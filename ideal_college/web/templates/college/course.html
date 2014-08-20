@@ -21,13 +21,18 @@
 		<table id="list" class="table table-hover" >
 			<tr class="success" style="font-size: 12px" style="width:auto">
 			  <th>Course</th>
-			  <th>Edit </th>
-			  <th>Delete</th>
+			  <th>University </th>
+			  <th>Course Type</th>
+			  <th>Registration Type</th>
+			  <th>&nbsp;</th>
 			</tr>
 			{% for course in courses %} 
 			<tr>
 				<td>{{course.course}}</td>
-				<td> <a href="{% url 'edit_course' course.id %}" >Edit </td>
+				<td>{{course.university}}</td>
+				<td>{{course.course_type}}</td>
+				<td>{{course.registration_type}}</td>
+				<!-- <td> <a href="{% url 'edit_course' course.id %}" >Edit </td> -->
 				<td><a href="{% url 'delete_course' course.id %}" >Delete</td>
 			</tr>
 			{% endfor %}				

@@ -11,7 +11,6 @@ from django.http import HttpResponse
 from fees.models import Installment, FeesHead, FeesStructureHead, FeesStructure, FeesPaymentInstallment, FeesPayment, CommonFeesPayment
 from college.models import College, Course, Batch
 from academic.models import Student
-from exam.models import Exam
 
 def header(canvas, y):
 
@@ -325,71 +324,3 @@ class OutstandingFeesListReport(View):
             p.save()
         return response
 
-class ExamScheduleReport(View):
-
-    def get(self, request, *args, **kwargs):
-
-        status_code = 200
-        response = HttpResponse(content_type='application/pdf')
-        p = canvas.Canvas(response, pagesize=(1000, 1250))
-        y = 1150
-        p = header(p, y)
-        p.setFont("Helvetica", 14)  
-        report_type = request.GET.get('report_type', '')
-        if not report_type:
-            return render(request, 'report/exam_schedule.html',{
-                'report_type' : 'exam_schedule',
-                })
-        else:
-            exam_id = request.GET.get('exam_id', '')
-            exam = Exam.objects.get(id=exam_id)
-            batch_name = str(exam.batch.start_date)+ ' - '+str(exam.batch.end_date) +(' - '+exam.batch.branch.branch if exam.batch.branch else '')
-            # heading = exam.course.course+ ' - ' + batch_name + ' - ' +exam.exam_name 
-            # p.drawCentredString(400, y - 70, heading)
-            p.setFontSize(14)
-            p.drawString(50, y - 100, "Exam")
-            p.drawString(50, y - 120, "Course ")
-            p.drawString(50, y - 140, "Batch")
-            p.drawString(50, y - 160, "Semester")
-            p.drawString(50, y - 180, "Start Date ")
-            p.drawString(50, y - 200, "End Date")
-            p.drawString(50, y - 220, "Exam Total")
-            p.drawString(50, y - 240, "No. of Subjects")
-            p.drawString(150, y - 100, "-")
-            p.drawString(150, y - 120, "-")
-            p.drawString(150, y - 140, "-")
-            p.drawString(150, y - 160, "-")
-            p.drawString(150, y - 180, "-")
-            p.drawString(150, y - 200, "-")
-            p.drawString(150, y - 220, "-")
-            p.drawString(150, y - 240, "-")
-            p.drawString(175, y - 100, exam.exam_name)
-            p.drawString(175, y - 120, exam.course.course)
-            p.drawString(175, y - 140, batch_name)
-            p.drawString(175, y - 160, exam.semester.semester if exam.semester else '')
-            p.drawString(175, y - 180, exam.start_date.strftime('%d/%m/%Y') if exam.start_date else '')
-            p.drawString(175, y - 200, exam.end_date.strftime('%d/%m/%Y') if exam.end_date else '')
-            p.drawString(175, y - 220, str(exam.exam_total))
-            p.drawString(175, y - 240, str(exam.no_subjects))
-            p.drawString(50, y - 280, 'Subject')
-            p.drawString(250, y - 280, 'Date')
-            p.drawString(350, y - 280, 'Start Time')
-            p.drawString(450, y - 280, 'End Time')
-            p.drawString(550, y - 280, 'Total Mark')
-            p.drawString(650, y - 280, 'Pass Mark')
-            y1 = y - 300
-            for subject in exam.subjects.all():
-                p.drawString(50, y1, subject.subject_name)
-                p.drawString(250, y1, subject.date.strftime('%d/%m/%Y'))
-                p.drawString(350, y1, str(subject.start_time))
-                p.drawString(450, y1, str(subject.end_time))
-                p.drawString(550, y1, str(subject.total_mark))
-                p.drawString(650, y1, str(subject.pass_mark))
-                y1 = y1 - 30
-                if y1 <= 270:
-                    y1 = y - 100
-                    p.showPage()
-                    p = header(p, y)
-            p.showPage()
-            p.save()
-            return response

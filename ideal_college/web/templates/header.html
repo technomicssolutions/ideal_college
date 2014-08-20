@@ -38,12 +38,6 @@
 				<li class="menu"> <a href="{% url 'list_student' %}"> Student </a>
 					
 				</li>
-				<li class="menu"> <a href=""> Exam </a>
-					<ul>
-						<li> <a href="{% url 'schedule_exam' %}"> Schedule Exam</a> </li>
-						<li> <a href="{% url 'marks' %}"> Marks</a> </li>
-					</ul>
-				</li>
 				<li class="menu"> <a href=""> Fees </a>
 					<ul>
 						<li> <a href="{% url 'fees_heads' %}">Fees Head</a> </li>
@@ -53,25 +47,9 @@
 						<li> <a href="{% url 'list_outstanding_fees' %}">Outstanding Fees</a> </li>
 					</ul>
 				</li>
-				<li class="menu"> <a href=""> Attendance </a>
-					<ul>
-						<li> <a href="{% url 'add_attendance' %}" >Attendance</a>
-						</li>
-						<li> <a href="{% url 'attendance_details' %}" >View Attendance</a>
-						</li>
-						<li> <a href="{% url 'holiday_calendar' %}" >Holiday Calendar</a>
-						</li>
-						<li> <a href="{% url 'clear_batch_details' %}" >Clear Batch Details</a>
-						</li>
-						<li> <a href="{% url 'clear_holiday_calendar' %}" >Clear Holiday Calendar </a>
-						</li>
-					</ul>
-				</li>
 				<li class="menu last"> <a href=""> Report </a>
 					<ul>
 						<li> <a href="{% url 'outstanding_fees_report' %}" >Outstanding Fees</a>
-						</li>
-						<li> <a href="{% url 'exam_schedule_report' %}" >Exam Schedule</a>
 						</li>
 					</ul>
 				</li>

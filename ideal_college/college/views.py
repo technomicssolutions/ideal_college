@@ -487,39 +487,23 @@ class AddNewBatch(View):
 
 class AddNewCourse(View):
     def post(self, request, *args, **kwargs):
-
+        status_code = 200
         if request.is_ajax():
             semester_list = ast.literal_eval(request.POST['semester_list'])
             try:
-        
-                course, created = Course.objects.get_or_create(course=request.POST['course'])
-                if not created:
-                    res = {
-                        'result': 'error',
-                        'message': 'Course already existing'
-                    }
-                    status_code = 200
-                else:
-                    try:
-                        course = Course.objects.get(id = request.POST['course'])
-                    
-                    except Exception as ex:
-                        print str(ex), "Exception ===="
-                    course.save()
-                    for semester_id in semester_list:
-                        course.semester.add(semester_id)
-                    res = {
-                        'result': 'ok',
-                    }  
-                    status_code = 200 
-
+                course = Course.objects.get(course=request.POST['course'],university=request.POST['university'], course_type=request.POST['course_type'], registration_type=request.POST['registration_type'])
+                res = {
+                    'result': 'error',
+                    'message': 'Course already existing'
+                }
             except Exception as ex:
                 print str(ex), "Exception ===="
+                course = Course.objects.create(course=request.POST['course'],university=request.POST['university'], course_type=request.POST['course_type'], registration_type=request.POST['registration_type'])
+                for semester_id in semester_list:
+                    course.semester.add(semester_id)
                 res = {
-                        'result': 'error: ' + str(ex),
-                        'message': 'Course Name already existing'
-                    }
-                status_code = 200
+                    'result': 'ok',
+                }  
             response = simplejson.dumps(res)
             return HttpResponse(response, status = status_code, mimetype="application/json")
 

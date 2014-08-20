@@ -11,16 +11,47 @@
                     <div class="section_1">
 
                         <div class="form_text">
-                                <label > Course</label> 
+                            <label > Course</label> 
                         </div>
 
                         <div class="form_input"> 
-                                <input type="text"  name="course" value=""  ng-model="course">
+                            <input type="text"  name="course" value=""  ng-model="course">
                         </div> 
                         <div class="form_text">
-                                <label > Add Semesters</label> 
+                            <label > University</label> 
                         </div>
                         <div class="form_input"> 
+                            <select name="university" ng-model="university">
+                                <option value="">Select</option>
+                                <option value="Ignou University">Ignou University</option>
+                                <option value="Kerala University">Kerala University</option>
+                                <option value="Calicut University">Calicut University</option>
+                            </select>
+                        </div> 
+                        <div class="form_text">
+                            <label > Course Type</label> 
+                        </div>
+                        <div class="form_input"> 
+                            <select name="course_type" ng-model="course_type" ng-change="get_registartion_type()">
+                                <option value="">Select</option>
+                                <option value="distant">Distant</option>
+                                <option value="regular">Regular</option>
+                            </select>
+                        </div> 
+                        <div class="form_text" ng-show="is_distant">
+                            <label > Registration Type</label> 
+                        </div>
+                        <div class="form_input"> 
+                            <select name="registration_type" ng-model="registration_type" ng-show="is_distant" ng-change="hide_semesters()">
+                                <option value="">Select</option>
+                                <option value="registration_only">Registration Only</option>
+                                <option value="contact_classes">With Contact Classes</option>
+                            </select>
+                        </div> 
+                        <div class="form_text" ng-hide="is_registration_only">
+                            <label > Add Semesters</label> 
+                        </div>
+                        <div class="form_input" ng-hide="is_registration_only"> 
                             <select size="10" name="semester_list" ng-model="semester_list" multiple ng-options="semester.id as semester.semester for semester in semesters">
                             </select>   
                         </div>

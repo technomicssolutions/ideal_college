@@ -12,9 +12,7 @@ urlpatterns = patterns('',
 	url(r'^academic/', include('academic.urls')),
 	url(r'^staff/', include('staff.urls')),
 	url(r'^fees/', include('fees.urls')),
-	url(r'^exam/', include('exam.urls')),
 
-	url(r'^attendance/', include('attendance.urls')),
 	url(r'^report/', include('report.urls')),
 	url(r'^site_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
 
