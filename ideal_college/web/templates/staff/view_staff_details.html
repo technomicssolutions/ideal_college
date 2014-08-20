@@ -1,0 +1,119 @@
+<div style='display:none' id="staff_details_view">
+    <div id='staff_details_view' style='padding:10px; background:#fff;'>
+        <div class="sign_box">
+            <div class="row-fluid">
+                <div class="span12 sign_mid">
+	                <div id="main-title">
+						<div class="alert alert-info" align="Center">
+							<h4>Staff Details</h4>
+						</div>
+					</div>
+					<div class="section_1">
+						<div class="formrow personal_details">	
+							<img src="/site_media/[[staff.photo]]" ng-show="staff.photo != ''"  class="staff_pic"/> 
+							<img src="/static/images/profile_pic.jpeg" ng-hide="staff.photo != ''"  class="staff_pic"/>
+							<div class="control">
+								<label class="bold"> Name</label>
+								<label name="staff_name"> &nbsp;[[staff.staff_name]]</label>
+								<label class="bold"> DOB</label>
+								<label name="dob"> &nbsp;[[staff.dob]]</label>
+								<label class="bold">Address</label>
+								<label name="address"> &nbsp;[[staff.address]]</label>
+								<label class="bold"> Mobile </label> 
+								<label name="mobile_number"> &nbsp;[[staff.mobile_number]]</label>
+								<label class="bold"> Tel:</label>
+								<label name="land_number" > &nbsp;[[staff.land_number]]</label>	
+								<label class="bold"> Email</label>
+								<label name="email"> &nbsp;[[staff.email]]</label>
+								<label class="bold">Blood Group</label>
+								<label name="blood_group"> &nbsp;[[staff.blood_group]]</label>
+							</div>
+						</div>
+						<div class="formrow official_details">
+							<h3> Official Details </h3>
+							<label class="bold">Staff Code</label> 
+							<label name="staff_id" ng-model="staff_id">&nbsp;[[staff.staff_id]] </label>
+							<label class="bold"> Date of join</label>
+							<label name="doj"> &nbsp;[[staff.doj]]</label>
+							<label class="bold">Designation</label>
+							<label name="designation"> &nbsp;[[staff.designation]]</label>  
+							<label class="bold"> Qualifications</label>
+							<label name="qualifications"> &nbsp;[[staff.qualifications]]</label> 
+							<label class="bold">Experience</label>
+							<label name="experiance"> &nbsp;[[staff.experiance]]</label> 
+							<label class="bold"> Role </label>
+							<label name="role"> &nbsp;[[staff.role]]</label> 
+							<label class="bold">Certificates Submitted</label>
+							<label name="certificates_submitted"> &nbsp;[[staff.certificates_submitted]]</label>
+							<label class="bold">Remarks </label>
+							<label name="certificates_submitted"> &nbsp;[[staff.certificates_remarks]]</label>
+							<label class="bold">File Number</label>
+							<label name="id_proofs_file"> &nbsp;[[staff.id_proofs_file]]</label>
+							<label class="bold">Certificates Submitted</label>
+							<label name="certificates_file"> &nbsp;[[staff.certificates_file]]</label>
+							<label class="bold">ID Proof Submitted</label>
+							<label name="id_proofs_submitted"> &nbsp;[[staff.id_proofs_submitted]]</label>
+							<label class="bold">Remarks </label>
+							<label name="id_proofs_remarks"> &nbsp;[[staff.id_proofs_remarks]]</label>			
+						</div>
+						<div class="formrow guardian_details">
+							<h3> Father/Mother/Guardian Details	</h3>
+							<label class="bold"> Name</label>
+							<label name="guardian_name"> &nbsp;[[staff.guardian_name]]</label>
+							<label class="bold">Address</label>
+							<label name="guardian_address"> &nbsp;[[staff.guardian_address]]</label>
+							<label class="bold"> Relationship</label>
+							<label name="relationship"> &nbsp;[[staff.relationship]]</label>
+							<label class="bold"> Mobile </label>
+							<label name="guardian_mobile_number"> &nbsp;[[staff.guardian_mobile_number]]</label>  
+							<label class="bold"> Tel:</label>
+							<label name="guardian_land_number"> &nbsp;[[staff.guardian_land_number]]</label> 
+							<label class="bold"> Email</label>
+							<label name="guardian_email"> &nbsp;[[staff.guardian_email]]</label> 
+							<label class="bold"> Reference Details Details</label>
+							<label>&nbsp;</label>
+						</div>
+						<div class="formrow reference_details">
+							<h3> Reference Details </h3>
+							<label class="bold"> Name</label>
+							<label name="reference_name"> &nbsp;[[staff.reference_name]]</label>
+							<label class="bold">Address</label>
+							<label name="reference_address"> &nbsp;[[staff.reference_address]]</label>
+							<label class="bold"> Mobile </label>  
+							<label name="reference_mobile_number"> &nbsp;[[staff.reference_mobile_number]]</label>
+							<label class="bold"> Tel:</label>
+							<label name="reference_land_number"> &nbsp;[[staff.reference_land_number]]</label>
+							<label class="bold"> Email</label>
+							<label name="reference_email"> [[staff.reference_email]]</label>
+						</div>
+					</div>
+					<div  align="Center">
+						<div class="buttons">
+							<input type="button" class="btn btn-info" value="Close" ng-click="close_popup()">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

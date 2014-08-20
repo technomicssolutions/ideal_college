@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Edit Semester Details{% endblock title %}
+{% block body_id %}edit_semester{% endblock %}
+
+{% block controller %}
+	ng-controller="EditSemesterController" ng-init="init('{{csrf_token}}', '{{semester_id}}')"
+{% endblock controller %}
+
+{% block content %}
+
+
+<div id="main-title">
+	<div class="alert alert-info" align="Center"><h4>Edit Semester Details </h4></div>
+</div>
+
+
+<div class="form_container">
+	<form class="" name="edit_semester" method="post" action="">
+		{% csrf_token %}
+		
+		<div class="abc">
+		<div class="control">
+			<label > Name</label>  
+			<input type="text"  name="semester" value=""  ng-model="semester.semester">
+		</div>
+		
+		<div class="control">
+	        <p class="error_message"> [[validation_error]] </p>
+	    </div>
+		
+		<div  align="Center">
+			<div class="buttons">
+				<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/college/list_semester/'">
+				<input type="submit" value="Submit" ng-click="save_semester()" class="btn btn-info">
+				
+			</div></div></div>
+		</div>
+	</form>
+</div>
+
+
+{% endblock content %}

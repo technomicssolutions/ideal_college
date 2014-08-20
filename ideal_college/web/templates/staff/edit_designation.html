@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Edit Designation Details{% endblock title %}
+{% block body_id %}edit_designation{% endblock %}
+
+{% block controller %}
+	ng-controller="EditDesignationController" ng-init="init('{{csrf_token}}', '{{designation_id}}')"
+{% endblock controller %}
+
+{% block content %}
+
+
+<div id="main-title">
+	<div class="alert alert-info" align="Center"><h4>Edit Designation Details </h4></div>
+</div>
+
+
+<div class="form_container">
+	<form class="" name="edit_college" method="post" action="">
+		{% csrf_token %}
+		
+		<div class="abc">
+		<div class="control">
+			<label > Designation</label>  
+			<input type="text"  name="designation" value=""  ng-model="designation.designation">
+		</div>
+		
+		
+		<div class="control">
+	        <p class="error_message"> [[validation_error]] </p>
+	    </div>
+		
+		<div  align="Center">
+			<div class="buttons">
+				<p ng-show="error_flag" class="error_message">[[message]]</p>
+				<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/staff/get_designation/'">
+				<input type="submit" value="Submit" ng-click="save_designation()" class="btn btn-info">
+				
+			</div></div></div>
+		</div>
+	</form>
+</div>
+{% endblock content %}

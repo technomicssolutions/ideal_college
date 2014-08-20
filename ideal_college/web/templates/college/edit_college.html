@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Edit College Details{% endblock title %}
+{% block body_id %}edit_college{% endblock %}
+
+{% block controller %}
+	ng-controller="EditCollegeController" ng-init="init('{{csrf_token}}', '{{college_id}}')"
+{% endblock controller %}
+
+{% block content %}
+
+
+<div id="main-title">
+	<div class="alert alert-info" align="Center"><h4>Edit College Details </h4></div>
+</div>
+
+
+<div class="form_container">
+	<form class="" name="edit_college" method="post" action="">
+		{% csrf_token %}
+		
+		<div class="abc">
+		<div class="control">
+			<label > Name</label>  
+			<input type="text"  name="college_name" value=""  ng-model="college.college_name">
+		</div>
+		
+		<div class="control">
+			<label>Address</label>
+			<input type="text" name="address" value="" ng-model="college.address"> 
+		</div>
+		<div class="control">
+			<label > Registration Number </label>  
+			<input type="text"  name="registration_number" value=""  ng-model="college.registration_number">
+		</div>
+
+	    <div class="control">
+	        <p class="error_message"> [[validation_error]] </p>
+	    </div>
+
+
+		<div  align="Center">
+			<div class="buttons">
+				<p ng-show="error_flag" class="error_message">[[message]]</p>
+				<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/college/list_college/'">
+				<input type="submit" value="Submit" ng-click="save_college()" class="btn btn-info">
+				
+			</div>
+		</div></div>
+	</form>
+</div>
+
+
+{% endblock content %}

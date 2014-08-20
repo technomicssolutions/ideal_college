@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Edit Fee Structure Details{% endblock title %}
+{% block body_id %}edit_fee_structure{% endblock %}
+{% block controller %}
+	ng-controller="EditFeeStructureController" ng-init="init('{{csrf_token}}', '{{fee_structure_id}}')"
+{% endblock controller %}
+{% block content %}
+
+	<div id="main-title">
+		<div class="alert alert-info" align="Center"><h4>Edit Structure Details </h4></div>
+	</div>
+	<div class="edit_fee_struicture_form_container">
+		<form class="" name="fees_structure" method="post" action="" align="Center">
+			<div class="section_1">
+				<div class="control">
+					<label>Course</label>
+					<input type="text" ng-model="fees_structure.course" readonly>
+				</div>
+				<div class="control">
+					<label>Batch</label>
+					<input type="text" ng-model="fees_structure.batch" readonly>
+				</div>
+			</div>
+			<div class="clear"></div>
+			<div class="section_1">
+				<table class="table striped">
+					<tr>
+						<th>Head</th>
+						<th>Amout</th>
+						<th>No. of Installments</th>
+						<th>&nbsp;</th>
+						<th>&nbsp;</th>
+					</tr>
+					<tr ng-repeat="fee_head in fees_structure.fees_head">
+						<td><input type="text" ng-model="fee_head.head"/></td>
+						<td><input type="text" ng-model="fee_head.amount"/></td>
+						<td><input type="text" ng-model="fee_head.no_installments" ng-change="add_fee_structure_installments(fee_head)"/></td>
+						<td>
+							<table ng-hide="fee_head.shrink">
+								<tr ng-show="fee_head.installments.length > 0">
+									<th>Due Date</th>
+									<th>Amount</th>
+									<th>Fine</th>
+								</tr>
+								<tr ng-repeat="installment in fee_head.installments">
+									<td><input type="text" name="due_date" id="[[installment.due_date_id]]" class="due_date" value="" ng-click="attach_date_picker(installment)" ng-model="installment.due_date"></td>
+									<td><input type="text" name="amount" value="" ng-model="installment.amount"></td>
+									<td><input type="text" name="fine_amount" value="" ng-model="installment.fine_amount"></td>
+									<td><input type="button" value="   Remove    " ng-click="remove_installment(installment, fee_head)"></td>
+								</tr>
+								
+							</table>
+						</td>
+						<td>
+							<a ng-show="fee_head.shrink"  class="align_left" href="" ng-click="show_installment_details(fee_head)"><input class="btn btn-info" type="button" value="+"></a>
+							<a ng-hide="fee_head.shrink" class="align_left" href="" ng-click="show_installment_details(fee_head)"><input class="btn btn-info" type="button" value="-"></a>
+						</td>
+						<td>
+							<a class="align_right" href="" ng-click="remove_head(fee_head)"><input class="btn btn-info" type="button" value="X"></a>
+						</td>
+					</tr>
+				</table>
+				<div class="control">
+					<a class="align_right" href="" ng-click="add_new_head()"><input class="btn btn-info" type="button" value="Add"></a>
+				</div>
+			</div>
+			<div class="section_1">
+				<div class="control" align="Center">
+					<div class="buttons">
+						<p class="error_message">[[validation_error]]</p>
+						<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/'">
+						<input type="submit" value="Submit" ng-click="save_edit_fee_structure()" class="btn btn-info">
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+
+{% endblock content %}

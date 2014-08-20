@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% block title %}Edit Staff Details{% endblock title %}
+{% block body_id %}edit_staff{% endblock %}
+
+{% block controller %}
+	ng-controller="EditStaffController" ng-init="init('{{csrf_token}}', '{{staff_id}}')"
+{% endblock controller %}
+
+{% block content %}
+
+
+<div id="main-title">
+	<div class="alert alert-info" align="Center"><h4>Edit Staff Details </h4></div>
+</div>
+<div class="staff_form_container">
+	<form class="" name="edit_staff_details" method="post" action="">
+		{% csrf_token %}
+		<div class = "section_1">
+		
+			<div class = "formrow">
+				
+				<div class = "form_text">
+					<label > Staff Code</label>
+				</div>
+				<div class = "form_input">
+					<input type="text"  name="staff_id" value=""  ng-model="staff.staff_id">
+				</div>
+
+				<div class = "form_text">
+					<label> First Name</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="first_name" value="" ng-model="staff.first_name">
+				</div>
+
+				<div class = "form_text">
+					<label> Last Name</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="last_name" value="" ng-model="staff.last_name">
+				</div>
+				<div class = "form_text">
+					<label> User Name</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="user_name" value="" ng-model="staff.username" readonly>
+				</div>
+				<div class = "form_text">
+					<label> DOB</label>
+				</div>
+				<div class = "form_input">
+					<input type="text"name="dob" value="" ng-model="staff.dob" id="dob"></textarea>
+				</div>
+				
+				<div class="form_text">
+					<label>Address</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="address" value="" ng-model="staff.address"> 
+				</div>
+
+				<div class="form_text">
+					<label > Mobile </label> 
+				</div>
+				<div class = "form_input"> 
+					<input type="text"  name="mobile_number" value=""  ng-model="staff.mobile_number">
+				</div>
+
+				<div class="form_text">
+					<label> Tel:</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="land_number" value="" ng-model="staff.land_number">
+				</div>
+
+				<div class="form_text">
+					<label> Email</label>
+				</div>
+				<div class = "form_input">
+					<input type="text"name="email" value="" ng-model="staff.email"></textarea>
+				</div>
+				
+				<div class="form_text">
+
+					<label>Blood Group</label>
+				</div>
+				<div class = "form_input">
+					<select ng-model="staff.blood_group">
+						<option value="">Select</option>
+						<option value="A-">A-</option>
+						<option value="A+">A+</option>
+						<option value="B-">B-</option>
+						<option value="B+">B+</option>
+						<option value="AB-">AB-</option>
+						<option value="AB+">AB+</option>
+						<option value="O-">O-</option>
+						<option value="O+">O+</option>
+					</select> 
+				</div>
+
+				<div class="form_text">
+					<label > Date of join</label>  
+				</div>
+				<div class = "form_input">
+					<input type="text"  name="doj" value=""  ng-model="staff.doj" id="doj">
+				</div>
+
+				<div class="form_text">
+					<label> Designation</label> 
+				</div>
+				<div class = "form_input"> 
+					<select name="designation" ng-model="staff.designation" ng-options="designation.designation as designation.designation for designation in designations" ng-selected="staff.designation == designation.designation">
+						<option value="">Select</option>
+					</select>  
+				</div>
+				
+
+				<div class="form_text">
+					<label > Qualifications</label> 
+				</div>
+				<div class = "form_input"> 
+					<input type="text"  name="qualifications" value=""  ng-model="staff.qualifications">
+				</div>
+
+				<div class="form_text">
+				<label>Photo</label>
+				</div>
+				<div class = "form_input">
+					<input type="file" fileread="photo_img.src"/>
+					<input type="hidden" ng-model="photo_img.src" >
+				</div>
+				<div class="form_text">
+					<label>Experience</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="experiance" value="" ng-model="staff.experiance">
+				</div>
+
+				<div class="form_text">
+					<label> Role </label>
+				</div>
+				
+				<div class = "form_input">
+					<select ng-model="staff.role">
+						<option value="teacher">Teacher</option>
+						<option value="office_staff">Office Staff</option>
+						<option value="admin">Admin</option>
+					</select>
+				</div>
+				
+				<div class="form_text">
+					<label>Certificates Submitted</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="certificates_submitted" value="" ng-model="staff.certificates_submitted"> 
+				</div>
+				<div class="form_text">
+					<label>Remarks </label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="certificates_remarks" value="" ng-model="staff.certificates_remarks"> 
+				</div>
+				<div class="form_text">
+					<label>File Number</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="certificates_file" value="" ng-model="staff.certificates_file"> 
+				</div>
+
+			</div>
+			<div class = "formrow">
+
+				<div class="form_text">
+					<label>ID Proof Submitted</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="id_proof" value="" ng-model="staff.id_proofs_submitted"> 
+				</div>
+				<div class="form_text">
+					<label>Remarks </label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="id_proof_remarks" value="" ng-model="staff.id_proofs_remarks"> 
+				</div>
+				<div class="form_text">
+					<label>File Number</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="id_proof_file" value="" ng-model="staff.id_proofs_file"> 
+				</div>
+				<div class="form_text">
+					<label> Father/Mother/Guardian Details</label>
+				</div>
+				<div class = "form_input">
+					<label>&nbsp;</label>
+				</div>
+
+				<div class="form_text">
+					
+					<label> Name</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="guardian_name" value="" ng-model="staff.guardian_name">
+				</div>
+				<div class="form_text">
+					<label>Address</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="guardian_address" value="" ng-model="staff.guardian_address"> 
+				</div>
+				<div class="form_text">
+					<label> Relationship</label>
+
+				</div>
+				<div class = "form_input">
+					<input type="text"name="relationship" value="" ng-model="staff.relationship"></textarea>
+				</div>
+				<div class="form_text">
+					<label > Mobile </label>  
+				</div>
+				<div class = "form_input">
+					<input type="text"  name="guardian_mobile_number" value=""  ng-model="staff.guardian_mobile_number">
+				</div>
+				<div class="form_text">
+					<label> Tel:</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="guardian_land_number" value="" ng-model="staff.guardian_land_number">
+				</div>
+				<div class="form_text">
+					<label> Email</label>
+				</div>
+				<div class = "form_input">
+					<input type="text"name="guardian_email" value="" ng-model="staff.guardian_email"></textarea>
+				</div>
+				<div class="form_text">
+					<label> Reference Details Details</label>
+				</div>
+				<div class = "form_input">
+					<label>&nbsp;</label>
+				</div>
+				<div class="form_text">
+					
+					<label> Name</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="reference_name" value="" ng-model="staff.reference_name">
+				</div>
+				<div class="form_text">
+					<label>Address</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="reference_address" value="" ng-model="staff.reference_address"> 
+				</div>
+				
+				<div class="form_text">
+					<label > Mobile </label>
+				</div>
+				<div class = "form_input">  
+					<input type="text"  name="reference_mobile_number" value=""  ng-model="staff.reference_mobile_number">
+				</div>
+				<div class="form_text">
+					<label> Tel:</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="reference_land_number" value="" ng-model="staff.reference_land_number">
+				</div>
+
+				<div class="form_text">
+					<label> Email</label>
+				</div>
+				<div class = "form_input">
+					<input type="text"name="reference_email" value="" ng-model="staff.reference_email"></textarea>
+				</div>
+				<div class="control">
+					<p class="error_message"> [[validation_error]] </p>
+				</div>
+		</div>
+		</div>
+		
+		
+		<div  align="Center">
+			<div class="buttons">
+				<p ng-show="error_flag" class="error_message">[[message]]</p>
+				<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/staff/list_staff/'">
+				<input type="submit" value="Submit" ng-click="edit_staff()" class="btn btn-info">
+				
+			</div>
+		</div>
+	</form>
+</div>
+
+
+{% endblock content %}

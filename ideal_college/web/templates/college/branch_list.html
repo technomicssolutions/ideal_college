@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Course Branch{% endblock title %}
+{% block body_id %}course_branch{% endblock %}
+
+{% block controller %}
+	ng-controller="BranchController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+
+{% block dialogue_popup %}
+	{% include 'popup/college/add_new_branch.html' %} 
+	              	
+{% endblock %}
+
+{% block content %}	
+	<div class="main-title">
+		<div class="alert alert-info" align="Center">Branch </div>
+		<div class="new_button">		
+			<input type="button" class="btn btn-info" value="New Branch" ng-click="add_new_branch()">	
+		</div>
+	</div>
+	<div class="branch_list">
+		<table id="list" class="table table-striped" >
+			<tr>
+			  <th>Name</th>
+			  <th>Edit</th>
+			  <th>Delete</th>		  
+			</tr>						
+			{% for branch in branch_list %} 
+				<tr>
+					<td>{{branch.branch}}</td>					 
+					<td><a href="{% url 'edit_course_branch' branch.id %}" >Edit</td>
+					<td><a href="{% url 'delete_course_branch' branch.id %}" >Delete</td>
+				</tr>
+			{% endfor %}										
+		</table> 
+	</div>
+{% endblock content %}

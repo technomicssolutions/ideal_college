@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}FeesHead{% endblock title %}
+{% block body_id %}fee_head{% endblock %}
+{% block controller %}
+	ng-controller="FeesHeadController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+
+{% block content %}
+	<div id="main-title">
+		<div class="alert alert-info" align="Center"><h4>Fees Head</h4></div>
+	</div>
+	<div class="form_container">
+		<form class="" name="fees_head" method="post" action="">
+			{% csrf_token %}
+			<div class="control">
+				<label>Head Name</label>
+				<input type="text" name="fee_head.head" value="" ng-model="fee_head.head"> 
+			</div>
+			<div class="control">
+				<label>Amount</label>
+				<input type="text" name="fee_head.amount" value="" ng-model="fee_head.amount"> 
+			</div>
+			<div class="control">
+	            <p class="error_message"> [[validation_error]] </p>
+	        </div>
+			<div  align="Center">
+				<div class="buttons">
+					<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/'">
+					<input type="submit" value="Submit" ng-click="save_fees_head()" class="btn btn-info">
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock content %}

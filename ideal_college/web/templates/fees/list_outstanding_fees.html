@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block title %}Outstanding Fees{% endblock title %}
+{% block body_id %}list_outstanding_fees{% endblock %}
+{% block controller %}
+	ng-controller="FeesController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+{% block content %}
+	<div class="main-title">
+		<div class="alert alert-info" align="Center">Outstanding Fees</div>
+		<div class="form_container">		
+			<div class="control">
+			<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
+				<option value="">Course</option>
+			</select>
+			</div>
+			<p class="error_message">[[no_batch_error]]</p>
+			<div class="control">
+				<select name="batch" ng-model="batch" ng-change="get_student()" ng-options="batch.id as batch.name for batch in batches">
+					<option value="">Batch</option>
+				</select>
+			</div>
+			<p class="error_message">[[no_student_error]]</p>
+			<div class="control">
+				<label><b> Fees Type: </b> </label>
+				<input type="radio" ng-model="fees_type" value="common" name="fees_type" ng-change="outstanding_fees_details()"/>
+				<label>Common Fees</label>
+				<input type="radio" ng-model="fees_type" value="course" name="fees_type" ng-change="outstanding_fees_details()"/>
+				<label>Course Fees</label>
+				<div class="clear"></div>
+			</div>
+			<div class="control">
+				<label><b> Report Type: </b> </label>
+				<input type="radio" ng-model="filtering_option" value="batch_wise" name="filtering_option" ng-change="outstanding_fees_details()"/>
+				<label>Batch wise</label>
+				<input type="radio" ng-model="filtering_option" value="student_wise" name="filtering_option" ng-change="outstanding_fees_details()"/>
+				<label>Student wise</label>
+				<div class="clear"></div>
+			</div>
+			<div class="control" ng-show="filtering_option == 'student_wise'">
+				<select name="student" ng-model="student_id" ng-change="outstanding_fees_details()" ng-options="student.id as student.student for student in students">
+					<option value="">Student</option>
+				</select>
+				<div class="control">
+					<label> Roll No:  </label> <label> [[fees_details.roll_no]] </label>
+				 	<label> Student Name:  </label> <label> [[fees_details.student_name]] </label>
+				 	<br /> <br />
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="section_3">
+		<div class="search_staff" ng-show="fees_type == 'course' ">				
+			<table id="list" class="table striped" ng-show="filtering_option == 'student_wise' && fees_details.head_details.length > 0">
+				<tr class="success" style="font-size: 12px" style="width:auto">
+					<th>Head</th>
+					<th>Total Amt</th>
+					<th>No. Inst.</th>
+					<th>Inst.Name</th>
+					<th>Inst.Amt</th>
+					<th>Inst.Due date</th>
+					<th>Inst.Fine Amt</th>
+					<th>Inst.Paid Amt</th>
+					<th>Inst.Balance Amt</th>
+				</tr>
+				<tr ng-repeat="head in fees_details.head_details" ng-show="filtering_option == 'student_wise'">
+					<td>[[head.head]]</td>
+					<td>[[head.amount]]</td>
+					<td>[[head.no_installments]]</td>
+					<td colspan="6" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px;">
+						<table style="width:100%">
+							<tr ng-repeat="installment in head.installments">
+								<td style="width : 10%;"> [[installment.name]] </td>
+								<td style="width : 10%;"> [[installment.amount]] </td>
+								<td style="width : 15%;"> [[installment.due_date]] </td>
+								<td style="width : 15%;"> [[installment.fine_amount]] </td>
+								<td style="width : 15%;"> [[installment.paid_installment_amount]] </td>
+								<td style="width : 15%;"> [[installment.balance]] </td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table> 
+			<table id="list" class="table striped" ng-show="filtering_option == 'batch_wise' && fees_details.students.length > 0">
+				<tr class="success" style="font-size: 12px" style="width:auto">
+					<th>Roll No:</th>
+					<th>Student Name</th>
+					<th>Head</th>
+					<th>Total Amt</th>
+					<th>No. Inst.</th>
+					<th>Inst.Name</th>
+					<th>Inst.Amt</th>
+					<th>Inst.Due date</th>
+					<th>Inst.Fine Amt</th>
+					<th>Inst.Paid Amt</th>
+					<th>Inst.Balance Amt</th>
+				</tr>
+				<tr ng-repeat="student in visible_list">
+					<td>[[student.roll_no]]</td>
+					<td>[[student.name]]</td>
+					<td colspan="10" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px;"> 
+						<table style="width:100%;">
+							<tr ng-repeat="head in student.head_details" ng-show="filtering_option == 'batch_wise'">
+								<td style="width: 6%;">[[head.head]]</td>
+								<td style="width: 11%;">[[head.amount]]</td>
+								<td style="width: 6%;">[[head.no_installments]]</td>
+								<td colspan="6" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px;">
+									<table style="width:100%">
+										<tr ng-repeat="installment in head.installments">
+											<td style="width : 16%;"> [[installment.name]] </td>
+											<td style="width : 12%;"> [[installment.amount]] </td>
+											<td style="width : 20%;"> [[installment.due_date]] </td>
+											<td style="width : 14%;"> [[installment.fine_amount]] </td>
+											<td style="width : 18%;"> [[installment.paid_installment_amount]] </td>
+											<td style="width : 15%;"> [[installment.balance]] </td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table> 
+		</div>
+		<div class="search_staff" ng-show="fees_type == 'common' ">
+			<table id="list" class="table table-stripped" ng-show="filtering_option == 'student_wise' && fees_details.head_details.length > 0">
+				<tr style="font-size: 12px" style="width:auto">
+					<th>Head</th>
+					<th>Total Amt</th>
+					<th>Head.Paid Amt</th>
+					<th>Head.Balance Amt</th>
+				</tr>
+				<tr ng-repeat="head in fees_details.head_details" ng-show="filtering_option == 'student_wise'">
+					<td>[[head.name]]</td>
+					<td>[[head.amount]]</td>
+					<td>[[head.paid_head_amount]]</td>
+					<td>[[head.balance]]</td>
+				</tr>
+			</table> 
+			<table id="list" class="table table-stripped" ng-show="filtering_option == 'batch_wise' && fees_details.students.length > 0">
+				<tr style="font-size: 12px" style="width:auto">
+					<th>Roll No:</th>
+					<th>Student Name</th>
+					<th>Head</th>
+					<th>Total Amt</th>
+					<th>Head.Paid Amt</th>
+					<th>Head.Balance Amt</th>
+				</tr>
+				<tr ng-repeat="student in visible_list">
+					<td>[[student.roll_no]]</td>
+					<td>[[student.name]]</td>
+					<td colspan="4" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px;"> 
+						<table style="width:100%;">
+							<tr ng-repeat="head in student.head_details" ng-show="filtering_option == 'batch_wise'">
+								<td style="width: 15%;">[[head.name]]</td>
+								<td style="width: 20%;">[[head.amount]]</td>
+								<td style="width: 35%;">[[head.paid_head_amount]]</td>
+								<td>[[head.balance]]</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table> 
+		</div>
+		<div ng-show="fees_details.students.length > 0 && filtering_option == 'batch_wise'">
+			{% include 'pagination_div.html' %}
+		</div>
+	</div>	
+{% endblock content %}

@@ -1,0 +1,56 @@
+<div style='display:none' id="fees_structure_details_view">
+    <div id='fees_structure_details_view' style='padding:10px; background:#fff;'>
+        <div class="sign_box">
+            <div class="row-fluid">
+                <div class="span12 sign_mid">
+	                <div id="main-title">
+						<div class="alert alert-info" align="Center"><h4> Fees Structure </h4></div>
+					</div>
+					<div class="section_1">
+						<div class="control">
+							<table class="table stripped">
+								<tr>
+									<th> Course </th>
+									<th> Batch </th>
+								</tr>
+								<tr>
+									<td> [[fees_structure.course]] </td>
+									<td> [[fees_structure.batch]] </td>
+								</tr>
+							</table>
+						</div>
+
+						<div class="control">
+							<table class="table">
+								<tr>
+									<th> Head </th>
+									<th> Amount </th>
+									<th> Installments </th>
+									<th> Inst: NO: </th>
+									<th> Due Date </th>
+									<th> Amount </th>
+									<th> Fine Amount </th>
+								</tr>
+								<tr ng-repeat="head in fees_structure.fees_head">
+									<td> [[head.head]] </td>
+									<td> [[head.amount]] </td>
+									<td> [[head.no_installments]] </td>
+									<td  colspan="4">
+										<table style="width: 90%;">
+											<tr ng-repeat="installment in head.installments">
+												<td style=" width: 20%;"> [[$index + 1]] </td>
+												<td style=" width: 20%;"> [[installment.due_date]] </td>
+												<td style=" width: 20%;"> [[installment.amount]] </td>
+												<td style=" width: 20%;"> [[installment.fine_amount]] </td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

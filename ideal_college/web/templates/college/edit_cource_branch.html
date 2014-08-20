@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Edit Branch{% endblock title %}
+{% block body_id %}edit_branch{% endblock %}
+
+{% block controller %}
+	ng-controller="BranchController" ng-init="init('{{csrf_token}}', '{{branch_id}}')"
+{% endblock controller %}
+
+{% block content %}
+
+
+<div id="main-title">
+	<div class="alert alert-info" align="Center"><h4>Edit Branch </h4></div>
+</div>
+
+
+<div class="form_container">
+	<form class="" name="edit_college" method="post" action="">
+		{% csrf_token %}
+		
+		<div class="abc">
+		<div class="control">
+			<label > Branch Name</label>  
+			<input type="text"  name="branch" value=""  ng-model="branch_name">
+		</div>
+		
+		<div  align="Center">
+			<p class="error_message"> [[validation_error]] </p>
+			<div class="buttons">
+				<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/college/branch_list/'">
+				<input type="submit" value="Submit" ng-click="save_new_branch()" class="btn btn-info">
+				
+			</div></div></div>
+		</div>
+	</form>
+</div>
+
+
+{% endblock content %}

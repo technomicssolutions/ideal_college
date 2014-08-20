@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Student Details{% endblock title %}
+{% block body_id %}list_student{% endblock %}
+
+{% block controller %}
+	ng-controller="StudentListController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+
+{% block dialogue_popup %}
+	{% include 'academic/add_student.html' %}
+	{% include 'academic/view_student_details.html' %} 
+	           	
+{% endblock %}
+
+{% block content %}	
+	<div class="main-title">
+		<div class="alert alert-info" align="Center"> Students </div>
+		<div class="search_students">
+			<label> Course</label> 
+			<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
+				<option value="">Select</option>
+			</select>
+			<label> Batch</label> 
+			<select name="batch" ng-model="batch" ng-change="get_students()" ng-options="bat.id as bat.name for bat in batches">
+				<option value="">Select</option>
+			</select>
+		</div>
+		<div  class="new_button">		
+			<input type="button" class="btn btn-info" value="New student" ng-click="add_new_student()">
+		</div>
+	</div>
+	<div class="list_student">
+		<table id="list" class="table table-hover" >
+			<tr class="success" style="font-size: 12px" style="width:auto">			
+			  	<th>Student Name</th>
+			  	<th>Roll No</th>			  
+			  	<th>View</th>
+			  	<th>Edit</th>
+			  	<th>Delete</th>			  
+			</tr>			
+			<tr ng-repeat="student in visible_list">
+				<td>[[student.name]]</td>
+				<td>[[student.roll_number]]</td>
+				<td><a href="" ng-click="display_student_details(student)" >View</td>
+				<td><a href="/academic/edit_student_details/[[student.id]]/" >Edit</td>
+				<td><a href="/academic/delete_student_details/[[student.id]]/" >Delete</td>
+			</tr>
+		</table> 
+		{% include 'pagination_div.html' %}
+	</div>
+	</div>
+{% endblock content %}

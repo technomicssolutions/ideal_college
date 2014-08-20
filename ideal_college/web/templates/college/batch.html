@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Batch{% endblock title %}
+{% block body_id %}Batch{% endblock %}
+
+{% block controller %}
+	ng-controller="CollegeController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+
+{% block dialogue_popup %}
+	{% include 'college/add_batch.html' %} 
+	              	
+{% endblock %}
+
+{% block content %}
+
+	<!-- <div class="form_container"> -->
+		<form class="" name="branch" method="post" action="">
+			
+
+			<div class="main-title">
+				<div class="alert alert-info" align="Center">Batch </div>
+					<div  align="Center">		
+						<input type="button" class="btn btn-info" value="New Batch" ng-click="add_new_batch()">
+		
+					</div>
+			</div>
+		<div class="section_3_staff">
+			<div class="search_staff">
+
+				<table id="list" class="table table-hover" >
+					<tr class="success" style="font-size: 12px" style="width:auto">
+					  <th>Course</th>
+					  <th>Branch</th>
+					  <th>Start</th>
+					  <th>End</th>
+					  <th>Edit </th>
+					  <th>Delete</th>
+					  
+					</tr>
+					<tr>
+					{% for batch in batches %} 
+					<td>{{batch.course.course}}</td>
+					<td>{{batch.branch.branch}}</td>
+					<td>{{batch.start_date}}</td>
+					<td>{{batch.end_date}}</td>
+					
+					 
+					<td> <a href="{% url 'edit_batch' batch.id %}" >Edit </td>
+					<td><a href="{% url 'delete_batch' batch.id %}" >Delete</td>
+					</tr>
+					{% endfor %}				
+					</tr>
+
+				</table> 
+			</div>
+		</div>	
+	</form>
+<!-- </div> -->
+{% endblock content %}

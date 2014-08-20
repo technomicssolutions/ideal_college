@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Batch{% endblock title %}
+{% block body_id %}Batch{% endblock %}
+
+{% block controller %}
+	ng-controller="StaffController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+
+{% block dialogue_popup %}
+	{% include 'staff/add_designation.html' %} 
+	              	
+{% endblock %}
+
+{% block content %}
+	<div class="main-title">
+		<div class="alert alert-info" align="Center">Designation </div>
+		<div class="new_button">		
+			<input type="button" class="btn btn-info" value="New Designation" ng-click="add_new_designation()">	
+		</div>
+	</div>
+	<div class="list_designation">
+		<table id="list" class="table table-hover" >
+			<tr class="success" style="font-size: 12px" style="width:auto">
+			  	<th>Designation</th>					  
+			  	<th>Edit </th>
+			  	<th>Delete</th>					  
+			</tr>
+			{% for designation in designations %} 
+			<tr>
+				<td>{{designation.designation}}</td>
+			
+				 
+				<td> <a href="{% url 'edit_designation' designation.id %}" >Edit </td>
+				<td><a href="{% url 'delete_designation' designation.id %}" >Delete</td>
+			</tr>
+			{% endfor %}				
+		</table> 
+	</div>
+{% endblock content %}

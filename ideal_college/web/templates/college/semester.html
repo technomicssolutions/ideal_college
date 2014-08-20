@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Semester{% endblock title %}
+{% block body_id %}semester{% endblock %}
+
+{% block controller %}
+	ng-controller="CollegeController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+
+{% block dialogue_popup %}
+	{% include 'college/add_semester.html' %} 	              	
+{% endblock %}
+
+{% block content %}
+	<div class="main-title">
+		<div class="alert alert-info" align="Center">Semester </div>
+		<div  class="new_button">		
+			<input type="button" class="btn btn-info" value="New Semester" ng-click="add_new_semseter()">		
+		</div>
+	</div>
+	<div class="semester_list">
+		<table id="list" class="table table-hover" >
+			<tr class="success" style="font-size: 12px" style="width:auto">
+			  	<th>Name</th>		
+			  	<th>Edit</th>
+			  	<th>Delete</th>					  
+			</tr>
+			{% for semester in semesters %} 
+			<tr>
+				<td>{{semester.semester}}</td>					 
+				<td> <a href="{% url 'edit_semester' semester.id %}" >Edit</td>
+				<td><a href="{% url 'delete_semester' semester.id %}" >Delete</td>
+			</tr>
+			{% endfor %}				
+		</table> 
+	</div>
+{% endblock content %}

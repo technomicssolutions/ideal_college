@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Edit Course Details{% endblock title %}
+{% block body_id %}edit_course{% endblock %}
+
+{% block controller %}
+	ng-controller="EditCourseController" ng-init="init('{{csrf_token}}', '{{course_id}}')"
+{% endblock controller %}
+
+{% block content %}
+<div id="main-title">
+	<div class="alert alert-info" align="Center"><h4>Edit Course Details </h4></div>
+</div>
+<div class="form_container">		
+	<div class="form_text">
+		<label > Course</label>  
+	</div>
+	<div class="form_input"> 
+		<input type="text"  name="course" value=""  ng-model="course.course">
+	</div>
+	<div class="form_text">
+		<label class="one" > Choose Semesters</label>  
+	</div>
+    <div class="form_input"> 
+	    <select class="one" size="10" name="semester_list" ng-model="semester_list" ng-selected="semester.selected" multiple ng-options="semester.id as semester.semester for semester in semesters">
+		</select>   
+	</div>		
+	<div class="control">
+        <p class="error_message"> [[validation_error]] </p>
+    </div>	
+	<div  align="Center">
+		<div class="buttons">
+			<p ng-show="error_flag" class="error_message">[[message]]</p>
+			<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/college/list_course/'">
+			<input type="submit" value="Submit" ng-click="save_course()" class="btn btn-info">			
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Outstanding Fees{% endblock title %}
+{% block body_id %}list_outstanding_fees{% endblock %}
+{% block controller %}
+	ng-controller="FeesReportController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+{% block content %}
+	<form class="" name="list_outstanding_fees" method="get" action="">
+		{% csrf_token %}
+		<div class="main-title">
+			<div class="alert alert-info" align="Center">Outstanding Fees</div>
+			<input type="hidden" name="report_type" value="{{report_type}}">
+			<div class="form_container">	
+				<p class="error_message">[[validation_error]]</p>	
+				<div class="control">
+					<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
+						<option value="">Course</option>
+					</select>
+				</div>
+				<p class="error_message">[[no_batch_error]]</p>
+				<div class="control">
+					<select name="batch" ng-model="batch" ng-change="get_student()" ng-options="batch.id as batch.name for batch in batches">
+						<option value="">Batch</option>
+					</select>
+				</div>
+				<p class="error_message">[[no_student_error]]</p>
+				
+				<div class="control">
+					<label>Fees Type</label>
+					<input type="radio" ng-model="fees_type" value="common" name="fees_type" ng-click="outstanding_fees_details()"/>
+					<label>Common Fees</label>
+					<input type="radio" ng-model="fees_type" value="course" name="fees_type" ng-click="outstanding_fees_details()"/>
+					<label>Course Fees</label>
+				</div>
+				<div class="control">
+					<label>Report Type</label>
+					<input type="radio" ng-model="filtering_option" value="batch_wise" name="filtering_option" ng-click="outstanding_fees_details()"/>
+					<label>Batch wise</label>
+					<input type="radio" ng-model="filtering_option" value="student_wise" name="filtering_option"/>
+					<label>Student wise</label>
+				</div>
+				<div class="control" ng-show="filtering_option == 'student_wise'">
+					<select name="student" ng-model="student_id" ng-change="outstanding_fees_details()" ng-options="student.id as student.student for student in students">
+						<option value="">Student</option>
+					</select>
+				</div>
+				<div class="control">
+					<input type="submit" value="View" ng-click="view_report()">
+				</div>
+			</div>
+		</div>
+	</form>
+{% endblock content %}

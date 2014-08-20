@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}College{% endblock title %}
+{% block body_id %}college{% endblock %}
+
+{% block controller %}
+	ng-controller="CollegeController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+
+{% block dialogue_popup %}
+	{% include 'college/add_college.html' %} 
+	              	
+{% endblock %}
+
+{% block content %}
+
+
+	<form class="" name="college" method="post" action="">
+			
+
+			<div class="main-title">
+				<div class="alert alert-info" align="Center">Colleges </div>
+					<div  align="Center">		
+						<input type="button" class="btn btn-info" value="New College" ng-click="add_new_college()">
+		
+					</div>
+			</div>
+
+	
+
+		<div class="section_3_staff">
+			<div class="search_staff">
+
+				<table id="list" class="table table-hover" >
+					<tr class="success" style="font-size: 12px" style="width:auto">
+					  <th>Name</th>
+					  <th>Address</th>
+					  <th>Registartion Number</th>
+					  <th>Edit</th>
+					  <th>Delete</th>
+					  
+					</tr>
+					<tr>
+					{% for college in colleges %} 
+					<td>{{college.name}}</td>
+					<td>{{college.address}}</td>
+					<td>{{college.registration_number}}</td>
+
+					<td><a href="{% url 'edit_college' college.id %}" >Edit</td>
+					<td><a href="{% url 'delete_college' college.id %}" >Delete</td>
+
+					</tr>
+					{% endfor %}				
+					</tr>
+
+				</table> 
+			</div>
+		</div>	
+	</form>
+
+{% endblock content %}

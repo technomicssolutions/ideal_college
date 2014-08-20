@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Common Fees Payment{% endblock title %}
+{% block body_id %}common_fees_payment{% endblock %}
+
+{% block controller %}
+	ng-controller="CommonFeesPayment" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+{% block content %}
+	
+	<div id="main-title">
+		<div class="alert alert-info" align="Center"><h4>Common Fees Payment</h4></div>
+	</div>
+	<div class="form_container">
+		<form class="" name="payment" method="post" action="">
+			{% csrf_token %}
+			<div class="control">
+				<label> Course</label> 
+				<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
+					<option value="">Select</option>
+				</select>
+			</div>
+			<div class"error_message">
+				<p class='error_message'>[[no_batch_error]]</p>
+			</div>
+			<div class="control">
+				<label> Batch</label>
+				<select name="batch" ng-model="batch" ng-change="get_student()" ng-options="batch.id as batch.name for batch in batches">
+					<option value="">Select</option>
+					</option>
+				</select>
+			</div>
+			<div class"error_message">
+				<p class='error_message'>[[no_student_error]]</p>
+			</div>
+			<div class="control">
+				<label> Student</label>
+				<select name="student" ng-model="fees_payment.student" ng-change="get_fees_head()" ng-options="student.id as student.student for student in students">
+					<option value="">Select</option>
+				</select>
+			</div>
+			<div class"error_message">
+				<p class='error_message'>[[no_head_error]]</p>
+			</div>
+			<div class="control">
+				<label> Fees Head</label>  
+				<select name="head" ng-model="head" ng-options="head as head.name for head in heads" ng-change="get_head_details()">
+					<option value="">Select</option>
+				</select>
+			</div>
+			<div class="control">
+				<label>Fees Amount</label>
+				<input type="text" name="amount" id="fee_amount" ng-model="fees_payment.amount"  readonly/> 
+			</div>
+			<div class="control">
+				<label>Paid Date</label>
+				<input type="text" name="paid_date" id="paid_date" value="{{current_date}}" /> 
+			</div>
+			<div class="control">
+				<label>Paid Head Amount</label>
+				<input type="text" name="paid_amount" ng-model="fees_payment.paid_head_amount" readonly/> 
+			</div>
+			<div class="control">
+				<label>Balance Amount</label>
+				<input type="text" name="paid_amount" id="balance" ng-model="fees_payment.balance" readonly/> 
+			</div>
+			<div class="control">
+				<label>Paid Amount</label>
+				<input type="text" name="paid_amount" ng-model="fees_payment.paid_amount"/> 
+			</div>
+			<div  align="Center">
+				<div class="buttons">
+					<p class="error_message"> [[validation_error]] </p>
+					<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/'">
+					<input type="submit" value="Submit" ng-click="save_fees_payment()" class="btn btn-info">
+				</div>
+			</div>
+		</form>
+	</div>	
+
+{% endblock content %}
