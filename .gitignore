@@ -13,12 +13,11 @@ build/
 develop-eggs/
 dist/
 eggs/
-lib/
 lib64/
 parts/
 sdist/
 var/
-local_settings
+local_settings.py
 *.egg-info/
 .installed.cfg
 *.egg
