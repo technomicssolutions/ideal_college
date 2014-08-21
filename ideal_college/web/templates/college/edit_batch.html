@@ -17,9 +17,6 @@
 <div class="form_container">
 	<form class="" name="edit_college" method="post" action="">
 		{% csrf_token %}
-		
-		<div class="abc">
-
 		<div class="form_text">
 			<label > Course</label> 
 		</div>
@@ -32,44 +29,26 @@
 		<div class="form_input"> 
 			<input type="text"  name="branch" value=""  ng-model="batch.branch" /readonly>
 		</div>	
-
 		<div class="form_text">
             <label> Start Year</label>  
         </div>
-
         <div class="form_input">
-            
-            <input type="text"name="batch_start" value="" ng-model="batch.batch_start" id="batch_start"></text>
+            <input type="text"name="batch_start" value="" ng-model="batch.batch_start" id="batch_start"/>
         </div>
-
         <div class="form_text">
             <label> End Year</label>  
         </div>
-
         <div class="form_input">
-            
-            <input type="text"name="batch_end" value="" ng-model="batch.batch_end" id="batch_end"></text>
+            <input type="text"name="batch_end" value="" ng-model="batch.batch_end" id="batch_end"/>
         </div>
-
-        <div class="form_text">
-            <label> Periods (Class hours)</label>  
-        </div>
-
-        <div class="form_input">
-            
-            <input type="text"name="batch_periods" value="" ng-model="batch.batch_periods" id="batch_periods"></text>
-        </div>
-		
 		<div class="control">
 	        <p class="error_message"> [[validation_error]] </p>
 	    </div>
-		
 		<div  align="Center">
 			<div class="buttons">
 				<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/college/list_batch/'">
 				<input type="submit" value="Submit" ng-click="save_batch()" class="btn btn-info">
-				
-			</div></div></div>
+			</div>
 		</div>
 	</form>
 </div>

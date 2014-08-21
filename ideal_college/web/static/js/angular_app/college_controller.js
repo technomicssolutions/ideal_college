@@ -159,15 +159,11 @@ function EditBatchController($scope, $http, $element, $location, $timeout) {
     }
     $scope.validate_edit_batch = function() {
         $scope.validation_error = '';
-
         if($scope.batch.batch_start == '' || $scope.batch.batch_start == undefined) {
             $scope.validation_error = "Please Enter Start Year" ;
             return false;
         } else if($scope.batch.batch_end == '' || $scope.batch.batch_end == undefined) {
             $scope.validation_error = "Please Enter End Year" ;
-            return false;
-        } else if($scope.batch.batch_periods == '' || $scope.batch.batch_periods == undefined) {
-            $scope.validation_error = "Please Enter No of Hours during day" ;
             return false;
         } 
         return true;   
@@ -178,11 +174,9 @@ function EditBatchController($scope, $http, $element, $location, $timeout) {
         $scope.batch.batch_start = $$('#batch_start')[0].get('value');
         $scope.batch.batch_end = $$('#batch_end')[0].get('value');
         $scope.is_valid = $scope.validate_edit_batch();
-
         if ($scope.is_valid) {
             $scope.error_flag=false;
             $scope.message = '';
-           
             params = { 
                 'batch': angular.toJson($scope.batch),
                 "csrfmiddlewaretoken" : $scope.csrf_token
@@ -196,7 +190,6 @@ function EditBatchController($scope, $http, $element, $location, $timeout) {
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                
                 hide_spinner();
                 if (data.result == 'error'){
                     $scope.error_flag=true;

@@ -194,8 +194,7 @@ class EditBatch(View):
                     'course':batch.course.course,
                     'branch':batch.branch.branch if batch.branch else '',                  
                     'batch_start':batch.start_date,
-                    'batch_end':batch.end_date,
-                    'batch_periods':batch.periods,                                        
+                    'batch_end':batch.end_date,                                      
                 })
                 res = {
                     'result': 'ok',
@@ -220,7 +219,6 @@ class EditBatch(View):
         try:
             batch.start_date = data['batch_start']
             batch.end_date = data['batch_end']
-            batch.periods = data['batch_periods']
             batch.save()
             res = {
                 'result': 'ok',
