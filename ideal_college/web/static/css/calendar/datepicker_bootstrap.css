@@ -240,4 +240,8 @@
   margin-top: 10px;
   float: left;
 }
-  
+.year {
+    float: left;
+    padding: 10px;
+    width: 43px !important;
+}

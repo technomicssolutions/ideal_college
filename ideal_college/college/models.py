@@ -63,8 +63,6 @@ class Batch(models.Model):
 	branch = models.ForeignKey(CourseBranch, null=True, blank=True)
 	start_date = models.IntegerField('Start Dtae', null=True,blank=True)
 	end_date = models.IntegerField('End Date', null=True,blank=True)	
-	periods = models.IntegerField('Periods', null=True,blank=True)	
-
 	def __unicode__(self):
 		return str(self.start_date) + ' - ' + str(self.end_date) +( ' - ' + self.branch.branch if self.branch else '')
 	class Meta:

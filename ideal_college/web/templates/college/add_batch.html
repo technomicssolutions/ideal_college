@@ -36,35 +36,21 @@
                             
                             <input type="text"name="batch_start" value="" ng-model="batch_start" id="batch_start"></text>
                         </div>
-
                         <div class="formtext">
                             <label> End Date</label>  
                         </div>
-
                         <div class="form_input">
-                            
                             <input type="text"name="batch_end" value="" ng-model="batch_end" id="batch_end"></text>
                         </div>
-                         <div class="formtext">
-                            <label> Periods (Class hours)</label>  
-                        </div>
-
-                        <div class="form_input">
-                            
-                            <input type="text"name="batch_periods" value="" ng-model="batch_periods" id="batch_periods"></text>
-                        </div>
-
                         <div class="form_text">
                             <p class="error_message"> [[validation_error]] </p>
                         </div>
-
                     </div>
-                        
-                        <div align="center">
-                            <p ng-show="error_flag" class="error_message">[[message]]</p>
-                            <input class ="btn btn-info" name="submit" type="button" value="Add" ng-click="save_new_batch()">
-                            <input class ="btn btn-info" name="cancel" type="button" value="Cancel" ng-click="close_popup()">
-                        </div>
+                    <div align="center">
+                        <p ng-show="error_flag" class="error_message">[[message]]</p>
+                        <input class ="btn btn-info" name="submit" type="button" value="Add" ng-click="save_new_batch()">
+                        <input class ="btn btn-info" name="cancel" type="button" value="Cancel" ng-click="close_popup()">
+                    </div>
                     </form>                        
                 </div>
             </div>    

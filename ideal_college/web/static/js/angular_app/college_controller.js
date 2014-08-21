@@ -453,17 +453,10 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
         } else if($scope.batch_end == '' || $scope.batch_end == undefined) {
             $scope.validation_error = "Please Enter End Year" ;
             return false;
-        } else if($scope.batch_periods == '' || $scope.batch_periods == undefined) {
-            $scope.validation_error = "Please Enter No of Hours during day" ;
-            return false;
-        }  
-        else {
-            return true;
-        } 
+        } return true;
     }
     validate_new_course = function($scope) {
         $scope.validation_error = '';     
-        console.log($scope.semester_list) 
         if($scope.course == '' || $scope.course == undefined) {
             $scope.validation_error = "Please Enter a Course" ;
             return false;
@@ -641,7 +634,6 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
                 'branch': $scope.branch,
                 'batch_start':$scope.batch_start,
                 'batch_end':$scope.batch_end,
-                'periods': $scope.batch_periods,
                 "csrfmiddlewaretoken" : $scope.csrf_token
             }
             show_spinner();

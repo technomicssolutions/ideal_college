@@ -464,9 +464,9 @@ class AddNewBatch(View):
                 course = Course.objects.get(id = request.POST['course'])
                 if request.POST['branch']:
                     branch = CourseBranch.objects.get(id = request.POST['branch'])
-                    batch, created = Batch.objects.get_or_create(course=course, start_date=request.POST['batch_start'],end_date=request.POST['batch_end'],periods=request.POST['periods'],branch=branch)
+                    batch, created = Batch.objects.get_or_create(course=course, start_date=request.POST['batch_start'],end_date=request.POST['batch_end'],branch=branch)
                 else:
-                    batch, created = Batch.objects.get_or_create(course=course, start_date=request.POST['batch_start'],end_date=request.POST['batch_end'],periods=request.POST['periods'])
+                    batch, created = Batch.objects.get_or_create(course=course, start_date=request.POST['batch_start'],end_date=request.POST['batch_end'])
                 if not created:
                     res = {
                         'result': 'error',
