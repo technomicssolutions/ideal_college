@@ -2,16 +2,21 @@ from django.db import models
 from college.models import Branch, Batch, Course
 from academic.models import Student 
 
+DATE_RANGE_NAME = (
+	('Early Payment', 'Early Payment'),
+	('Standard Payment', 'Standard Payment'),
+	('Late Payment', 'Late Payment')
+)
 
 class Installment(models.Model):
 
-	due_date = models.DateField('Due Date', null=True, blank=True)
-	amount = models.DecimalField('Amount',max_digits=14, decimal_places=2, default=0)
-	fine_amount = models.DecimalField('Fine Amount',max_digits=14, decimal_places=2, default=0)
+	name = models.CharField('Name', null=True, blank=True, max_length=200, choices=DATE_RANGE_NAME)
+	start_date = models.DateField('Start Date', null=True, blank=True)
+	end_date = models.DateField('End Date', null=True, blank=True)
 	
 	def __unicode__(self):
 
-		return str(self.amount)
+		return str(self.name)
 	
 	class Meta:
 
