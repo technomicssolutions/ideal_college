@@ -13,10 +13,7 @@ function EditSemesterController($scope, $http, $element, $location, $timeout) {
         
     }
     $scope.validate_edit_semester = function() {
-
-        
         $scope.validation_error = '';
-
         if($scope.semester.semester == '' || $scope.semester.semester == undefined) {
             $scope.validation_error = "Please Enter semester Name" ;
             return false;
@@ -161,8 +158,6 @@ function EditBatchController($scope, $http, $element, $location, $timeout) {
         
     }
     $scope.validate_edit_batch = function() {
-
-        
         $scope.validation_error = '';
 
         if($scope.batch.batch_start == '' || $scope.batch.batch_start == undefined) {
@@ -409,7 +404,7 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
         get_branch_list($scope, $http);
     }
     $scope.get_registartion_type = function() {
-        if ($scope.course_type == 'distant') {
+        if ($scope.course_type == 'Distant') {
             $scope.is_distant = true;
         } else {
             $scope.is_distant = false;
@@ -484,7 +479,7 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
         } else if($scope.semesters == '' || $scope.semesters == undefined){
             $scope.validation_error = "You have to add semesters for creating new course" ;
             return false;
-        } else if ($scope.registration_type != 'registration_only') {
+        } else if ($scope.registration_type != 'Registration Only') {
             if($scope.semester_list == '' || $scope.semester_list == undefined){
                 $scope.validation_error = "Please Choose a semester" ;
                 return false;
@@ -492,24 +487,18 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
         } return true;
     }
     $scope.hide_semesters = function(){
-        if ($scope.registration_type == 'registration_only') {
+        if ($scope.registration_type == 'Registration Only') {
             $scope.is_registration_only = true;
         } else {
             $scope.is_registration_only = false;
         }
     }
     validate_new_semester = function($scope) {
-
-        
         $scope.validation_error = '';
-
         if($scope.semester_name== '' || $scope.semester_name == undefined) {
             $scope.validation_error = "Please Enter Semester" ;
             return false;
-        }   
-        else {
-            return true;
-        } 
+        } return true;
     }
     $scope.add_new_college = function(){  
         $scope.popup = new DialogueModelWindow({

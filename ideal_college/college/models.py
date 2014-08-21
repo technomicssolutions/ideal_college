@@ -1,12 +1,12 @@
 from django.db import models
 
 COURSE_TYPE = (
-	('Distant', 'distant'),
-	('Regular', 'regular')
+	('Distant', 'Distant'),
+	('Regular', 'Regular')
 )
 REGISTRATION_TYPE = (
-	('registration_only', 'registration_only'),
-	('contact_classes', 'contact_classes'),
+	('Registration Only', 'Registration Only'),
+	('With Contact Classes', 'With Contact Classes'),
 )
 
 class College(models.Model):

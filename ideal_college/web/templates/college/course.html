@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}Batch{% endblock title %}
-{% block body_id %}Batch{% endblock %}
+{% block title %}Courses{% endblock title %}
+{% block body_id %}batch{% endblock %}
 
 {% block controller %}
 	ng-controller="CollegeController" ng-init="init('{{csrf_token}}')"
@@ -32,7 +32,6 @@
 				<td>{{course.university}}</td>
 				<td>{{course.course_type}}</td>
 				<td>{{course.registration_type}}</td>
-				<!-- <td> <a href="{% url 'edit_course' course.id %}" >Edit </td> -->
 				<td><a href="{% url 'delete_course' course.id %}" >Delete</td>
 			</tr>
 			{% endfor %}				

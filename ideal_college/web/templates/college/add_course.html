@@ -34,8 +34,8 @@
                         <div class="form_input"> 
                             <select name="course_type" ng-model="course_type" ng-change="get_registartion_type()">
                                 <option value="">Select</option>
-                                <option value="distant">Distant</option>
-                                <option value="regular">Regular</option>
+                                <option value="Distant">Distant</option>
+                                <option value="Regular">Regular</option>
                             </select>
                         </div> 
                         <div class="form_text" ng-show="is_distant">
@@ -44,8 +44,8 @@
                         <div class="form_input"> 
                             <select name="registration_type" ng-model="registration_type" ng-show="is_distant" ng-change="hide_semesters()">
                                 <option value="">Select</option>
-                                <option value="registration_only">Registration Only</option>
-                                <option value="contact_classes">With Contact Classes</option>
+                                <option value="Registration Only">Registration Only</option>
+                                <option value="With Contact Classes">With Contact Classes</option>
                             </select>
                         </div> 
                         <div class="form_text" ng-hide="is_registration_only">
