@@ -234,13 +234,7 @@ function EditFeeStructureController($scope, $http, $element) {
             return false;
         } else if ($scope.fees_structure.fees_head.length > 0) {
             for (var i=0; i<$scope.fees_structure.fees_head.length; i++) {
-                total_installment_amount = 0;
-                if ($scope.fees_structure.fees_head[i].installments.length > 0) {
-                    for (var j=0; j<$scope.fees_structure.fees_head[i].installments.length; j++) {
-                        if ($scope.fees_structure.fees_head[i].installments[j].amount == Number($scope.fees_structure.fees_head[i].installments[j].amount))
-                            total_installment_amount = parseFloat(total_installment_amount) + parseFloat($scope.fees_structure.fees_head[i].installments[j].amount);
-                    }
-                }
+                
                 if($scope.fees_structure.fees_head[i].head == '' || $scope.fees_structure.fees_head[i].head == undefined) {
                     $scope.validation_error = "Please enter head in the row "+(i + 1);
                     return false;                                           
@@ -250,38 +244,34 @@ function EditFeeStructureController($scope, $http, $element) {
                 } else if($scope.fees_structure.fees_head[i].amount != Number($scope.fees_structure.fees_head[i].amount)) {
                     $scope.validation_error = "Please enter valid amount for the head "+$scope.fees_structure.fees_head[i].head;
                     return false;                                           
-                } else if($scope.fees_structure.fees_head[i].no_installments == '' || $scope.fees_structure.fees_head[i].no_installments == undefined || $scope.fees_structure.fees_head[i].no_installments == 0) {
-                    $scope.validation_error = "Please enter no of installments for the head "+$scope.fees_structure.fees_head[i].head;
-                    return false;                                           
-                } else if($scope.fees_structure.fees_head[i].no_installments != Number($scope.fees_structure.fees_head[i].no_installments)) {
-                    $scope.validation_error = "Please enter valid no of installments for the head "+$scope.fees_structure.fees_head[i].head;
-                    return false;                                           
-                } else if($scope.fees_structure.fees_head[i].no_installments != $scope.fees_structure.fees_head[i].installments.length) {
-                    $scope.validation_error = "Please check the no.installments for the head "+$scope.fees_structure.fees_head[i].head;
-                    return false;                                           
-                } else if($scope.fees_structure.fees_head[i].no_installments > 0) {
-                    for (var j=0; j<$scope.fees_structure.fees_head[i].no_installments; j++) {
-                        console.log($scope.fees_structure.fees_head[i].installments[j].fine_amount);
-                        if ($scope.fees_structure.fees_head[i].installments[j].due_date == '' || $scope.fees_structure.fees_head[i].installments[j].due_date == undefined) {
-                            $scope.validation_error = 'Please enter Due Date for the head '+$scope.fees_structure.fees_head[i].head+' installment in the row '+(j + 1);
-                            $scope.fees_structure.fees_head[i].shrink = false;
-                            return false;
-                        } else if ($scope.fees_structure.fees_head[i].installments[j].amount == '' || $scope.fees_structure.fees_head[i].installments[j].amount == undefined || $scope.fees_structure.fees_head[i].installments[j].amount == 0) {
-                            $scope.validation_error = 'Please enter installment amount for the head '+$scope.fees_structure.fees_head[i].head+ ' installment in the row '+(j + 1);
-                            $scope.fees_structure.fees_head[i].shrink = false;
-                            return false;
-                        } else if ($scope.fees_structure.fees_head[i].installments[j].amount != Number($scope.fees_structure.fees_head[i].installments[j].amount)) {
-                            $scope.validation_error = 'Please enter valid installment amount for the head '+$scope.fees_structure.fees_head[i].head+ ' installment in the row '+(j + 1);
-                            $scope.fees_structure.fees_head[i].shrink = false;
-                            return false;
-                        } else if (parseFloat($scope.fees_structure.fees_head[i].installments[j].fine_amount) != Number($scope.fees_structure.fees_head[i].installments[j].fine_amount)) {
-                            $scope.validation_error = 'Please enter valid fine amount for the head '+$scope.fees_structure.fees_head[i].head+' installment in the row '+(j + 1);
-                            $scope.fees_structure.fees_head[i].shrink = false;
-                            return false;
+                } else if ($scope.fees_structure.fees_head[i].installments.length == 0) {
+                    $scope.validation_error = "Please add payment details for the head "+$scope.fees_structure.fees_head[i].head;
+                    return false;   
+                } else if($scope.fees_structure.fees_head[i].installments.length > 0) {
+                    $scope.flag = 0;
+                    for(var j=0; j<$scope.fees_structure.fees_head[i].installments.length; j++){
+                        if($scope.fees_structure.fees_head[i].installments[j].type != ""){
+                            $scope.flag = 1;
+                            for(var k=0; k<$scope.fees_structure.fees_head[i].installments.length; k++){
+                                if($scope.fees_structure.fees_head[i].installments[j].type == $scope.fees_structure.fees_head[i].installments[k].type && (j!=k) ){
+                                    $scope.validation_error = "Duplicate entry for payment type in "+$scope.fees_structure.fees_head[i].head;
+                                    return false;  
+                                }
+                            }
+                            if($scope.fees_structure.fees_head[i].installments[j].start_date == ""){
+                                $scope.validation_error = "Please enter the start date in "+$scope.fees_structure.fees_head[i].installments[j].type+" for head "+$scope.fees_structure.fees_head[i].head;
+                                return false;    
+                            } else if($scope.fees_structure.fees_head[i].installments[j].end_date == ""){
+                                $scope.validation_error = "Please enter the end date in "+$scope.fees_structure.fees_head[i].installments[j].type+" for head "+$scope.fees_structure.fees_head[i].head;
+                                return false;    
+                            } else if($scope.fees_structure.fees_head[i].installments[j].fine_amount != Number($scope.fees_structure.fees_head[i].installments[j].fine_amount)){
+                                $scope.validation_error = "Please enter valid fine amount in "+$scope.fees_structure.fees_head[i].installments[j].type+" for head "+$scope.fees_structure.fees_head[i].head;
+                                return false; 
+                            }
                         }
                     }
-                    if ($scope.fees_structure.fees_head[i].amount != total_installment_amount) { 
-                        $scope.validation_error = 'Please check the Amount and Total of Installments amount for the head in the row '+(i + 1);
+                    if($scope.flag == 0){
+                        $scope.validation_error = "Please select atleast one payment type for "+$scope.fees_structure.fees_head[i].head;
                         return false;
                     } 
                 }
@@ -289,37 +279,38 @@ function EditFeeStructureController($scope, $http, $element) {
         }
         return true;
     }
-/*    $scope.add_new_head = function() {
+    $scope.add_new_head = function() {
+        $scope.installment = []                
+        for(var i = 0; i < 3; i++){
+            $scope.installment.push({
+                'start_date_id': 'start_date'+$scope.fees_structure.fees_head.length+i,
+                'end_date_id': 'end_date'+$scope.fees_structure.fees_head.length+i,
+                'type': '',
+                'start_date': '',
+                'end_date': '',
+                'fine_amount': '',
+            })
+        }
         $scope.fees_structure.fees_head.push({
             'head': '',
-            'amount': 0,
-            'no_installments': 0,
-            'installments': [],
-            'shrink':true,
-        })
-    }*/
-
-    $scope.add_fee_structure_installments = function(fee_head){
-        var installments = fee_head.no_installments;
-        var fee_head_id = $scope.fees_structure.fees_head.indexOf(fee_head);
-        var diff = installments - fee_head.installments.length;
-        if (diff > 0) {
-            for (i=0; i <diff; i++){
-                id_name = 'due_date' + fee_head_id + fee_head.installments.length;
-                fee_head.installments.push({
-                    'due_date_id': id_name ,
-                    'amount': 0,
-                    'fine_amount': '',
-                    'due_date': '',
-                });
-                id_name = '';
-            }
-        } else {
-            var diff = fee_head.installments.length - installments ;
-            for (i=diff; i >0; i--){
-                last_index = fee_head.installments.indexOf(fee_head.installments[fee_head.installments.length - 1]);
-                fee_head.installments.splice(last_index, 1);
-            }
+            'amount': '',
+            'installments': $scope.installment,
+            'removed_installments': []
+        }) 
+    }
+    $scope.add_installment = function(head) {
+        var diff = 3 - head.installments.length;
+        console.log(diff);
+        index = $scope.fees_structure.fees_head.indexOf(head);
+        if (diff != 0) {
+            head.installments.push({
+                'start_date_id': 'start_date'+index+head.installments.length,
+                'end_date_id': 'end_date'+index+head.installments.length,
+                'type': '',
+                'start_date': '',
+                'end_date': '',
+                'fine_amount': '',
+            })
         }
     }
 
@@ -341,9 +332,20 @@ function EditFeeStructureController($scope, $http, $element) {
             fee_head.shrink = true;
         }
     }
-    $scope.attach_date_picker = function(installment) {
+    $scope.attach_start_date_picker = function(installment) {
         var id_name = '#';
-        id_name = id_name + installment.due_date_id;
+        id_name = id_name + installment.start_date_id;
+        new Picker.Date($$(id_name), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+    }
+    $scope.attach_end_date_picker = function(installment) {
+        var id_name = '#';
+        id_name = id_name + installment.end_date_id;
         new Picker.Date($$(id_name), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
@@ -354,11 +356,15 @@ function EditFeeStructureController($scope, $http, $element) {
     }
     $scope.save_edit_fee_structure = function() {
         for (var i=0; i< $scope.fees_structure.fees_head.length; i++) {
-            console.log($scope.fees_structure.fees_head[i].installments.length);
             if ($scope.fees_structure.fees_head[i].installments.length > 0) {
                 for (var j=0; j< $scope.fees_structure.fees_head[i].installments.length; j++) {
-                    id_name = '#' + $scope.fees_structure.fees_head[i].installments[j].due_date_id;
-                    $scope.fees_structure.fees_head[i].installments[j].due_date = $$(id_name)[0].get('value');
+                    start_date_id_name = '#' + $scope.fees_structure.fees_head[i].installments[j].start_date_id;
+                    $scope.fees_structure.fees_head[i].installments[j].start_date = $$(start_date_id_name)[0].get('value');
+                    end_date_id_name = '#' + $scope.fees_structure.fees_head[i].installments[j].end_date_id;
+                    $scope.fees_structure.fees_head[i].installments[j].end_date = $$(end_date_id_name)[0].get('value');
+                    if ($scope.fees_structure.fees_head[i].installments[j].fine_amount == null) {
+                        $scope.fees_structure.fees_head[i].installments[j].fine_amount = 0;
+                    }
                 }
             }
         }
@@ -551,10 +557,8 @@ function FeesStructureController($scope, $http, $element) {
                     $scope.validation_error = "Please enter valid amount for the head "+$scope.fees_head_details[i].head;
                     return false;                                           
                 }  
-                console.log($scope.fees_head_details[i].payment.length);
                 for(var j=0; j<$scope.fees_head_details[i].payment.length; j++){
                     if($scope.fees_head_details[i].payment[j].type != ""){
-                        console.log('inside');
                         $scope.flag = 1;
                         for(var k=0; k<$scope.fees_head_details[i].payment.length; k++){
                             if($scope.fees_head_details[i].payment[j].type == $scope.fees_head_details[i].payment[k].type && (j!=k) ){
@@ -621,7 +625,6 @@ function FeesStructureController($scope, $http, $element) {
         }          
     }
     $scope.display_fees_structure_details = function(fees_structure) {  
-        console.log(fees_structure);
         $scope.fees_structure_id = fees_structure.id;
         $scope.url = '/fees/edit_fees_structure_details/' + $scope.fees_structure_id+ '/';
         show_spinner();
