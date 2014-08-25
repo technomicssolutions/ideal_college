@@ -48,7 +48,8 @@
 							</td>
 							<tr ng-repeat="payment in fee_head.payment">
 								<td>
-									<select class="payment_select" ng-model="payment.type">	   <option value="">Select</option>
+									<select class="payment_select" ng-model="payment.type" ng-change="hide_fine_block(payment)">	   
+										<option value="">Select</option>
 										<option value="Early Payment">Early Payment</option>
 										<option value="Standard Payment">Standard Payment</option>
 										<option value="Late Payment">Late Payment</option>
@@ -56,7 +57,7 @@
 								</td>
 								<td><input type="text" name="start_date" id="[[payment.start_date_id]]" ng-model="payment.start_date" ng-click="attach_date_picker_start_date(payment)"></td>
 								<td><input type="text" name="end_date" id="[[payment.end_date_id]]" ng-model="payment.end_date" ng-click="attach_date_picker_end_date(payment)"></td>
-								<td><input type="text" ng-model="payment.fine"/></td>
+								<td><input type="text" ng-model="payment.fine" ng-readonly="payment.is_not_late_payment"/></td>
 							</tr>
 							</table>
 						</td>

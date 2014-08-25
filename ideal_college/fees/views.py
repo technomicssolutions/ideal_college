@@ -47,6 +47,8 @@ class CreateFeesStructure(View):
                             installment.end_date = datetime.strptime(installment_details['end_date'], '%d/%m/%Y')                        
                             if installment_details['fine']:
                                 installment.fine_amount = installment_details['fine']
+                            else:
+                                installment.fine_amount = 0
                             installment.save()
                             fee_structure_head.installments.add(installment)
                     fee_structure.head.add(fee_structure_head)
@@ -73,11 +75,6 @@ class EditFeesStructure(View):
                 ctx_installments = []
                 j  = 0
                 for installment in head.installments.all():
-                    print installment.name
-                    if installment.name == 'Late Payment':
-                        print "in if " 
-                    else:
-                        print  'true' 
                     ctx_installments.append({
                         'id': installment.id,
                         'type': installment.name,
@@ -89,7 +86,6 @@ class EditFeesStructure(View):
                         'is_not_late_payment': 'false' if installment.name == 'Late Payment' else 'true',
                      })
                     j = j + 1
-                    print installment, ctx_installments
 
                 ctx_fees_head.append({
                     'id': head.id,
@@ -140,7 +136,6 @@ class EditFeesStructure(View):
             fee_structure_head.amount = fee_head['amount']
             fee_structure_head.save()
             for installment_details in fee_head['installments']:
-                print installment_details
                 if installment_details['type']:
                     try:
                         installment = Installment.objects.get(id=installment_details['id'])
@@ -151,6 +146,8 @@ class EditFeesStructure(View):
                     installment.end_date = datetime.strptime(installment_details['end_date'], '%d/%m/%Y')                        
                     if installment_details['fine_amount']:
                         installment.fine_amount = installment_details['fine_amount']
+                    else:
+                         installment.fine_amount = 0       
                     installment.save()
                     fee_structure_head.installments.add(installment)
             fee_structure.head.add(fee_structure_head)

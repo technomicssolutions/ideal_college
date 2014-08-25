@@ -467,6 +467,14 @@ function FeesStructureController($scope, $http, $element) {
     $scope.range = function(n) {
         return new Array(n);
     }
+    $scope.hide_fine_block = function(payment) {
+        if (payment.type != 'Late Payment') {
+            payment.is_not_late_payment = true;
+            payment.fine = 0;
+        } else {
+            payment.is_not_late_payment = false;
+        }
+    }
     $scope.add_fee_structure_installments = function(fee_head){
         var installments = fee_head.no_installment;
         var fee_head_id = $scope.fees_head_details.indexOf(fee_head);
@@ -576,12 +584,6 @@ function FeesStructureController($scope, $http, $element) {
                 for(var j=0; j<$scope.fees_head_details[i].payment.length; j++){
                     if($scope.fees_head_details[i].payment[j].type != ""){
                         $scope.flag = 1;
-                        for(var k=0; k<$scope.fees_head_details[i].payment.length; k++){
-                            if($scope.fees_head_details[i].payment[j].type == $scope.fees_head_details[i].payment[k].type && (j!=k) ){
-                                $scope.validation_error = "Duplicate entry for payment type in "+$scope.fees_head_details[i].head;
-                                return false;  
-                            }
-                        }
                         if($scope.fees_head_details[i].payment[j].start_date == ""){
                             $scope.validation_error = "Please enter the start date in "+$scope.fees_head_details[i].payment[j].type+" for head "+$scope.fees_head_details[i].head;
                             return false;    
@@ -591,6 +593,16 @@ function FeesStructureController($scope, $http, $element) {
                         } else if($scope.fees_head_details[i].payment[j].fine != Number($scope.fees_head_details[i].payment[j].fine)){
                             $scope.validation_error = "Please enter valid fine amount in "+$scope.fees_head_details[i].payment[j].type+" for head "+$scope.fees_head_details[i].head;
                             return false; 
+                        } else if($scope.fees_head_details[i].payment.length == 0){
+                            $scope.validation_error = "Please add payments";
+                            return false; 
+                        } else if ($scope.fees_head_details[i].payment.length > 0) {
+                            for(var k=0; k<$scope.fees_head_details[i].payment.length; k++){
+                                if($scope.fees_head_details[i].payment[j].type == $scope.fees_head_details[i].payment[k].type && (j!=k) ){
+                                    $scope.validation_error = "Duplicate entry for payment type in "+$scope.fees_head_details[i].head;
+                                    return false;  
+                                }
+                            }
                         }
                     }
                 }
@@ -614,8 +626,17 @@ function FeesStructureController($scope, $http, $element) {
         }        
         $scope.fee_structure.course = $scope.course  
         if($scope.validate_new_fees_structure()) {
+            for (var i=0; i<$scope.fees_head_details.length; i++) {
+                for (var j=0; j<$scope.fees_head_details[i].payment.length; j++) {
+                    if ($scope.fees_head_details[i].payment[j].is_not_late_payment == true) {
+                        $scope.fees_head_details[i].payment[j].is_not_late_payment = 'true';
+                    } else {
+                        $scope.fees_head_details[i].payment[j].is_not_late_payment = 'false';
+                    }
+                }
+            }            
             $scope.fee_structure.fees_head_details = $scope.fees_head_details;
-            console.log($scope.fee_structure);
+
             params = { 
                 'fee_structure': angular.toJson($scope.fee_structure),
                 "csrfmiddlewaretoken" : $scope.csrf_token
