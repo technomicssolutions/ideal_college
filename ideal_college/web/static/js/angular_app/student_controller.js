@@ -89,6 +89,13 @@ function save_new_student($http, $scope) {
         });
     }
 }
+function get_fees_head($scope, $http) {
+    $http.get().success(function(data){
+        $scope.heads = data.heads;
+    }).error(function(data, status){
+        console.log('Request failed'|| data)
+    })
+}
 
 function reset_student($scope) {
     $scope.student_name = '';
