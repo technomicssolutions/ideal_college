@@ -1,6 +1,5 @@
 from django.db import models
-from college.models import Branch, Batch, Course
-from academic.models import Student 
+from college.models import Branch, Batch, Course 
 
 DATE_RANGE_NAME = (
 	('Early Payment', 'Early Payment'),
@@ -63,6 +62,7 @@ class FeesStructure(models.Model):
 	class Meta:
 
 		verbose_name_plural = 'Fees Structure'
+from academic.models import Student
 
 class FeesPaymentInstallment(models.Model):
 	student = models.ForeignKey(Student, null=True, blank=True)
