@@ -39,6 +39,14 @@
 								</select>
 							</div>
 							<div class="formtext">
+								<label> Choose Applicable Fees Heads</label>  
+							</div>
+							<div class="forminput">
+								<select name="batch" ng-model="batch" ng-options="head.id as head.name for head in heads" multiple>
+									<option value="">Select</option>
+								</select>
+							</div>
+							<div class="formtext">
 								<label> Qualification</label>  
 							</div>
 							<div class="forminput">							
