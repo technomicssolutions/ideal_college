@@ -279,6 +279,14 @@ function EditFeeStructureController($scope, $http, $element) {
         }
         return true;
     }
+    $scope.hide_fine_block = function(installment) {
+        if (installment.type != 'Late Payment') {
+            installment.is_not_late_payment = true;
+            installment.fine_amount = 0;
+        } else {
+            installment.is_not_late_payment = false;
+        }
+    }
     $scope.add_new_head = function() {
         $scope.installment = []                
         for(var i = 0; i < 3; i++){
@@ -362,7 +370,7 @@ function EditFeeStructureController($scope, $http, $element) {
                     $scope.fees_structure.fees_head[i].installments[j].start_date = $$(start_date_id_name)[0].get('value');
                     end_date_id_name = '#' + $scope.fees_structure.fees_head[i].installments[j].end_date_id;
                     $scope.fees_structure.fees_head[i].installments[j].end_date = $$(end_date_id_name)[0].get('value');
-                    if ($scope.fees_structure.fees_head[i].installments[j].fine_amount == null) {
+                     if ($scope.fees_structure.fees_head[i].installments[j].fine_amount == null) {
                         $scope.fees_structure.fees_head[i].installments[j].fine_amount = 0;
                     }
                 }
@@ -374,6 +382,14 @@ function EditFeeStructureController($scope, $http, $element) {
                     $scope.fees_structure.fees_head[i].shrink = 'true';
                 } else {
                     $scope.fees_structure.fees_head[i].shrink = 'false';
+                }
+                for (var j=0; j< $scope.fees_structure.fees_head[i].installments.length; j++) {
+
+                    if ($scope.fees_structure.fees_head[i].installments[j].is_not_late_payment == true) {
+                        $scope.fees_structure.fees_head[i].installments[j].is_not_late_payment = 'true';
+                    } else {
+                        $scope.fees_structure.fees_head[i].installments[j].is_not_late_payment = 'false';
+                    }
                 }
             }
             var height = $(document).height();

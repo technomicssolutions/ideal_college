@@ -73,6 +73,11 @@ class EditFeesStructure(View):
                 ctx_installments = []
                 j  = 0
                 for installment in head.installments.all():
+                    print installment.name
+                    if installment.name == 'Late Payment':
+                        print "in if " 
+                    else:
+                        print  'true' 
                     ctx_installments.append({
                         'id': installment.id,
                         'type': installment.name,
@@ -81,8 +86,10 @@ class EditFeesStructure(View):
                         'fine_amount': installment.fine_amount,
                         'start_date_id': 'start_date'+str(i)+str(j),
                         'end_date_id': 'end_date'+str(i)+str(j),
-                    })
+                        'is_not_late_payment': 'false' if installment.name == 'Late Payment' else 'true',
+                     })
                     j = j + 1
+                    print installment, ctx_installments
 
                 ctx_fees_head.append({
                     'id': head.id,

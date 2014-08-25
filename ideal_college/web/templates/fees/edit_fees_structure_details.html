@@ -45,7 +45,8 @@
 								</tr>
 								<tr ng-repeat="installment in fee_head.installments">
 									<td>
-										<select class="payment_select" ng-model="installment.type">	   <option value="">Select</option>
+										<select class="payment_select" ng-model="installment.type" ng-change="hide_fine_block(installment)">
+											<option value="">Select</option>
 											<option value="Early Payment">Early Payment</option>
 											<option value="Standard Payment">Standard Payment</option>
 											<option value="Late Payment">Late Payment</option>
@@ -53,7 +54,7 @@
 									</td>
 									<td><input type="text" name="start_date" id="[[installment.start_date_id]]" class="due_date" value="" ng-click="attach_start_date_picker(installment)" ng-model="installment.start_date"></td>
 									<td><input type="text" name="end_date" value="" id="[[installment.end_date_id]]" ng-click="attach_end_date_picker(installment)" ng-model="installment.end_date"></td>
-									<td><input type="text" name="fine_amount" value="" ng-model="installment.fine_amount"></td>
+									<td><input type="text" name="fine_amount" value="" ng-model="installment.fine_amount" ng-readonly="installment.is_not_late_payment"></td>
 									<td><input type="button" value="   Remove    " ng-click="remove_installment(installment, fee_head)"></td>
 									<td><input type="button" value="Add " ng-click="add_installment(fee_head)"></td>
 								</tr>
