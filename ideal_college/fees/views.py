@@ -38,15 +38,17 @@ class CreateFeesStructure(View):
                     fee_structure_head = FeesStructureHead()
                     fee_structure_head.name = fee_head['head']
                     fee_structure_head.amount = fee_head['amount']
-                    fee_structure_head.no_installments = fee_head['no_installment']
                     fee_structure_head.save()
-                    for installment_details in fee_head['installments']:
-                        installment = Installment()
-                        installment.due_date = datetime.strptime(installment_details['due_date'], '%d/%m/%Y')
-                        installment.amount = installment_details['amount']
-                        installment.fine_amount = installment_details['fine_amount']
-                        installment.save()
-                        fee_structure_head.installments.add(installment)
+                    for installment_details in fee_head['payment']:
+                        if installment_details['type']:
+                            installment = Installment()
+                            installment.name = installment_details['type']
+                            installment.start_date = datetime.strptime(installment_details['start_date'], '%d/%m/%Y')
+                            installment.end_date = datetime.strptime(installment_details['end_date'], '%d/%m/%Y')                        
+                            if installment_details['fine']:
+                                installment.fine_amount = installment_details['fine']
+                            installment.save()
+                            fee_structure_head.installments.add(installment)
                     fee_structure.head.add(fee_structure_head)
 
                 res = {
@@ -73,10 +75,12 @@ class EditFeesStructure(View):
                 for installment in head.installments.all():
                     ctx_installments.append({
                         'id': installment.id,
-                        'due_date': installment.due_date.strftime('%d/%m/%Y') if installment.due_date else '',
-                        'amount': installment.amount,
+                        'name': installment.name,
+                        'start_date': installment.start_date.strftime('%d/%m/%Y') if installment.start_date else '',
+                        'end_date': installment.end_date.strftime('%d/%m/%Y') if installment.end_date else '',
                         'fine_amount': installment.fine_amount,
-                        'due_date_id': 'due_date'+str(i)+str(j),
+                        'start_date_id': 'start_date'+str(i)+str(j),
+                        'end_date_id': 'end_date'+str(i)+str(j),
                     })
                     j = j + 1
 
@@ -84,8 +88,6 @@ class EditFeesStructure(View):
                     'id': head.id,
                     'head': head.name,
                     'amount': head.amount,
-                    'no_installments': head.no_installments,
-                    'installment_no': head.no_installments,
                     'installments': ctx_installments,
                     'shrink': False,
                     'removed_installments': []

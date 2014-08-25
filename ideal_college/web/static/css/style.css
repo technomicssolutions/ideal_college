@@ -359,8 +359,15 @@ form {
     float: left;
     margin: auto;
 }
-
-
+#fee_structure select.payment_select{
+	width: 100%;
+}
+#fees_structure_details_view th.no_border_top{
+	border-top: none;
+}
+#fee_structure th.no_border_top{
+	border-top: none;
+}
 /****************************Staff Module*******************************/
 
 .staff_form_container {

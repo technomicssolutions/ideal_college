@@ -23,24 +23,24 @@
 						<div class="control">
 							<table class="table">
 								<tr>
-									<th> Head </th>
-									<th> Amount </th>
-									<th> Installments </th>
-									<th> Inst: NO: </th>
-									<th> Due Date </th>
-									<th> Amount </th>
-									<th> Fine Amount </th>
+									<th class="no_border_top"> Head </th>
+									<th class="no_border_top"> Amount </th>		
 								</tr>
 								<tr ng-repeat="head in fees_structure.fees_head">
 									<td> [[head.head]] </td>
 									<td> [[head.amount]] </td>
-									<td> [[head.no_installments]] </td>
-									<td  colspan="4">
+									<td  colspan="3">
 										<table style="width: 90%;">
+											<tr>
+												<th class="no_border_top"> Payment Type </th>
+												<th class="no_border_top"> Start Date</th>
+												<th class="no_border_top"> End Date</th>
+												<th class="no_border_top"> Fine Amount </th>
+											</tr>
 											<tr ng-repeat="installment in head.installments">
-												<td style=" width: 20%;"> [[$index + 1]] </td>
-												<td style=" width: 20%;"> [[installment.due_date]] </td>
-												<td style=" width: 20%;"> [[installment.amount]] </td>
+												<td style=" width: 20%;"> [[installment.name]] </td>
+												<td style=" width: 20%;"> [[installment.start_date]] </td>
+												<td style=" width: 20%;"> [[installment.end_date]] </td>							
 												<td style=" width: 20%;"> [[installment.fine_amount]] </td>
 											</tr>
 										</table>

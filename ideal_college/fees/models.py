@@ -13,7 +13,8 @@ class Installment(models.Model):
 	name = models.CharField('Name', null=True, blank=True, max_length=200, choices=DATE_RANGE_NAME)
 	start_date = models.DateField('Start Date', null=True, blank=True)
 	end_date = models.DateField('End Date', null=True, blank=True)
-	
+	fine_amount = models.IntegerField('Fine Amount', null=True, blank=True)
+
 	def __unicode__(self):
 
 		return str(self.name)
@@ -39,7 +40,6 @@ class FeesStructureHead(models.Model):
 	
 	name = models.CharField('Head Name', max_length=200, null=True, blank=True)
 	amount = models.DecimalField('Amount', max_digits=14, decimal_places=2, default=0)
-	no_installments = models.IntegerField('Number of Installments', default=0)
 	installments = models.ManyToManyField(Installment, null=True, blank=True)
 
 	def __unicode__(self):
@@ -58,7 +58,7 @@ class FeesStructure(models.Model):
 	
 	def __unicode__(self):
 
-		return str(self.course.course) + ' - ' + str(self.batch.start_date) + ' - ' + str(self.batch.end_date) + ' - ' + str(self.batch.branch.branch)
+		return str(self.course.course) + ' - ' + str(self.batch.start_date) + ' - ' + str(self.batch.end_date)  
 	
 	class Meta:
 

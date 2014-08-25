@@ -31,33 +31,35 @@
 			<div class="section_1" ng-hide="fees_structure_exists">
 				<table class="table striped">
 					<tr>
-						<th>Head</th>
-						<th>Amout</th>
-						<th>No. of Installments</th>
-						<th>&nbsp;</th>
-						<th>&nbsp;</th>
+						<th class="no_border_top">Head</th>
+						<th class="no_border_top">Amount</th>						
 					</tr>
 					<tr ng-repeat="fee_head in fees_head_details">
 						<td><input type="text" ng-model="fee_head.head"/></td>
 						<td><input type="text" ng-model="fee_head.amount"/></td>
-						<td><input type="text" ng-model="fee_head.no_installment" ng-change="add_fee_structure_installments(fee_head)"/></td>
 						<td>
-							<table ng-hide="fee_head.shrink">
-								<tr ng-show="fee_head.installments.length > 0">
-									<th>Due Date</th>
-									<th>Amount</th>
-									<th>Fine</th>
-								</tr>
-								<tr ng-repeat="installment in fee_head.installments">
-									<td><input type="text" name="due_date" id="[[installment.due_date_id]]" class="due_date" value="" ng-click="attach_date_picker(installment)" ></td>
-									<td><input type="text" name="amount" value="" ng-model="installment.amount"></td>
-									<td><input type="text" name="fine_amount" value="" ng-model="installment.fine_amount"></td>
-									<td><input type="button" value="Remove Head" ng-click="remove_installment(installment, fee_head)"></td>
-								</tr>
+							<table>
+							<th>Payment</th>
+							<th>Start Date</th>
+							<th>End Date</th>
+							<th>Fine</th>
+							<td>
+							<a class="align_right" href="" ng-click="remove_head(fee_head)"><input class="btn btn-info" type="button" value="X"></a>
+							</td>
+							<tr ng-repeat="payment in fee_head.payment">
+								<td>
+									<select class="payment_select" ng-model="payment.type">	   <option value="">Select</option>
+										<option value="Early Payment">Early Payment</option>
+										<option value="Standard Payment">Standard Payment</option>
+										<option value="Late Payment">Late Payment</option>
+									</select>
+								</td>
+								<td><input type="text" name="start_date" id="[[payment.start_date_id]]" ng-model="payment.start_date" ng-click="attach_date_picker_start_date(payment)"></td>
+								<td><input type="text" name="end_date" id="[[payment.end_date_id]]" ng-model="payment.end_date" ng-click="attach_date_picker_end_date(payment)"></td>
+								<td><input type="text" ng-model="payment.fine"/></td>
+							</tr>
 							</table>
 						</td>
-						<td><a ng-show="fee_head.shrink"  class="align_left" href="" ng-click="show_installment_details(fee_head)"><input class="btn btn-info" type="button" value="+"></a><a ng-hide="fee_head.shrink" class="align_left" href="" ng-click="show_installment_details(fee_head)"><input class="btn btn-info" type="button" value="-"></a></td>
-						<td><input type="button" value="Remove Head" ng-click="remove_head(fee_head)"></td>
 					</tr>
 				</table>
 				<a class="align_right" href="" ng-click="add_new_head()"><input class="btn btn-info" type="button" value="Add"></a>
