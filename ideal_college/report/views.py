@@ -1,9 +1,11 @@
 
+import os
 from datetime import datetime
 
-
+from PIL import Image
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
+from reportlab.lib.units import inch,cm, mm
 
 from django.shortcuts import render
 from django.views.generic.base import View
@@ -12,6 +14,7 @@ from django.http import HttpResponse
 from fees.models import Installment, FeesHead, FeesStructureHead, FeesStructure, FeesPaymentHead, FeesPayment, CommonFeesPayment
 from college.models import College, Course, Batch
 from academic.models import Student
+from django.conf import settings
 
 def header(canvas, y):
 
@@ -32,11 +35,10 @@ class IdcardReport(View):
     response = HttpResponse(content_type='application/pdf')
     p = canvas.Canvas(response, pagesize=(1000, 1250))
     y = 1150
-    p.rect(30,720,300,500)
+    p.rect(30,940,270,270)
     p.setFont('Times-Bold',10)  
     current_date = datetime.now().date()
     report_type = request.GET.get('report_type', '')
-    print report_type
     if not report_type:
         return render(request, 'report/id_card.html',{
             'report_type' : 'id_card',
@@ -47,10 +49,45 @@ class IdcardReport(View):
         student_id = request.GET.get('student', '')
         student = Student.objects.get(id=student_id)
         heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
-        p.drawCentredString(180, y+40, heading)   
+        p.drawCentredString(160, y+40, heading)   
         p.setFont('Times-Roman',10)  
         heading = "Karumanamkurussi(PO), Cherupulassery"  
-        p.drawCentredString(180, y+20, heading)   
+        p.drawCentredString(160, y+25, heading)   
+        heading = "Palakkad(Dt),Kerala,PIN-679504"  
+        p.drawCentredString(160, y+10, heading)  
+        heading = "PH:466-2280111,2280112,2207585"  
+        p.drawCentredString(160, y-5, heading)  
+        p.drawString(40, y-30, "Name:")  
+        p.drawString(120, y-30, student.student_name);
+        p.drawString(40, y-45, "Guardian Name:")  
+        p.drawString(120, y-45, student.guardian_name);
+        p.drawString(40, y-60, "Course:")  
+        if student.batch.branch:
+            branch_name = student.batch.branch.branch
+        else:
+            branch_name = ''
+        p.drawString(120, y-60, student.course.course+" "+ branch_name);
+        p.drawString(40, y-75, "Batch:")  
+        p.drawString(120, y-75, str(student.batch.start_date)+"-"+str(student.batch.end_date))  
+        address = str(student.address)
+        p.drawString(40,y-90,"Address:")
+        i = 120
+        j = 90
+        for address_line in address.split(","):
+            p.drawString(120, y-j, address_line.lstrip())
+            j = j+15
+        j = y-j
+        p.drawString(40, j, "Date of Birth:")
+        p.drawString(120, j, str(student.dob))
+        p.drawString(40, j-15, "Land Phone:")
+        p.drawString(120, j-15, str(student.land_number))
+        p.drawString(40, j-30, "Blood Group:")
+        p.drawString(120, j-30, str(student.blood_group))
+        try:
+            path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+student.photo.name
+            p.drawImage(path, 200, j-140, width=3.5*cm, height=4.5*cm, preserveAspectRatio=True)
+        except:
+            pass
         p.save()
         return response
 
