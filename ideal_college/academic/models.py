@@ -13,7 +13,6 @@ class Student(models.Model):
 	qualified_exam = models.ManyToManyField(QualifiedExam, null=True, blank=True)
 	technical_qualification = models.ManyToManyField(TechnicalQualification, null=True, blank=True)
 	dob = models.DateField('Date of Birth',null=True, blank=True)
-	address= models.CharField('Student Address',null=True, blank=True, max_length=200)
 	mobile_number= models.CharField('Mobile Number',null=True, blank=True, max_length=200)
 	land_number= models.CharField('Land Number',null=True, blank=True, max_length=200)
 	email = models.CharField('Email',null=True, blank=True, max_length=200)
