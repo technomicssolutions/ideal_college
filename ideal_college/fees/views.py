@@ -690,4 +690,26 @@ class IsFeesStructureExists(View):
             response = simplejson.dumps(res)
             return HttpResponse(response, status=status, mimetype='application/json')
 
+class GetApplicableFeeStructureHeads(View):
+    def get(self, request, *args, **kwargs):
+
+        course_id = kwargs['course_id']
+        batch_id = kwargs['batch_id']
+        if request.is_ajax():
+            fee_structure = FeesStructure.objects.filter(course__id=course_id, batch__id=batch_id)
+            heads_list = []
+            if fee_structure.count() > 0:
+                heads = fee_structure[0].head.all()
+                for head in heads:
+                    heads_list.append({
+                        'head': head.name, 
+                        'id': head.id ,            
+                    })
+            res = {
+                'result': 'ok',
+                'heads': heads_list,
+            }
+            status = 200
+            response = simplejson.dumps(res)
+            return HttpResponse(response, status=status, mimetype='application/json')
             
