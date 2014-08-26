@@ -124,7 +124,6 @@ validate_new_student = function($scope) {
     $scope.validation_error = '';
     $scope.dob = $$('#dob')[0].get('value');
     $scope.doj = $$('#doj')[0].get('value');
-    console.log($scope.fee_heads);
     if($scope.student_name == '' || $scope.student_name == undefined) {
         $scope.validation_error = "Please Enter the Name" ;
         return false;
@@ -213,6 +212,11 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
             $scope.student = data.student[0];
             if ($scope.student.course_id)
                 $scope.get_batch($scope.student.course_id);
+            if ($scope.student.course && $scope.student.batch) {
+                $scope.course = $scope.student.course;
+                $scope.batch = $scope.student.batch;
+                get_fee_structure_head_details($scope, $http);
+            }
             hide_spinner();
         }).error(function(data, status)
         {
@@ -254,7 +258,6 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
         $scope.validation_error = '';
         $scope.dob = $$('#dob')[0].get('value');
         $scope.doj = $$('#doj')[0].get('value');
-
         if($scope.student.student_name == '' || $scope.student.student_name == undefined) {
             $scope.validation_error = "Please Enter the Name" ;
             return false;
@@ -266,6 +269,9 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
             return false;
         } else if($scope.student.batch == '' || $scope.student.batch == undefined) {
             $scope.validation_error = "Please Enter Batch";
+            return false;
+        } else if($scope.student.fee_heads_list == '' || $scope.student.fee_heads_list == undefined) {
+            $scope.validation_error = "Please choose Fees Heads";
             return false;
         } else if($scope.student.dob == '' || $scope.student.dob == undefined) {
             $scope.validation_error = "Please Enter DOB";
@@ -303,7 +309,6 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
         } else if($scope.student.guardian_name == '' || $scope.student.guardian_name == undefined) {
             $scope.validation_error = "Please Enter the Guardian Name" ;
             return false;
-        
         } else if($scope.student.guardian_address == '' || $scope.student.guardian_address == undefined) {
             $scope.validation_error = "Please Enter Guardian Address";
             return false;
@@ -323,8 +328,8 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
             $scope.validation_error = "Please enter a Valid Telephone Number";
             return false;
         } else if(($scope.student.guardian_email != '' && $scope.student.guardian_email != undefined) && (!(validateEmail($scope.student.guardian_email)))){
-                $scope.validation_error = "Please enter a Valid Email Id";
-                return false;                                                    
+            $scope.validation_error = "Please enter a Valid Email Id";
+            return false;                                                    
         } else {
             return true;
         }  
@@ -334,6 +339,7 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
             $scope.error_flag=false;
             $scope.message = '';
             show_spinner();
+            $scope.student.fee_heads = angular.toJson($scope.student.fee_heads_list);
             params = { 
                 'student': angular.toJson($scope.student),
                 "csrfmiddlewaretoken" : $scope.csrf_token
@@ -346,7 +352,6 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-                
                 if (data.result == 'error'){
                     $scope.error_flag=true;
                     $scope.message = data.message;
@@ -452,10 +457,8 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
         {
             console.log(data || "Request failed");
         });
-
         $scope.hide_popup_windows();
         $('#student_details_view')[0].setStyle('display', 'block');
-        
         $scope.popup = new DialogueModelWindow({                
             'dialogue_popup_width': '78%',
             'message_padding': '0px',
@@ -464,7 +467,6 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
             'height': 'auto',
             'content_div': '#student_details_view'
         });
-        
         var height = $(document).height();
         $scope.popup.set_overlay_height(height);
         $scope.popup.show_content();

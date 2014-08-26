@@ -153,13 +153,16 @@ class ViewStudentDetails(View):
                 student = Student.objects.get(id = student_id)
                 qualified_exam = ''
                 technical_qualification = ''
+                fees_heads = ''
                 for exam in student.qualified_exam.all():
-                    qualified_exam = qualified_exam + exam.name + ',' 
+                    qualified_exam = qualified_exam + exam.name + ', ' 
                 qualified_exam = qualified_exam[:-1]
                 
                 for exam in student.technical_qualification.all():
-                    technical_qualification = technical_qualification + exam.name + ',' 
-                technical_qualification = technical_qualification[:-1]
+                    technical_qualification = technical_qualification + exam.name + ', '
+                for head in student.applicable_fees_heads.all():
+                    fees_heads = fees_heads + head.name + ', ' 
+                fees_heads = fees_heads[:-1]
                 ctx_student_data.append({
                     'student_name': student.student_name if student.student_name else '',
                     'roll_number': student.roll_number if student.roll_number else '',
@@ -190,6 +193,7 @@ class ViewStudentDetails(View):
                     'guardian_email': student.guardian_email if student.guardian_email else '',
                     'qualified_exam': qualified_exam if qualified_exam else 'xxx',
                     'technical_qualification': technical_qualification if technical_qualification else 'xxx',
+                    'fees_head': fees_heads if fees_heads else 'xxx',
                 })
                 res = {
                     'result': 'ok',
@@ -236,13 +240,18 @@ class EditStudentDetails(View):
                 for exam in student.technical_qualification.all():
                     technical_qualification = technical_qualification + exam.name + ',' 
                 technical_qualification = technical_qualification[:-1]
-
+                ctx_fee_heads = []
+                for fees_head in student.applicable_fees_heads.all():
+                    ctx_fee_heads.append({
+                        'head': fees_head.name,
+                        'id': fees_head.id,
+                    })
                 ctx_student_data.append({
                     'student_name': student.student_name if student.student_name else '',
                     'roll_number': student.roll_number if student.roll_number else '',
                     'dob': student.dob.strftime('%d/%m/%Y') if student.dob else '',
                     'address': student.address if student.address else '',
-                    'course': student.course.course if student.course.course else '',
+                    'course': student.course.id if student.course.course else '',
                     'course_id': student.course.id if student.course.course else '',
                     'name': str(student.batch.start_date) + '-' + str(student.batch.end_date) + ' ' + (str(student.batch.branch) if student.batch.branch else ''),     
                     'batch': student.batch.id if student.batch else '',
@@ -266,6 +275,7 @@ class EditStudentDetails(View):
                     'guardian_email': student.guardian_email if student.guardian_email else '',
                     'qualified_exams': qualified_exam if qualified_exam else '',
                     'technical_exams': technical_qualification if technical_qualification else '',
+                    'applicable_fees_heads': ctx_fee_heads,
                 })
                 res = {
                     'result': 'ok',
@@ -286,11 +296,12 @@ class EditStudentDetails(View):
         student_id = kwargs['student_id']
         student = Student.objects.get(id = student_id)
         student_data = ast.literal_eval(request.POST['student'])
+        print student_data
         try:
             student.student_name = student_data['student_name']
             student.roll_number = student_data['roll_number']
             student.address = student_data['address']
-            course = Course.objects.get(course = student_data['course'])
+            course = Course.objects.get(id = student_data['course'])
             student.course=course
             batch = Batch.objects.get(id = student_data['batch'])
             student.batch=batch
@@ -330,6 +341,13 @@ class EditStudentDetails(View):
             student.guardian_land_number = student_data['guardian_land_number']
             student.guardian_email = student_data['guardian_email']   
             student.save()
+            fees_heads = ast.literal_eval(student_data['fee_heads'])
+            if student.applicable_fees_heads.count() > 0 :
+                student.applicable_fees_heads.clear()
+            for fees_head in fees_heads:
+                if fees_head not in student.applicable_fees_heads.all():
+                    fee_head = FeesStructureHead.objects.get(id=fees_head)
+                    student.applicable_fees_heads.add(fee_head)
             res = {
                 'result': 'ok',
             }
