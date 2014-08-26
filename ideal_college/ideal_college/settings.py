@@ -4,6 +4,10 @@ import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+fillpath = lambda x: os.path.join(os.path.dirname(__file__), x)
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -51,12 +55,12 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
-MEDIA_ROOT = 'media'
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+MEDIA_ROOT = fillpath('media')
+
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_URL = '/media/'
+MEDIA_URL = '/site_media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files

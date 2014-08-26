@@ -49,7 +49,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 $('#balance').val(0);
                 $('#total_fee_amount').val(0);
                 if ($scope.heads.length == 0) {
-                    $scope.no_head_error = 'No fees structure for this batch';
+                    $scope.no_head_error = 'No fees heads for this student';
                 } else {
                     $scope.no_head_error = '';
                 }
