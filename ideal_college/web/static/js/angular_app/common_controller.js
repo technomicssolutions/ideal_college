@@ -200,6 +200,17 @@ function get_fees_head_details($scope, $http, fees_head_id) {
 function get_fee_structure_head_details($scope, $http) {
     $http.get('/fees/get_applicable_fee_structure_head/'+$scope.course+'/'+$scope.batch+'/').success(function(data){
         $scope.heads = data.heads;
+        $scope.student.fee_heads_list = [];
+        if($('#edit_student').length > 0 ) {
+            for(var i=0; i<$scope.heads.length; i++) {
+                for(var j=0; j<$scope.student.applicable_fees_heads.length; j++) {
+                    if ($scope.student.applicable_fees_heads[j].id == $scope.heads[i].id) {
+                        $scope.heads[i].selected = true;
+                        $scope.student.fee_heads_list.push($scope.heads[i].id);
+                    }
+                }
+            }
+        }
     }).error(function(data, status){
         console.log(data || 'Request failed');
     });
