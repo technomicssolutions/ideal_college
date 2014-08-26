@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.views.generic.base import View
 from django.http import HttpResponse
 
-from fees.models import Installment, FeesHead, FeesStructureHead, FeesStructure, FeesPaymentInstallment, FeesPayment, CommonFeesPayment
+from fees.models import Installment, FeesHead, FeesStructureHead, FeesStructure, FeesPaymentHead, FeesPayment, CommonFeesPayment
 from college.models import College, Course, Batch
 from academic.models import Student
 

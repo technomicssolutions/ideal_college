@@ -298,7 +298,7 @@ class FeesPaymentSave(View):
                 student = Student.objects.get(id=fees_payment_details['student'])
                 fees_payment, created = FeesPayment.objects.get_or_create(fee_structure=fees_structure[0], student=student)
                 installment = Installment.objects.get(id=fees_payment_details['installment_id'])
-                fee_payment_installment, installment_created = FeesPaymentInstallment.objects.get_or_create(installment=installment, student=student)
+                # fee_payment_installment, installment_created = FeesPaymentInstallment.objects.get_or_create(installment=installment, student=student)
                 fee_payment_installment.installment_amount = installment.amount
                 fee_payment_installment.installment_fine = installment.fine_amount
                 if installment_created:
@@ -330,56 +330,27 @@ class GetFeeStructureHeadList(View):
         student_id = kwargs['student_id']
         if request.is_ajax():
             fee_structure = FeesStructure.objects.filter(course__id=course_id, batch__id=batch_id)
-            heads_list = []
+            student = Student.objects.get(id=student_id)
+            ctx_heads_list = []
             if fee_structure.count() > 0:
-                heads = fee_structure[0].head.all()
+                heads = student.applicable_fees_heads.all()
                 for head in heads:
-                    ctx_installments = []
-                    i = 0
-                    for installment in head.installments.all():
-                        try:
-                            fees_payment = FeesPayment.objects.get(fee_structure=fee_structure, student__id=student_id)
-                            fees_payment_installments = fees_payment.payment_installment.filter(installment=installment)
-                            if fees_payment_installments.count() > 0:
-                                if fees_payment_installments[0].installment_amount < installment.amount:
-                                    ctx_installments.append({
-                                        'id': installment.id,
-                                        'amount':installment.amount,
-                                        'due_date': installment.due_date.strftime('%d/%m/%Y'),
-                                        'fine_amount': installment.fine_amount,
-                                        'name':'installment'+str(i + 1),
-                                        'paid_installment_amount': fees_payment_installments[0].installment_amount,
-                                        'balance': float(installment.amount) - float(fees_payment_installments[0].installment_amount),
-                                    })
-                            elif fees_payment_installments.count() == 0:
-                                ctx_installments.append({
-                                    'id': installment.id,
-                                    'amount':installment.amount,
-                                    'due_date': installment.due_date.strftime('%d/%m/%Y'),
-                                    'fine_amount': installment.fine_amount,
-                                    'name':'installment'+str(i + 1),
-                                    'paid_installment_amount': 0,
-                                    'balance': float(installment.amount),
-                                })
-                        except Exception:
-                            ctx_installments.append({
-                                'id': installment.id,
-                                'amount':installment.amount,
-                                'due_date': installment.due_date.strftime('%d/%m/%Y'),
-                                'fine_amount': installment.fine_amount,
-                                'name':'installment'+str(i + 1),
-                                'paid_installment_amount': 0,
-                                'balance': float(installment.amount),
+                    try:
+                        fees_payment = FeesPayment.objects.get(fee_structure=fee_structure, student__id=student_id)
+                        fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
+                        if fees_payment_heads.count() == 0:
+                            ctx_heads_list.append({
+                                'id': head.id,
+                                'head': head.name,
                             })
-                        i = i + 1
-                    heads_list.append({
-                        'head': head.name, 
-                        'id': head.id ,
-                        'installments': ctx_installments,               
-                    })
+                    except Exception:
+                        ctx_heads_list.append({
+                           'id': head.id,
+                            'head': head.name,
+                        })
             res = {
                 'result': 'ok',
-                'heads': heads_list,
+                'heads': ctx_heads_list,
             }
             status = 200
             response = simplejson.dumps(res)

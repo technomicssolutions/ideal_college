@@ -44,7 +44,7 @@
 			</div>
 			<div class="control">
 				<label> Fees Head</label>  
-				<select name="head" ng-model="head" ng-options="head as head.head for head in heads" ng-change="get_installment()">
+				<select name="head" ng-model="head" ng-options="head.id as head.head for head in heads" ng-change="get_installment()">
 					<option value="">Select</option>
 				</select>
 			</div>
