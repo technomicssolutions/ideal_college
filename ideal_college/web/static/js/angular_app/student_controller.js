@@ -344,18 +344,23 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
                 'student': angular.toJson($scope.student),
                 "csrfmiddlewaretoken" : $scope.csrf_token
             }
-            $http({
-                method : 'post',
-                url : $scope.url,
-                data : $.param(params),
-                headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded'
+            var fd = new FormData();
+            fd.append('photo_img', $scope.photo_img.src)   
+            for(var key in params){
+                fd.append(key, params[key]);          
+            }
+            // var url = "/academic/add_student/";
+            show_spinner();
+            $http.post($scope.url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined
                 }
-            }).success(function(data, status) {
+            }).success(function(data, status){
                 if (data.result == 'error'){
                     $scope.error_flag=true;
                     $scope.message = data.message;
-                } else {
+                }
+                else {
                     $scope.error_flag=false;
                     $scope.message = '';
                     document.location.href = '/academic/list_student/';
@@ -365,6 +370,14 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
                 $scope.error_flag=true;
                 $scope.message = data.message;
             });
+            // $http({
+            //     method : 'post',
+            //     url : $scope.url,
+            //     data : $.param(params),
+            //     headers : {
+            //         'Content-Type' : 'application/x-www-form-urlencoded'
+            //     }
+            // }).
         }
     }
 }
