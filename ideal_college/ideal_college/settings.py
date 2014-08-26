@@ -1,7 +1,12 @@
 # Django settings for ideal_college project.
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+fillpath = lambda x: os.path.join(os.path.dirname(__file__), x)
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
