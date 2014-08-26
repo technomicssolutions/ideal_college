@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}ID Card{% endblock title %}
+{% block body_id %}id_card_generate{% endblock %}
+{% block controller %}
+	ng-controller="StudentListController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+{% block content %}
+	<form class="" name="id_card_generate" method="get" action="">
+		{% csrf_token %}
+		<div class="main-title">
+			<div class="alert alert-info" align="Center">ID Card</div>
+			<input type="hidden" name="report_type" value="{{report_type}}">
+			<div class="form_container">	
+				<p class="error_message">[[validation_error]]</p>	
+				<div class="control">
+					<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
+						<option value="">Course</option>
+					</select>
+				</div>
+				<p class="error_message">[[no_batch_error]]</p>
+				<div class="control">
+					<select name="batch" ng-model="batch" ng-change="get_students()" ng-options="batch.id as batch.name for batch in batches">
+						<option value="">Batch</option>
+					</select>
+				</div>
+				<p class="error_message">[[no_student_error]]</p>		
+				
+				<div class="control">
+					<select name="student" ng-model="student_id" ng-options="student.id as student.name for student in students">
+						<option value="">Student</option>
+					</select>
+				</div>
+				<div class="control">
+					<input type="submit" value="Generate ID" ng-click="generate_id_card()">
+				</div>
+			</div>
+		</div>
+	</form>
+{% endblock content %}

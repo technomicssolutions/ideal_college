@@ -416,6 +416,7 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
         $http.get(url).success(function(data)
         {
             $scope.students = data.students;
+            console.log($scope.students);
             paginate(data.students, $scope);
             hide_spinner();
         }).error(function(data, status)
@@ -428,6 +429,18 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
     }
     $scope.save_new_student = function(){
         save_new_student($http, $scope);
+    }
+    $scope.generate_id_card = function(){
+        console.log($scope.student_id);
+        if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
+            $scope.validation_error = 'Please choose course';
+        } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {
+            $scope.validation_error = 'Please choose batch';
+        } else if ($scope.student_id == undefined) {
+            $scope.validation_error = 'Please choose student';
+        } else {
+           document.location.href = '/report/id_card/?course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&report_type=id_card';
+        }
     }
     $scope.hide_popup_windows = function(){
         $('#add_student_details')[0].setStyle('display', 'none');
