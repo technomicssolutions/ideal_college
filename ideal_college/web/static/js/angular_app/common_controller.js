@@ -99,6 +99,17 @@ function get_fee_structure_details($scope, $http, fees_structure_id) {
         $scope.fees_structure = data.fees_structure[0];
         $scope.no_installments = data.fees_structure[0].no_installments;
         $scope.fees_structure.removed_heads = [];
+        if ($('#edit_fee_structure').length > 0) {
+            for (var i=0; i<$scope.fees_structure.fees_head.length; i++) {
+                for(var j=0; j<$scope.fees_structure.fees_head[i].installments.length; j++){
+                    if ($scope.fees_structure.fees_head[i].installments[j].is_not_late_payment == 'true') {
+                        $scope.fees_structure.fees_head[i].installments[j].is_not_late_payment = true;
+                    } else {
+                        $scope.fees_structure.fees_head[i].installments[j].is_not_late_payment = false;
+                    }
+                } 
+            }
+        }
     }).error(function(data, status){
        console.log(data || "Request failed");
     })
@@ -186,6 +197,12 @@ function get_fees_head_details($scope, $http, fees_head_id) {
     });
 }
 
-
+function get_fee_structure_head_details($scope, $http) {
+    $http.get('/fees/get_applicable_fee_structure_head/'+$scope.course+'/'+$scope.batch+'/').success(function(data){
+        $scope.heads = data.heads;
+    }).error(function(data, status){
+        console.log(data || 'Request failed');
+    });
+}
 /************************** End Common JS Functions *****************************/
 

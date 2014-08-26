@@ -47,6 +47,8 @@ class CreateFeesStructure(View):
                             installment.end_date = datetime.strptime(installment_details['end_date'], '%d/%m/%Y')                        
                             if installment_details['fine']:
                                 installment.fine_amount = installment_details['fine']
+                            else:
+                                installment.fine_amount = 0
                             installment.save()
                             fee_structure_head.installments.add(installment)
                     fee_structure.head.add(fee_structure_head)
@@ -75,13 +77,14 @@ class EditFeesStructure(View):
                 for installment in head.installments.all():
                     ctx_installments.append({
                         'id': installment.id,
-                        'name': installment.name,
+                        'type': installment.name,
                         'start_date': installment.start_date.strftime('%d/%m/%Y') if installment.start_date else '',
                         'end_date': installment.end_date.strftime('%d/%m/%Y') if installment.end_date else '',
                         'fine_amount': installment.fine_amount,
                         'start_date_id': 'start_date'+str(i)+str(j),
                         'end_date_id': 'end_date'+str(i)+str(j),
-                    })
+                        'is_not_late_payment': 'false' if installment.name == 'Late Payment' else 'true',
+                     })
                     j = j + 1
 
                 ctx_fees_head.append({
@@ -125,24 +128,28 @@ class EditFeesStructure(View):
                 fee_structure_head = FeesStructureHead.objects.get(id=fee_head['id'])
             except:
                 fee_structure_head = FeesStructureHead()
-            fee_structure_head.name = fee_head['head']
-            fee_structure_head.amount = fee_head['amount']
-            fee_structure_head.no_installments = fee_head['no_installments']
-            fee_structure_head.save()
             removed_installments = fee_head['removed_installments']
             for installment in removed_installments:
                 installment_obj = Installment.objects.get(id=installment['id'])
                 installment_obj.delete()
+            fee_structure_head.name = fee_head['head']
+            fee_structure_head.amount = fee_head['amount']
+            fee_structure_head.save()
             for installment_details in fee_head['installments']:
-                try:
-                    installment = Installment.objects.get(id=installment_details['id'])
-                except:
-                    installment = Installment()
-                installment.due_date = datetime.strptime(installment_details['due_date'], '%d/%m/%Y')
-                installment.amount = installment_details['amount']
-                installment.fine_amount = installment_details['fine_amount']
-                installment.save()
-                fee_structure_head.installments.add(installment)
+                if installment_details['type']:
+                    try:
+                        installment = Installment.objects.get(id=installment_details['id'])
+                    except:
+                        installment = Installment()
+                    installment.name = installment_details['type']
+                    installment.start_date = datetime.strptime(installment_details['start_date'], '%d/%m/%Y')
+                    installment.end_date = datetime.strptime(installment_details['end_date'], '%d/%m/%Y')                        
+                    if installment_details['fine_amount']:
+                        installment.fine_amount = installment_details['fine_amount']
+                    else:
+                         installment.fine_amount = 0       
+                    installment.save()
+                    fee_structure_head.installments.add(installment)
             fee_structure.head.add(fee_structure_head)
         res = {
             'result': 'ok',
@@ -683,4 +690,26 @@ class IsFeesStructureExists(View):
             response = simplejson.dumps(res)
             return HttpResponse(response, status=status, mimetype='application/json')
 
+class GetApplicableFeeStructureHeads(View):
+    def get(self, request, *args, **kwargs):
+
+        course_id = kwargs['course_id']
+        batch_id = kwargs['batch_id']
+        if request.is_ajax():
+            fee_structure = FeesStructure.objects.filter(course__id=course_id, batch__id=batch_id)
+            heads_list = []
+            if fee_structure.count() > 0:
+                heads = fee_structure[0].head.all()
+                for head in heads:
+                    heads_list.append({
+                        'head': head.name, 
+                        'id': head.id ,            
+                    })
+            res = {
+                'result': 'ok',
+                'heads': heads_list,
+            }
+            status = 200
+            response = simplejson.dumps(res)
+            return HttpResponse(response, status=status, mimetype='application/json')
             

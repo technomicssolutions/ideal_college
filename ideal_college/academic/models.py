@@ -1,10 +1,11 @@
 
 from django.db import models
 from college.models import Course, Batch, QualifiedExam, TechnicalQualification
-
+from fees.models import FeesStructureHead
 
 class Student(models.Model):
 	student_name = models.CharField('Student Name', null=True, blank=True, max_length=200)
+	unique_id = models.CharField('Unique id', null=True, blank=True, max_length=100)
 	roll_number = models.IntegerField('Roll Number', default=0, null=True, blank=True)
 	address = models.CharField('Student Address', null=True, blank=True, max_length=200 )
 	course = models.ForeignKey(Course, null=True, blank=True)
@@ -31,6 +32,7 @@ class Student(models.Model):
 	guardian_mobile_number= models.CharField('Guardian Mobile Number',null=True, blank=True, max_length=200)
 	guardian_land_number= models.CharField('Guardian Land Number',null=True, blank=True, max_length=200)
 	guardian_email = models.CharField('Guardian Email',null=True, blank=True, max_length=200)
+	applicable_fees_heads = models.ManyToManyField(FeesStructureHead, null=True, blank=True)
 
 	def __unicode__(self):
 		return str(self.student_name)

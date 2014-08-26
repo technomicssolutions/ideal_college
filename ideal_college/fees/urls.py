@@ -4,7 +4,7 @@ from django.conf import settings
 
 from fees.views import CreateFeesStructure, EditFeesStructure, DeleteFeesStructure, ListFeesStructure, AddFeesHead, EditFeesHead, \
 	DeleteFeesHead, FeesHeadList, FeesPaymentSave, GetFeeStructureHeadList, ListOutStandingFees, CommonFeesPaymentSave,\
-	 GetFeesHeadList, GetOutStandingFeesDetails, IsFeesStructureExists
+	 GetFeesHeadList, GetOutStandingFeesDetails, IsFeesStructureExists, GetApplicableFeeStructureHeads
 
 urlpatterns = patterns('',
 	url(r'^fees_heads/$',login_required(FeesHeadList.as_view()), name='fees_heads'),
@@ -26,4 +26,6 @@ urlpatterns = patterns('',
 	url(r'^list_outstanding_fees/$',login_required(ListOutStandingFees.as_view()), name='list_outstanding_fees'),
 	url(r'^get_outstanding_fees_details/$',login_required(GetOutStandingFeesDetails.as_view()), name='get_outstanding_fees_details'),
 	url(r'^is_fees_structure_exists/(?P<course_id>\d+)/(?P<batch_id>\d+)/', login_required(IsFeesStructureExists.as_view()), name="is_fees_structure_exists"),
+
+	url(r'^get_applicable_fee_structure_head/(?P<course_id>\d+)/(?P<batch_id>\d+)/$',login_required(GetApplicableFeeStructureHeads.as_view()), name='get_applicable_fee_structure_head'),
 )
