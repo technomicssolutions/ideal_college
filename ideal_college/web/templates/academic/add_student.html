@@ -38,11 +38,11 @@
 									<option value="">Select</option>
 								</select>
 							</div>
-							<div class="formtext">
-								<label> Choose Applicable Fees Heads</label>  
+							<div class="formtext" style="width: 57% !important;">
+								<label> Fees Heads</label>  
 							</div>
 							<div class="forminput">
-								<select name="batch" ng-model="batch" ng-options="head.id as head.name for head in heads" multiple>
+								<select name="head" ng-model="fee_heads" ng-options="head.id as head.head for head in heads" multiple style="width: auto;">
 									<option value="">Select</option>
 								</select>
 							</div>

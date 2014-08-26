@@ -197,6 +197,12 @@ function get_fees_head_details($scope, $http, fees_head_id) {
     });
 }
 
-
+function get_fee_structure_head_details($scope, $http) {
+    $http.get('/fees/get_applicable_fee_structure_head/'+$scope.course+'/'+$scope.batch+'/').success(function(data){
+        $scope.heads = data.heads;
+    }).error(function(data, status){
+        console.log(data || 'Request failed');
+    });
+}
 /************************** End Common JS Functions *****************************/
 

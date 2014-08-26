@@ -1,21 +1,20 @@
-
 import simplejson
 import ast
+from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.views.generic.base import View
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 
-from academic.models import Student
-from datetime import datetime
-
 from college.models import Course, Branch, Batch, Semester, QualifiedExam, TechnicalQualification
-
+from academic.models import Student
+from fees.models import FeesStructureHead
 
 class AddStudent(View):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
+            print request.POST
             try:
                 course = Course.objects.get(id = request.POST['course'])
                 batch = Batch.objects.get(id = request.POST['batch'])
@@ -61,13 +60,23 @@ class AddStudent(View):
                         student.relationship = request.POST['relationship']
                         student.guardian_mobile_number = request.POST['guardian_mobile_number']
                         student.guardian_land_number = request.POST['guardian_land_number']
-                        student.guardian_email = request.POST['guardian_email']                   
+                        student.guardian_email = request.POST['guardian_email']  
+                        student.save()
+                        fees_heads = ast.literal_eval(request.POST['applicable_fee_heads']) 
+                        for fee_head in fees_heads:
+                            fees_head = FeesStructureHead.objects.get(id=fee_head) 
+                            try:
+                                student.applicable_fees_heads.add(fees_head) 
+                            except Exception as ex:
+                                print str(ex) 
+                        student.save()
                     except Exception as ex:
+                        print str(ex)
                         res = {
                             'result': 'error',
                             'message': str(ex)
                         }
-                    student.save()
+                    
                     res = {
                         'result': 'ok',
                     }                     

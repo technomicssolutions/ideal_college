@@ -5,6 +5,7 @@ from fees.models import FeesStructureHead
 
 class Student(models.Model):
 	student_name = models.CharField('Student Name', null=True, blank=True, max_length=200)
+	unique_id = models.CharField('Unique id', null=True, blank=True, max_length=100)
 	roll_number = models.IntegerField('Roll Number', default=0, null=True, blank=True)
 	address = models.CharField('Student Address', null=True, blank=True, max_length=200 )
 	course = models.ForeignKey(Course, null=True, blank=True)
