@@ -153,13 +153,16 @@ class ViewStudentDetails(View):
                 student = Student.objects.get(id = student_id)
                 qualified_exam = ''
                 technical_qualification = ''
+                fees_heads = ''
                 for exam in student.qualified_exam.all():
-                    qualified_exam = qualified_exam + exam.name + ',' 
+                    qualified_exam = qualified_exam + exam.name + ', ' 
                 qualified_exam = qualified_exam[:-1]
                 
                 for exam in student.technical_qualification.all():
-                    technical_qualification = technical_qualification + exam.name + ',' 
-                technical_qualification = technical_qualification[:-1]
+                    technical_qualification = technical_qualification + exam.name + ', '
+                for head in student.applicable_fees_heads.all():
+                    fees_heads = fees_heads + head.name + ', ' 
+                fees_heads = fees_heads[:-1]
                 ctx_student_data.append({
                     'student_name': student.student_name if student.student_name else '',
                     'roll_number': student.roll_number if student.roll_number else '',
@@ -190,6 +193,7 @@ class ViewStudentDetails(View):
                     'guardian_email': student.guardian_email if student.guardian_email else '',
                     'qualified_exam': qualified_exam if qualified_exam else 'xxx',
                     'technical_qualification': technical_qualification if technical_qualification else 'xxx',
+                    'fees_head': fees_heads if fees_heads else 'xxx',
                 })
                 res = {
                     'result': 'ok',
