@@ -1,6 +1,7 @@
 
 from datetime import datetime
 
+
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 
@@ -23,6 +24,35 @@ def header(canvas, y):
         canvas.drawString(80, y - 5, college.name)
     canvas.line(50, y - 30, 950, y - 30)
     return canvas
+
+
+class IdcardReport(View):
+   def get(self, request, *args, **kwargs):
+    status_code = 200
+    response = HttpResponse(content_type='application/pdf')
+    p = canvas.Canvas(response, pagesize=(1000, 1250))
+    y = 1150
+    p.rect(30,720,300,500)
+    p.setFont('Times-Bold',10)  
+    current_date = datetime.now().date()
+    report_type = request.GET.get('report_type', '')
+    print report_type
+    if not report_type:
+        return render(request, 'report/id_card.html',{
+            'report_type' : 'id_card',
+            })
+    else:
+        course = request.GET.get('course','')
+        batch = request.GET.get('batch', '')
+        student_id = request.GET.get('student', '')
+        student = Student.objects.get(id=student_id)
+        heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
+        p.drawCentredString(180, y+40, heading)   
+        p.setFont('Times-Roman',10)  
+        heading = "Karumanamkurussi(PO), Cherupulassery"  
+        p.drawCentredString(180, y+20, heading)   
+        p.save()
+        return response
 
 
 class OutstandingFeesListReport(View):
