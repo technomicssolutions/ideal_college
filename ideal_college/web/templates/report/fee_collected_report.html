@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Fee Collected{% endblock title %}
+{% block body_id %}fee_collected_report{% endblock %}
+{% block controller %}
+	ng-controller="FeesReportController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+{% block content %}
+	<form class="" name="fee_collected_report" method="get" action="">
+		{% csrf_token %}
+		<div class="main-title">
+			<div class="alert alert-info" align="Center">Fee Collected Report</div>
+			<input type="hidden" name="report_type" value="{{report_type}}">
+			<div class="form_container">	
+				<p class="error_message">[[validation_error]]</p>	
+				<div class="control">
+					<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
+						<option value="">Course</option>
+					</select>
+				</div>
+				<p class="error_message">[[no_batch_error]]</p>
+				<div class="control">
+					<select name="batch" ng-model="batch" ng-change="get_student()" ng-options="batch.id as batch.name for batch in batches">
+						<option value="">Batch</option>
+					</select>
+				</div>
+
+				<p class="error_message">[[no_student_error]]</p>		
+				
+				<div class="control">
+					<select name="student" ng-model="student_id" ng-options="student.id as student.student for student in students">
+						<option value="">Student</option>
+					</select>
+				</div>
+				<div class="control">
+					<input type="submit" value="Generate Report" ng-click="generate_fee_collected_report()">
+				</div>
+			</div>
+		</div>
+	</form>
+{% endblock content %}
