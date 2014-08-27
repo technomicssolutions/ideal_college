@@ -704,9 +704,20 @@ class GetFeesHeadDateRanges(View):
                     'message': 'ok'
                 })
         else:
+            try:
+                installment = head.installments.filter(end_date__lte=paid_date, name='Late Payment')
+            except:
+                try:
+                    installment = head.installments.filter(end_date__lte=paid_date, name='Standard Payment')
+                except:
+                    installment = head.installments.filter(end_date__lte=paid_date, name='Early Payment')
+            no_of_days = (paid_date - installment[0].start_date).days
+            fine = no_of_days*installment[0].fine_amount
             head_installments.append({
-                'result': 'error',
-                'message': 'Please check the Paid date'
+                'name': installment[0].name,
+                'id': installment[0].id,
+                'fine': fine,
+                'message': 'ok'
             })
         res = {
             'result': 'ok',
