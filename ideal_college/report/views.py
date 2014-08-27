@@ -540,3 +540,18 @@ class OutstandingFeesListReport(View):
             p.save()
         return response
 
+class FeeCollectedReport(View):
+    
+    def get(self, request, *args, **kwargs):
+        status_code = 200
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1250))
+        y = 1150
+        p = header(p, y)
+        p.setFont("Helvetica", 14)  
+        current_date = datetime.now().date()
+        report_type = request.GET.get('report_type', '')
+        if not report_type:
+            return render(request, 'report/fee_collected_report.html',{
+                'report_type' : 'fee_collected',
+                })
