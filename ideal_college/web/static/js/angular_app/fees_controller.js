@@ -147,6 +147,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         $scope.payment_installment.fine = $$('#fine_amount')[0].get('value');
         $scope.payment_installment.amount = $$('#fee_amount')[0].get('value');
         $scope.payment_installment.installment_id = $$('#installment')[0].get('value');
+        $scope.payment_installment.payment_type = $$('#payment_type')[0].get('value');
         // if($scope.validate_fees_payment()) {
             params = { 
                 'fees_payment': angular.toJson($scope.payment_installment),

@@ -295,8 +295,8 @@ class FeesPaymentSave(View):
             try:
                 fees_payment_details = ast.literal_eval(request.POST['fees_payment'])
                 print fees_payment_details
-                # fees_structure = FeesStructure.objects.filter(course__id=fees_payment_details['course_id'], batch__id=fees_payment_details['batch_id'])
-                # student = Student.objects.get(id=fees_payment_details['student'])
+                fees_structure = FeesStructure.objects.filter(course__id=fees_payment_details['course_id'], batch__id=fees_payment_details['batch_id'])
+                student = Student.objects.get(id=fees_payment_details['student_id'])
                 # fees_payment, created = FeesPayment.objects.get_or_create(fee_structure=fees_structure[0], student=student)
                 # installment = Installment.objects.get(id=fees_payment_details['installment_id'])
                 # # fee_payment_installment, installment_created = FeesPaymentInstallment.objects.get_or_create(installment=installment, student=student)
