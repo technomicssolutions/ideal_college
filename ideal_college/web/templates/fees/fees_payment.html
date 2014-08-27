@@ -13,7 +13,6 @@
 	<div class="form_container">
 		<form class="" name="payment" method="post" action="">
 			{% csrf_token %}
-			
 			<div class="control">
 				<label> Course</label> 
 				<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
@@ -35,7 +34,7 @@
 			</div>
 			<div class="control">
 				<label> Student</label>
-				<select name="student" ng-model="payment_installment.student" ng-change="get_fees_head()" ng-options="student.id as student.student for student in students">
+				<select name="student" ng-model="student" ng-change="get_fees_head()" ng-options="student as student.student for student in students">
 					<option value="select">Select</option>
 				</select>
 			</div>
@@ -44,44 +43,34 @@
 			</div>
 			<div class="control">
 				<label> Fees Head</label>  
-				<select name="head" ng-model="head" ng-options="head.id as head.head for head in heads" ng-change="get_installment()">
+				<select name="head" ng-model="head" ng-options="head.id as head.head for head in heads" ng-change="calculate_total_amount()">
 					<option value="">Select</option>
 				</select>
-			</div>
-			<div class"error_message">
-				<p class='error_message'>[[no_installment_error]]</p>
+				<input type="text" readonly id="head">
+				<input type="text" readonly id="installment">
 			</div>
 			<div class="control">
-				<label> Installment </label>  
-				<select name="installment" ng-model="installment" ng-options="installment as installment.name for installment in installments" ng-change="get_fees()">
-					<option value="">Select</option>
-					</option>
-				</select>
+				<label>Paid Date</label>
+				<input type="text" name="paid_date" id="paid_date" value="{{current_date}}" onSelect="calculate_total_amount()"/> 
+			</div>
+			<div class"error_message">
+				<p class='error_message' id="error_payment_type">[[no_installment_error]]</p>
+			</div>
+			<div class="control">
+				<label> Student Unique ID</label>  
+				<input type="text" id="u_id" ng-model="payment_installment.u_id" name="u_id" ng-readonly="is_uid_exists" ng-change="check_student_uid_exists()"/>
+			</div>
+			<div class="control">
+				<label> Payment Type </label>  
+				<input type="text" id="payment_type" ng-model="payment_installment.payment_type" name="payment_type"/>
 			</div>
 			<div class="control">
 				<label>Fees Amount</label>
 				<input type="text" name="amount" id="fee_amount" ng-model="payment_installment.amount"  readonly/> 
 			</div>
 			<div class="control">
-				<label>Due Date</label>
-				<input type="text" name="date" id="due_date" ng-model="payment_installment.due_date" readonly/> 
-			</div>
-			<div class="control">
 				<label>Fine</label>
 				<input type="text" name="fine" id="fine_amount" ng-model="payment_installment.fine" readonly /> 
-			</div>
-			<div class="control">
-				<label>Paid Date</label>
-				<input type="text" name="paid_date" id="paid_date" value="{{current_date}}" onSelect="calculate_total_amount()"/> 
-			</div>
-			<div class="control">
-				<label>Paid Installment Amount</label>
-				<input type="text" name="paid_amount" ng-model="payment_installment.paid_installment_amount" readonly/> 
-			</div>
-			<div class="control">
-				<label>Balance Amount</label>
-				<input type="hidden" name="paid_amount" id="balance" ng-model="payment_installment.balance" readonly/> 
-				<input type="text" name="paid_amount" id="balance_amount" ng-model="payment_installment.balance" readonly/> 
 			</div>
 			<div class="control">
 				<label>Total amount to pay</label>

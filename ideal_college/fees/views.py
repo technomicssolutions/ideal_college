@@ -294,21 +294,22 @@ class FeesPaymentSave(View):
             status_code = 200 
             try:
                 fees_payment_details = ast.literal_eval(request.POST['fees_payment'])
-                fees_structure = FeesStructure.objects.filter(course__id=fees_payment_details['course_id'], batch__id=fees_payment_details['batch_id'])
-                student = Student.objects.get(id=fees_payment_details['student'])
-                fees_payment, created = FeesPayment.objects.get_or_create(fee_structure=fees_structure[0], student=student)
-                installment = Installment.objects.get(id=fees_payment_details['installment_id'])
-                # fee_payment_installment, installment_created = FeesPaymentInstallment.objects.get_or_create(installment=installment, student=student)
-                fee_payment_installment.installment_amount = installment.amount
-                fee_payment_installment.installment_fine = installment.fine_amount
-                if installment_created:
-                    fee_payment_installment.paid_amount = fees_payment_details['paid_amount']
-                else:
-                    fee_payment_installment.paid_amount = float(fee_payment_installment.paid_amount) + float(fees_payment_details['paid_amount'])
-                fee_payment_installment.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
-                fee_payment_installment.total_amount = fees_payment_details['total_amount']
-                fee_payment_installment.save()
-                fees_payment.payment_installment.add(fee_payment_installment)
+                print fees_payment_details
+                # fees_structure = FeesStructure.objects.filter(course__id=fees_payment_details['course_id'], batch__id=fees_payment_details['batch_id'])
+                # student = Student.objects.get(id=fees_payment_details['student'])
+                # fees_payment, created = FeesPayment.objects.get_or_create(fee_structure=fees_structure[0], student=student)
+                # installment = Installment.objects.get(id=fees_payment_details['installment_id'])
+                # # fee_payment_installment, installment_created = FeesPaymentInstallment.objects.get_or_create(installment=installment, student=student)
+                # fee_payment_installment.installment_amount = installment.amount
+                # fee_payment_installment.installment_fine = installment.fine_amount
+                # if installment_created:
+                #     fee_payment_installment.paid_amount = fees_payment_details['paid_amount']
+                # else:
+                #     fee_payment_installment.paid_amount = float(fee_payment_installment.paid_amount) + float(fees_payment_details['paid_amount'])
+                # fee_payment_installment.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
+                # fee_payment_installment.total_amount = fees_payment_details['total_amount']
+                # fee_payment_installment.save()
+                # fees_payment.payment_installment.add(fee_payment_installment)
                 res = {
                     'result': 'ok',
                 }
@@ -497,7 +498,7 @@ class GetOutStandingFeesDetails(View):
                                     'no_installments': head.no_installments,
                                     'installments': ctx_installments,
                                 })
-                        ctx_student_fees_details.append({
+                        ctx_student_fees_details.aGetFeeSppend({
                             'head_details':ctx_fees_head_details,
                             'name': student.student_name,
                             'roll_no': student.roll_number,
@@ -683,4 +684,40 @@ class GetApplicableFeeStructureHeads(View):
             status = 200
             response = simplejson.dumps(res)
             return HttpResponse(response, status=status, mimetype='application/json')
+
+class GetFeesHeadDateRanges(View):
+
+    def get(self, request, *args, **kwargs):
+
+        head_id = request.GET.get('head_id', '')
+        paid_date = datetime.strptime(request.GET.get('paid_date', ''), '%d/%m/%Y').date()
+        head = FeesStructureHead.objects.get(id=head_id)
+        installments = head.installments.filter(start_date__lte=paid_date, end_date__gte=paid_date)
+        print installments.count()
+        head_installments = []
+        if installments.count() > 0:
+            for installment in installments:
+                fine = 0
+                if installment.name == 'Late Payment':
+                    no_of_days = (paid_date - installment.start_date).days
+                    fine = no_of_days*installment.fine_amount
+                head_installments.append({
+                    'name': installment.name,
+                    'id': installment.id,
+                    'fine': fine,
+                    'message': 'ok'
+                })
+        else:
+            head_installments.append({
+                'result': 'error',
+                'message': 'Please check the Paid date'
+            })
+        res = {
+            'result': 'ok',
+            'head_details': head_installments,
+            'fees_amount': head.amount,
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
+        
             

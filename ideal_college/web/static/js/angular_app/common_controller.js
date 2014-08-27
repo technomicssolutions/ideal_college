@@ -174,19 +174,36 @@ function date_conversion(date_val) {
     return converted_date;
 }
 
-function calculate_total_fee_amount() {
-    var due_date = date_conversion($$('#due_date')[0].get('value'));
-    var paid_date = date_conversion($$('#paid_date')[0].get('value'));
-    console.log($('#balance').val());
-    var balance_amount = $('#balance').val();
-    if (paid_date > due_date) {
-        $('#total_fee_amount').val(parseFloat($('#fee_amount').val()) + parseFloat($('#fine_amount').val()));
+function calculate_total_fee_amount(head_id) {
+    var head_id = head_id;
+    if (head_id == undefined)
+        var head_id = $$('#head')[0].get('value');
+    var paid_date = $$('#paid_date')[0].get('value');
+    $.ajax({
+        url: '/fees/get_fee_head_details/?head_id='+head_id+'&paid_date='+paid_date,
+        method: 'get',
+        success: successFunc,
+    });
+}
+function successFunc(response){
 
-        $('#balance_amount').val(parseFloat(balance_amount) + parseFloat($('#fine_amount').val()));
+    var head_details = response['head_details'][0];
+    if (head_details['result'] == 'error') {
+        alert(head_details['message']);
     } else {
-        $('#total_fee_amount').val(parseFloat($$('#fee_amount')[0].get('value')));
-        $('#balance_amount').val(balance_amount);
+        console.log(head_details['name']);
+        $('#payment_type').val(head_details['name']);
+        $('#fee_amount').val(response['fees_amount']);
+        $('#fine_amount').val(head_details['fine']);
+        $('#total_fee_amount').val(head_details['fine']+response['fees_amount']);
+        $('#installment').val(head_details['id']);
     }
+}
+
+function failureFunc(response){
+
+    console.log(response);
+    
 }
 
 function get_fees_head_details($scope, $http, fees_head_id) {
