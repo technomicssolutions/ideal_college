@@ -11,8 +11,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from fees.models import *
 from datetime import datetime
 
-# Fees structure start
-
 class CreateFeesStructure(View):
 
     def get(self, request, *args, **kwargs):
@@ -294,26 +292,26 @@ class FeesPaymentSave(View):
             status_code = 200 
             try:
                 fees_payment_details = ast.literal_eval(request.POST['fees_payment'])
-                print fees_payment_details
-                # fees_structure = FeesStructure.objects.filter(course__id=fees_payment_details['course_id'], batch__id=fees_payment_details['batch_id'])
-                # student = Student.objects.get(id=fees_payment_details['student'])
-                # fees_payment, created = FeesPayment.objects.get_or_create(fee_structure=fees_structure[0], student=student)
-                # installment = Installment.objects.get(id=fees_payment_details['installment_id'])
-                # # fee_payment_installment, installment_created = FeesPaymentInstallment.objects.get_or_create(installment=installment, student=student)
-                # fee_payment_installment.installment_amount = installment.amount
-                # fee_payment_installment.installment_fine = installment.fine_amount
-                # if installment_created:
-                #     fee_payment_installment.paid_amount = fees_payment_details['paid_amount']
-                # else:
-                #     fee_payment_installment.paid_amount = float(fee_payment_installment.paid_amount) + float(fees_payment_details['paid_amount'])
-                # fee_payment_installment.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
-                # fee_payment_installment.total_amount = fees_payment_details['total_amount']
-                # fee_payment_installment.save()
-                # fees_payment.payment_installment.add(fee_payment_installment)
+                fees_structure = FeesStructure.objects.filter(course__id=fees_payment_details['course_id'], batch__id=fees_payment_details['batch_id'])
+                student = Student.objects.get(id=fees_payment_details['student_id'])
+                fees_payment, created = FeesPayment.objects.get_or_create(fee_structure=fees_structure[0], student=student)
+                fees_head = FeesStructureHead.objects.get(id=fees_payment_details['head_id'])
+                fees_payment_head = FeesPaymentHead.objects.create(student=student, fees_head=fees_head)
+                fees_payment_head.installment = Installment.objects.get(id=fees_payment_details['installment_id'])
+                fees_payment_head.total_amount = fees_payment_details['total_amount']
+                fees_payment_head.fine = fees_payment_details['fine']
+                fees_payment_head.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
+                fees_payment_head.save()
+                fees_payment.payment_heads.add(fees_payment_head)
+                fees_payment.save()
+                if student.unique_id != fees_payment_details['u_id']:
+                    student.unique_id = fees_payment_details['u_id']
+                    student.save()
                 res = {
                     'result': 'ok',
                 }
             except Exception as Ex:
+                print str(Ex)
                 res = {
                     'result': 'error: '+str(Ex),
                     'message': 'Already Paid',
@@ -344,7 +342,8 @@ class GetFeeStructureHeadList(View):
                                 'id': head.id,
                                 'head': head.name,
                             })
-                    except Exception:
+                    except Exception as ex:
+                        print str(ex)
                         ctx_heads_list.append({
                            'id': head.id,
                             'head': head.name,
@@ -691,7 +690,6 @@ class GetFeesHeadDateRanges(View):
         paid_date = datetime.strptime(request.GET.get('paid_date', ''), '%d/%m/%Y').date()
         head = FeesStructureHead.objects.get(id=head_id)
         installments = head.installments.filter(start_date__lte=paid_date, end_date__gte=paid_date)
-        print installments.count()
         head_installments = []
         if installments.count() > 0:
             for installment in installments:

@@ -46,8 +46,8 @@
 				<select name="head" ng-model="head" ng-options="head.id as head.head for head in heads" ng-change="calculate_total_amount()">
 					<option value="">Select</option>
 				</select>
-				<input type="text" readonly id="head">
-				<input type="text" readonly id="installment">
+				<input type="hidden" readonly id="head">
+				<input type="hidden" readonly id="installment">
 			</div>
 			<div class="control">
 				<label>Paid Date</label>

@@ -378,7 +378,7 @@ class CheckUidExists(View):
             student = Student.objects.get(unique_id=uid)
             res = {
                 'result': 'error',
-                'message': 'This UID is already existing',
+                'message': 'This student unique ID is already existing',
             }
         except Exception as ex:
             res = {
