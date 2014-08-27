@@ -212,13 +212,6 @@ function get_fees_head_installment_details(response){
         $('#installment').val(head_details['id']);
     }
 }
-
-function failureFunc(response){
-
-    console.log(response);
-    
-}
-
 function get_fees_head_details($scope, $http, fees_head_id) {
     $http.get('/fees/edit_fees_head/'+fees_head_id+'/').success(function(data){
         $scope.fee_head = data.fees_head[0];

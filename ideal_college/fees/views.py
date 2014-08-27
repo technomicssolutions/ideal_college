@@ -292,7 +292,6 @@ class FeesPaymentSave(View):
             status_code = 200 
             try:
                 fees_payment_details = ast.literal_eval(request.POST['fees_payment'])
-                print fees_payment_details
                 fees_structure = FeesStructure.objects.filter(course__id=fees_payment_details['course_id'], batch__id=fees_payment_details['batch_id'])
                 student = Student.objects.get(id=fees_payment_details['student_id'])
                 fees_payment, created = FeesPayment.objects.get_or_create(fee_structure=fees_structure[0], student=student)
@@ -693,7 +692,6 @@ class GetFeesHeadDateRanges(View):
         paid_date = datetime.strptime(request.GET.get('paid_date', ''), '%d/%m/%Y').date()
         head = FeesStructureHead.objects.get(id=head_id)
         installments = head.installments.filter(start_date__lte=paid_date, end_date__gte=paid_date)
-        print installments.count()
         head_installments = []
         if installments.count() > 0:
             for installment in installments:
