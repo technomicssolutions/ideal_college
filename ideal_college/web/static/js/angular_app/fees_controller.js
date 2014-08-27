@@ -272,9 +272,7 @@ function EditFeeStructureController($scope, $http, $element) {
                                 var date_value = $scope.fees_structure.fees_head[i].installments[j - 1].end_date.split('/');
                                 var end_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
                                 var diff = start_date.getDate() - end_date.getDate();
-                                console.log('difffff ====', diff)
                                 if (diff > 1) {
-                                    console.log('greater')
                                     $scope.validation_error = "Please check the start date and end date for the payment type "+$scope.fees_structure.fees_head[i].installments[j].type+" in "+$scope.fees_structure.fees_head[i].head;
                                     return false;
                                 }
