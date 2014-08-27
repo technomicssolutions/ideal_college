@@ -54,7 +54,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 $scope.payment_installment.fine = '';
                 $('#total_fee_amount').val(0);
                 if ($scope.heads.length == 0) {
-                    $scope.no_head_error = 'No fees heads for this student';
+                    $scope.no_head_error = 'Payment completed for this student';
                 } else {
                     $scope.no_head_error = '';
                 }
@@ -63,36 +63,11 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 console.log(data || "Request failed");
             });
     }
-    /*$scope.get_installment = function() {
-        if ($scope.head.installments.length == 0) {
-            $scope.no_installment_error = 'Payment completed';
-        } else {
-            $scope.no_installment_error = '';
-        }
-        $scope.installments = $scope.head.installments;
-        $('#due_date').val('');
-        $('#fine_amount').val(0);
-        $('#fee_amount').val(0);
-        $('#total_fee_amount').val(0);
-    }*/
     $scope.calculate_total_amount = function() {
         $('#head').val($scope.head);
         calculate_total_fee_amount($scope.head);
 
     }
-    /*$scope.get_fees = function() {
-        $scope.payment_installment.paid_date = $scope.installment.paid_date;
-        $scope.payment_installment.due_date = $scope.installment.due_date;
-        $scope.payment_installment.amount = $scope.installment.amount;
-        $scope.payment_installment.fine = $scope.installment.fine_amount;
-        $scope.payment_installment.paid_installment_amount = $scope.installment.paid_installment_amount;
-        $('#due_date').val($scope.installment.due_date);
-        $('#fine_amount').val($scope.installment.fine_amount);
-        $('#fee_amount').val($scope.installment.amount);
-        $('#balance').val($scope.installment.balance);
-        $('#balance_amount').val($scope.installment.balance);
-        calculate_total_fee_amount($scope.head);
-    }*/
     $scope.check_student_uid_exists = function() {
         var u_id = $$('#u_id')[0].get('value');
         var url = '/academic/check_student_uid_exists/?uid='+u_id;
@@ -424,6 +399,14 @@ function EditFeeStructureController($scope, $http, $element) {
                         $scope.fees_structure.fees_head[i].installments[j].is_not_late_payment = 'true';
                     } else {
                         $scope.fees_structure.fees_head[i].installments[j].is_not_late_payment = 'false';
+                    }
+                }
+                for (var j=0; j< $scope.fees_structure.fees_head[i].removed_installments.length; j++) {
+
+                    if ($scope.fees_structure.fees_head[i].removed_installments[j].is_not_late_payment == true) {
+                        $scope.fees_structure.fees_head[i].removed_installments[j].is_not_late_payment = 'true';
+                    } else {
+                        $scope.fees_structure.fees_head[i].removed_installments[j].is_not_late_payment = 'false';
                     }
                 }
             }

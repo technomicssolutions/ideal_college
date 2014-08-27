@@ -706,19 +706,24 @@ class GetFeesHeadDateRanges(View):
         else:
             try:
                 installment = head.installments.filter(end_date__lte=paid_date, name='Late Payment')
-            except:
+                if installment.count() == 0:
+                    installment = head.installments.filter(end_date__lte=paid_date, name='Standard Payment')
+                    if installment.count() == 0:
+                        installment = head.installments.filter(end_date__lte=paid_date, name='Early Payment')
+            except Exception as ex:
                 try:
                     installment = head.installments.filter(end_date__lte=paid_date, name='Standard Payment')
-                except:
+                except Exception as ex:
                     installment = head.installments.filter(end_date__lte=paid_date, name='Early Payment')
-            no_of_days = (paid_date - installment[0].start_date).days
-            fine = no_of_days*installment[0].fine_amount
-            head_installments.append({
-                'name': installment[0].name,
-                'id': installment[0].id,
-                'fine': fine,
-                'message': 'ok'
-            })
+            if installment:
+                no_of_days = (paid_date - installment[0].start_date).days
+                fine = no_of_days*installment[0].fine_amount
+                head_installments.append({
+                    'name': installment[0].name,
+                    'id': installment[0].id,
+                    'fine': fine,
+                    'message': 'ok'
+                })
         res = {
             'result': 'ok',
             'head_details': head_installments,
