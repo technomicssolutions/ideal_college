@@ -448,10 +448,10 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
             $scope.validation_error = 'Please choose course';
         } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {
             $scope.validation_error = 'Please choose batch';
-        } else if ($scope.student_id == undefined) {
+        } else if ($scope.student_id == undefined && $scope.filtering_option == "student_wise") {
             $scope.validation_error = 'Please choose student';
         } else {
-           document.location.href = '/report/id_card/?course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&report_type=id_card';
+           document.location.href = '/report/id_card/?course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&filtering_option='+$scope.filtering_option+'&report_type=id_card';
         }
     }
     $scope.hide_popup_windows = function(){
