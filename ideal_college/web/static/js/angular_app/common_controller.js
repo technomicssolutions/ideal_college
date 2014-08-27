@@ -148,6 +148,13 @@ function get_course_batch_list($scope, $http) {
         $scope.batches = [];
     }
 }
+function clear_fees_payment_details($scope) {
+    
+    $('#payment_type').val('');
+    $('#fee_amount').val('');
+    $('#fine_amount').val('');
+    $('#total_fee_amount').val('');
+}
 
 function get_course_batch_student_list($scope, $http) {
     if (($scope.course != 'select') && (($scope.batch != 'select'))) {
@@ -158,6 +165,8 @@ function get_course_batch_student_list($scope, $http) {
             $scope.no_installment_error = '';
             if ($scope.students.length == 0) {
                 $scope.no_student_error = 'No students in this batch';
+                $scope.heads = [];
+                clear_fees_payment_details($scope);
             } else {
                 $scope.no_student_error = '';
             }
@@ -182,16 +191,20 @@ function calculate_total_fee_amount(head_id) {
     $.ajax({
         url: '/fees/get_fee_head_details/?head_id='+head_id+'&paid_date='+paid_date,
         method: 'get',
-        success: successFunc,
+        success: get_fees_head_installment_details,
     });
 }
-function successFunc(response){
+function get_fees_head_installment_details(response){
 
     var head_details = response['head_details'][0];
     if (head_details['result'] == 'error') {
-        alert(head_details['message']);
+        $('#error_payment_type').text(head_details['message']);
+        $('#payment_type').val('');
+        $('#fee_amount').val('');
+        $('#fine_amount').val('');
+        $('#total_fee_amount').val('');
     } else {
-        console.log(head_details['name']);
+        $('#error_payment_type').text('');
         $('#payment_type').val(head_details['name']);
         $('#fee_amount').val(response['fees_amount']);
         $('#fine_amount').val(head_details['fine']);
