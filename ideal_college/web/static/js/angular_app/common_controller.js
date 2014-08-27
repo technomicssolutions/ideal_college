@@ -184,15 +184,17 @@ function date_conversion(date_val) {
 }
 
 function calculate_total_fee_amount(head_id) {
-    var head_id = head_id;
-    if (head_id == undefined)
-        var head_id = $$('#head')[0].get('value');
-    var paid_date = $$('#paid_date')[0].get('value');
-    $.ajax({
-        url: '/fees/get_fee_head_details/?head_id='+head_id+'&paid_date='+paid_date,
-        method: 'get',
-        success: get_fees_head_installment_details,
-    });
+    if ($('#fees_payment').length >0) {
+        var head_id = head_id;
+        if (head_id == undefined)
+            var head_id = $$('#head')[0].get('value');
+        var paid_date = $$('#paid_date')[0].get('value');
+        $.ajax({
+            url: '/fees/get_fee_head_details/?head_id='+head_id+'&paid_date='+paid_date,
+            method: 'get',
+            success: get_fees_head_installment_details,
+        });
+    }
 }
 function get_fees_head_installment_details(response){
 
