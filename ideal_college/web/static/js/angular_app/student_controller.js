@@ -349,7 +349,6 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
             for(var key in params){
                 fd.append(key, params[key]);          
             }
-            // var url = "/academic/add_student/";
             show_spinner();
             $http.post($scope.url, fd, {
                 transformRequest: angular.identity,

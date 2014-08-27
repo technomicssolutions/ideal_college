@@ -1,16 +1,17 @@
 function FeesPaymentController($scope, $element, $http, $timeout, share, $location)
 {
     $scope.payment_installment = {
-        'installment_id': '',
         'course_id': '',
         'batch_id': '',
         'student_id': '',
         'head_id': '',
         'paid_date': '',
+        'u_id': '',
+        'payment_type': '',
+        'amount': '',
+        'fine': '',
         'total_amount': '',
         'paid_amount': '',
-        'paid_installment_amount': '',
-        'balance': '',
     }
     $scope.course = 'select';
     $scope.batch = 'select';
@@ -35,7 +36,14 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         get_course_batch_student_list($scope, $http);
     }
     $scope.get_fees_head = function(){
-        $scope.url = '/fees/get_fee_structure_head/'+ $scope.course+ '/'+ $scope.batch+ '/'+$scope.payment_installment.student+'/';
+        $scope.payment_installment.student_id = $scope.student.id;
+        $scope.payment_installment.u_id = $scope.student.u_id;
+        if ($scope.payment_installment.u_id == '' || $scope.payment_installment.u_id == undefined) {
+            $scope.is_uid_exists = false;
+        } else {
+            $scope.is_uid_exists = true;
+        }
+        $scope.url = '/fees/get_fee_structure_head/'+ $scope.course+ '/'+ $scope.batch+ '/'+$scope.student.id+'/';
         if ($scope.course !='select' && $scope.batch != 'select' && $scope.payment_installment.student != 'select')
             show_spinner();
             $http.get($scope.url).success(function(data)
@@ -71,7 +79,9 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         $('#total_fee_amount').val(0);
     }
     $scope.calculate_total_amount = function() {
-        calculate_total_fee_amount();
+        $('#head').val($scope.head);
+        calculate_total_fee_amount($scope.head);
+
     }
     $scope.get_fees = function() {
         $scope.payment_installment.paid_date = $scope.installment.paid_date;
@@ -84,7 +94,23 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         $('#fee_amount').val($scope.installment.amount);
         $('#balance').val($scope.installment.balance);
         $('#balance_amount').val($scope.installment.balance);
-        calculate_total_fee_amount();
+        calculate_total_fee_amount($scope.head);
+    }
+    $scope.check_student_uid_exists = function() {
+        var u_id = $$('#u_id')[0].get('value');
+        console.log(u_id);
+        var url = '/academic/check_student_uid_exists/?uid='+u_id;
+        $http.get(url).success(function(data){
+            if(data.result == 'ok') {
+                $scope.uid_exists = true;
+                $scope.validation_error = data.message;
+            } else {
+                $scope.uid_exists = true;
+                $scope.validation_error = '';
+            }
+        }).error(function(data, status){
+
+        });
     }
     $scope.validate_fees_payment = function() {
         $scope.validation_error = '';
@@ -94,14 +120,11 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         } else if($scope.batch == 'select') {
             $scope.validation_error = "Please Select a batch " ;
             return false;
-        } else if($scope.payment_installment.student == 'select') {
+        } else if($scope.payment_installment.student_id == 'select') {
             $scope.validation_error = "Please select a student" ;
             return false;
         } else if($scope.head == '' || $scope.head == undefined) {
             $scope.validation_error = "Please enter a head name" ;
-            return false;
-        } else if($scope.installment == '' || $scope.installment == undefined) {
-            $scope.validation_error = "Please enter an installment" ;
             return false;
         } else if ($scope.payment_installment.paid_amount == '' || $scope.payment_installment.paid_amount == undefined) {
             $scope.validation_error = "Please enter paid amount" ;
@@ -109,8 +132,8 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         } else if ($scope.payment_installment.paid_amount != Number($scope.payment_installment.paid_amount)) {
             $scope.validation_error = "Please enter valid paid amount" ;
             return false;
-        } else if ($scope.payment_installment.paid_amount != $scope.payment_installment.balance) {
-            $scope.validation_error = "Please check the balance amount with paid amount" ;
+        } else if ($scope.payment_installment.paid_amount != $scope.payment_installment.total_amount) {
+            $scope.validation_error = "Please check the Total Amount with Paid Amount" ;
             return false;
         } return true; 
     }
@@ -118,12 +141,13 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
 
         $scope.payment_installment.course_id = $scope.course;
         $scope.payment_installment.batch_id = $scope.batch;
-        $scope.payment_installment.installment_id = $scope.installment.id;
         $scope.payment_installment.head_id = $scope.head.id;
         $scope.payment_installment.paid_date = $$('#paid_date')[0].get('value');
         $scope.payment_installment.total_amount = $$('#total_fee_amount')[0].get('value');
-        $scope.payment_installment.balance = $$('#balance_amount')[0].get('value');
-        if($scope.validate_fees_payment()) {
+        $scope.payment_installment.fine = $$('#fine_amount')[0].get('value');
+        $scope.payment_installment.amount = $$('#fee_amount')[0].get('value');
+        $scope.payment_installment.installment_id = $$('#installment')[0].get('value');
+        // if($scope.validate_fees_payment()) {
             params = { 
                 'fees_payment': angular.toJson($scope.payment_installment),
                 "csrfmiddlewaretoken" : $scope.csrf_token,
@@ -148,7 +172,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 $scope.error_flag=true;
                 $scope.message = data.message;
             });
-        }
+        // }
     }
 }
 function FeesController($scope, $element, $http, $timeout, share, $location)

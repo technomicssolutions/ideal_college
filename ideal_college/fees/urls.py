@@ -4,7 +4,7 @@ from django.conf import settings
 
 from fees.views import CreateFeesStructure, EditFeesStructure, DeleteFeesStructure, ListFeesStructure, AddFeesHead, EditFeesHead, \
 	DeleteFeesHead, FeesHeadList, FeesPaymentSave, GetFeeStructureHeadList, ListOutStandingFees, CommonFeesPaymentSave,\
-	 GetFeesHeadList, GetOutStandingFeesDetails, IsFeesStructureExists, GetApplicableFeeStructureHeads
+	 GetFeesHeadList, GetOutStandingFeesDetails, IsFeesStructureExists, GetApplicableFeeStructureHeads, GetFeesHeadDateRanges
 
 urlpatterns = patterns('',
 	url(r'^fees_heads/$',login_required(FeesHeadList.as_view()), name='fees_heads'),
@@ -28,4 +28,5 @@ urlpatterns = patterns('',
 	url(r'^is_fees_structure_exists/(?P<course_id>\d+)/(?P<batch_id>\d+)/', login_required(IsFeesStructureExists.as_view()), name="is_fees_structure_exists"),
 
 	url(r'^get_applicable_fee_structure_head/(?P<course_id>\d+)/(?P<batch_id>\d+)/$',login_required(GetApplicableFeeStructureHeads.as_view()), name='get_applicable_fee_structure_head'),
+	url(r'^get_fee_head_details/$',login_required(GetFeesHeadDateRanges.as_view()), name='get_fee_head_details'),
 )

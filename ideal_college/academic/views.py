@@ -128,7 +128,8 @@ class GetStudent(View):
                 for student in students:
                     student_list.append({
                         'student': student.student_name,
-                        'id' :student.id 
+                        'id' : student.id,
+                        'u_id': student.unique_id if student and student.unique_id else '',
                     })
                 res = {
                     'result': 'ok',
@@ -327,7 +328,6 @@ class EditStudentDetails(View):
             student.email = student_data['email']
             student.blood_group = student_data['blood_group']
             student.doj = datetime.strptime(student_data['doj'], '%d/%m/%Y')
-            print request.FILES
             student.photo = request.FILES.get('photo_img', '')                       
             student.certificates_submitted = student_data['certificates_submitted']
             student.certificates_remarks = student_data['certificates_remarks']
@@ -368,3 +368,22 @@ class DeleteStudentDetails(View):
         student = Student.objects.filter(id=student_id)                          
         student.delete()
         return HttpResponseRedirect(reverse('list_student'))
+
+class CheckUidExists(View):
+
+    def get(self, request, *args, **kwargs):
+
+        uid = request.GET.get('uid', '')
+        try:
+            student = Student.objects.get(unique_id=uid)
+            res = {
+                'result': 'error',
+                'message': 'This UID is already existing',
+            }
+        except Exception as ex:
+            res = {
+                'result': 'ok',                
+            }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
+        
