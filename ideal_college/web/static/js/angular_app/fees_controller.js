@@ -998,14 +998,14 @@ function FeesReportController($scope, $http, $element) {
             positionOffset: {x: 5, y: 0},
             pickerClass: 'datepicker_bootstrap',
             useFadeInOut: !Browser.ie,
-            format:'%d/%m/%Y',
+            format:'%Y-%m-%d',
         });
         var to_date = new Picker.Date($$('#to_date'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
             pickerClass: 'datepicker_bootstrap',
             useFadeInOut: !Browser.ie,
-            format:'%d/%m/%Y',
+            format:'%Y-%m-%d',
         });
     }
     $scope.get_batch = function(){
@@ -1045,6 +1045,16 @@ function FeesReportController($scope, $http, $element) {
         }
     }
     $scope.generate_common_report = function(){
+        $scope.from_date =  $$('#from_date')[0].get('value');
+        $scope.to_date =  $$('#to_date')[0].get('value');
         console.log($scope.head);
+        if($scope.from_date == "" || $scope.from_date == undefined){
+            $scope.validation_error = 'Please enter Start date';
+        } else if($scope.to_date == "" || $scope.to_date == undefined){
+            $scope.validation_error = 'Please enter End date';
+        } else if ($scope.head == 'All' || $scope.head == '' || $scope.head == null) {
+            document.location.href = '/report/common_fee_report/?from='+$scope.from_date+'&to='+$scope.to_date+'&type=All';
+        } else
+            document.location.href = '/report/common_fee_report/?from='+$scope.from_date+'&to='+$scope.to_date+'&type='+$scope.head;        
     }
 }

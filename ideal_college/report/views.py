@@ -127,14 +127,119 @@ class CommonFeeReport(View):
         response = HttpResponse(content_type='application/pdf')
         p = canvas.Canvas(response, pagesize=(1000, 1250))
         y = 1150
-        p = header(p, y)
+        p = header(p, y-10)
         p.setFont("Helvetica", 14)  
         current_date = datetime.now().date()
-        report_type = request.GET.get('report_type', '')
+        report_type = request.GET.get('type', '')
         if not report_type:
             return render(request, 'report/common_fee_report.html',{
                 'report_type' : 'common_fees',
                 })
+        else:
+            from_date = request.GET.get('from', '')
+            to_date = request.GET.get('to', '')
+            p.setFont('Times-Roman',20)  
+            heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
+            p.drawCentredString(500, y+35, heading)   
+            p.setFont('Times-Roman',14)  
+            heading = "Karumanamkurussi(PO), Cherupulassery"  
+            p.drawCentredString(500, y+15, heading)   
+            heading = "Palakkad(Dt),Kerala,PIN-679504"  
+            p.drawCentredString(500, y-5, heading)  
+            heading = "PH:466-2280111,2280112,2207585"  
+            p.drawCentredString(500, y-25, heading)  
+            p.setFontSize(15)
+            p.drawCentredString(500, y-60, "Common Fee Payment Report")  
+            p.drawString(50, y - 120, "#")
+            p.drawString(80, y - 120, "Name")
+            p.drawString(250, y - 120, "Fee Head")
+            p.drawString(420, y - 120, "Date")
+            p.drawString(550, y - 120, "Total Amount")
+            p.drawString(700, y - 120, "Amount Paid")
+            if report_type == 'All':
+                tot_amount = 0
+                paid_amount = 0
+                tot_count = 0
+                j = 150
+                commonfeepayments = CommonFeesPayment.objects.filter(paid_date__range=[from_date, to_date]).order_by('student')
+                for commonfeepayment in commonfeepayments:
+                    tot_amount = tot_amount + commonfeepayment.head.amount
+                    paid_amount = paid_amount + commonfeepayment.paid_amount
+                    tot_count = tot_count + 1
+                    p.setFontSize(13)
+                    p.drawString(50, y - j, str(tot_count))
+                    p.drawString(80, y - j, commonfeepayment.student)
+                    p.drawString(250, y - j, commonfeepayment.head.name)
+                    p.drawString(420, y - j, str(commonfeepayment.paid_date.strftime('%d-%m-%Y')))
+                    p.drawString(550, y - j, str(commonfeepayment.head.amount))
+                    p.drawString(700, y - j, str(commonfeepayment.paid_amount))
+                    j = j+30
+                    if j > 1110:
+                        j = 0
+                        p.showPage()
+                if j > 1020:
+                    j = 0
+                    p.showPage()
+                j = y-j-10
+                p.drawString(80, j, "From ")
+                p.drawString(230, j, ":")
+                p.drawString(250, j, str(datetime.strptime(from_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                p.drawString(80, j-20, "To ")
+                p.drawString(230, j-20, ":")
+                p.drawString(250, j-20, str(datetime.strptime(to_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                p.drawString(80, j-40, "Total count ")
+                p.drawString(230, j-40, ":")
+                p.drawString(250, j-40, str(tot_count))
+                p.drawString(80, j-60, "Total amount ")
+                p.drawString(230, j-60, ":")
+                p.drawString(250, j-60, str(tot_amount))
+                p.drawString(80, j-80, "Total amount collected ")
+                p.drawString(230, j-80, ":")
+                p.drawString(250, j-80, str(paid_amount))
+            else:
+                tot_amount = 0
+                paid_amount = 0
+                tot_count = 0
+                j = 150
+                commonfeepayments = CommonFeesPayment.objects.filter(paid_date__range=[from_date, to_date], head__id=report_type).order_by('student')
+                for commonfeepayment in commonfeepayments:
+                    tot_amount = tot_amount + commonfeepayment.head.amount
+                    paid_amount = paid_amount + commonfeepayment.paid_amount
+                    tot_count = tot_count + 1
+                    p.setFontSize(13)
+                    p.drawString(50, y - j, str(tot_count))
+                    p.drawString(80, y - j, commonfeepayment.student)
+                    p.drawString(250, y - j, commonfeepayment.head.name)
+                    p.drawString(420, y - j, str(commonfeepayment.paid_date.strftime('%d-%m-%Y')))
+                    p.drawString(550, y - j, str(commonfeepayment.head.amount))
+                    p.drawString(700, y - j, str(commonfeepayment.paid_amount))
+                    j = j+30
+                    if j > 1110:
+                        j = 0
+                        p.showPage()
+                if j > 1020:
+                    j = 0
+                    p.showPage()
+                j = y-j-10
+                p.drawString(80, j, "From ")
+                p.drawString(230, j, ":")
+                p.drawString(250, j, str(datetime.strptime(from_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                p.drawString(80, j-20, "To ")
+                p.drawString(230, j-20, ":")
+                p.drawString(250, j-20, str(datetime.strptime(to_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                p.drawString(80, j-40, "Total count ")
+                p.drawString(230, j-40, ":")
+                p.drawString(250, j-40, str(tot_count))
+                p.drawString(80, j-60, "Total amount ")
+                p.drawString(230, j-60, ":")
+                p.drawString(250, j-60, str(tot_amount))
+                p.drawString(80, j-80, "Total amount collected ")
+                p.drawString(230, j-80, ":")
+                p.drawString(250, j-80, str(paid_amount))
+            p.save()
+            return response
+
+
 
 class OutstandingFeesListReport(View):
 

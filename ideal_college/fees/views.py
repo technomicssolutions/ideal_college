@@ -586,11 +586,9 @@ class CommonFeesPaymentSave(View):
             try:
                 fees_payment_details = ast.literal_eval(request.POST['fees_payment']) 
                 head = FeesHead.objects.get(id=fees_payment_details['head_id'])
-                fees_payment, created = CommonFeesPayment.objects.get_or_create(head=head)
-                if created:
-                    fees_payment.paid_amount = fees_payment_details['paid_amount']
-                else:
-                    fees_payment.paid_amount = float(fees_payment.paid_amount) + float(fees_payment_details['paid_amount'])
+                fees_payment = CommonFeesPayment()
+                fees_payment.head = head
+                fees_payment.paid_amount = fees_payment_details['paid_amount']
                 fees_payment.student = fees_payment_details['name']
                 fees_payment.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
                 fees_payment.save()
