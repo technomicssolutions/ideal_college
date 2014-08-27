@@ -52,7 +52,6 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 $scope.heads = data.heads;
                 $scope.installments = [];
                 $scope.payment_installment.amount = '';
-                $scope.payment_installment.due_date = '';
                 $scope.payment_installment.fine = '';
                 $('#balance').val(0);
                 $('#total_fee_amount').val(0);
@@ -66,7 +65,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 console.log(data || "Request failed");
             });
     }
-    $scope.get_installment = function() {
+    /*$scope.get_installment = function() {
         if ($scope.head.installments.length == 0) {
             $scope.no_installment_error = 'Payment completed';
         } else {
@@ -77,13 +76,13 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         $('#fine_amount').val(0);
         $('#fee_amount').val(0);
         $('#total_fee_amount').val(0);
-    }
+    }*/
     $scope.calculate_total_amount = function() {
         $('#head').val($scope.head);
         calculate_total_fee_amount($scope.head);
 
     }
-    $scope.get_fees = function() {
+    /*$scope.get_fees = function() {
         $scope.payment_installment.paid_date = $scope.installment.paid_date;
         $scope.payment_installment.due_date = $scope.installment.due_date;
         $scope.payment_installment.amount = $scope.installment.amount;
@@ -95,7 +94,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         $('#balance').val($scope.installment.balance);
         $('#balance_amount').val($scope.installment.balance);
         calculate_total_fee_amount($scope.head);
-    }
+    }*/
     $scope.check_student_uid_exists = function() {
         var u_id = $$('#u_id')[0].get('value');
         console.log(u_id);
@@ -141,7 +140,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
 
         $scope.payment_installment.course_id = $scope.course;
         $scope.payment_installment.batch_id = $scope.batch;
-        $scope.payment_installment.head_id = $scope.head.id;
+        $scope.payment_installment.head_id = $scope.head;
         $scope.payment_installment.paid_date = $$('#paid_date')[0].get('value');
         $scope.payment_installment.total_amount = $$('#total_fee_amount')[0].get('value');
         $scope.payment_installment.fine = $$('#fine_amount')[0].get('value');
@@ -153,6 +152,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 'fees_payment': angular.toJson($scope.payment_installment),
                 "csrfmiddlewaretoken" : $scope.csrf_token,
             }
+            console.log($scope.payment_installment);
             show_spinner();
             $http({
                 method: 'post',
