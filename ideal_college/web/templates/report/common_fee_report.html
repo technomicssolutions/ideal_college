@@ -14,18 +14,19 @@
 			<div class="form_container">
 				<div class="control">
 					<label> Fees Head</label>  
-					<select name="head" ng-model="head" ng-options="head as head.name for head in fees_heads" ng-change="get_head_details()">
+					<select name="head" ng-model="head" ng-options="head.id as head.name for head in fees_heads" ng-change="get_head_details()">
 						<option value="">All</option>
 					</select>
 				</div>
 				<div class="control">
 					<label> Date</label>  
-					<input type="text" ng-model="head.start_date" placeholder="From" name="from_date" id="from_date">
-					<input type="text" ng-model="head.end_date" placeholder="To" name="to_date" id="to_date">
+					<input type="text" placeholder="From" name="from_date" id="from_date">
+					<input type="text" placeholder="To" name="to_date" id="to_date">
 				</div>
 				<div class="control">
 					<input type="submit" value="Generate Report" ng-click="generate_common_report()">
 				</div>
+				<p class="error_message">[[validation_error]]</p>
 			</div>
 		</div>
 	</form>
