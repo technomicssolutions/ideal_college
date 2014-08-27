@@ -116,13 +116,13 @@ class FeesPayment(models.Model):
 
 class CommonFeesPayment(models.Model):
 
-	student = models.ForeignKey(Student, null=True, blank=True)
+	student = models.CharField('Name',max_length=200, null=True, blank=True)
 	head = models.ForeignKey(FeesHead, null=True, blank=True)
 	paid_date = models.DateField('Paid Date', null=True, blank=True)
 	paid_amount = models.DecimalField('Paid Amount', max_digits=14, decimal_places=2, default=0)
 
 	def __unicode__(self):
-		return str(self.student.student_name) + ' - '+ str(self.head.name)
+		return str(self.student) + ' - '+ str(self.head.name)
 
 	class Meta:
 		verbose_name_plural = 'Common Fees Payment'

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Common Fees Payment{% endblock title %}
+{% block body_id %}common_fees_report{% endblock %}
+
+{% block controller %}
+	ng-controller="FeesReportController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+{% block content %}
+	<form class="" name="common_fees_report" method="get" action="">
+		{% csrf_token %}
+		<div class="main-title">
+			<div class="alert alert-info" align="Center">Common Fees Report</div>
+			<input type="hidden" name="report_type" value="{{report_type}}">
+			<div class="form_container">
+				<div class="control">
+					<label> Fees Head</label>  
+					<select name="head" ng-model="head" ng-options="head as head.name for head in fees_heads" ng-change="get_head_details()">
+						<option value="">All</option>
+					</select>
+				</div>
+				<div class="control">
+					<label> Date</label>  
+					<input type="text" ng-model="head.start_date" placeholder="From" name="from_date" id="from_date">
+					<input type="text" ng-model="head.end_date" placeholder="To" name="to_date" id="to_date">
+				</div>
+				<div class="control">
+					<input type="submit" value="Generate Report" ng-click="generate_common_report()">
+				</div>
+			</div>
+		</div>
+	</form>
+
+{% endblock content %}

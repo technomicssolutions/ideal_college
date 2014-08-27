@@ -35,8 +35,6 @@ class IdcardReport(View):
     response = HttpResponse(content_type='application/pdf')
     p = canvas.Canvas(response, pagesize=(1000, 1250))
     y = 1150
-    p.rect(30,940,270,270)
-    p.setFont('Times-Bold',10)  
     current_date = datetime.now().date()
     report_type = request.GET.get('report_type', '')
     if not report_type:
@@ -44,53 +42,99 @@ class IdcardReport(View):
             'report_type' : 'id_card',
             })
     else:
+        filtering_option = request.GET.get('filtering_option','')
         course = request.GET.get('course','')
         batch = request.GET.get('batch', '')
-        student_id = request.GET.get('student', '')
-        student = Student.objects.get(id=student_id)
-        heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
-        p.drawCentredString(160, y+40, heading)   
-        p.setFont('Times-Roman',10)  
-        heading = "Karumanamkurussi(PO), Cherupulassery"  
-        p.drawCentredString(160, y+25, heading)   
-        heading = "Palakkad(Dt),Kerala,PIN-679504"  
-        p.drawCentredString(160, y+10, heading)  
-        heading = "PH:466-2280111,2280112,2207585"  
-        p.drawCentredString(160, y-5, heading)  
-        p.drawString(40, y-30, "Name:")  
-        p.drawString(120, y-30, student.student_name);
-        p.drawString(40, y-45, "Guardian Name:")  
-        p.drawString(120, y-45, student.guardian_name);
-        p.drawString(40, y-60, "Course:")  
-        if student.batch.branch:
-            branch_name = student.batch.branch.branch
+        if filtering_option == 'student_wise':
+            p.rect(30,940,270,270)
+            p.setFont('Times-Bold',10)  
+            student_id = request.GET.get('student', '')
+            student = Student.objects.get(id=student_id)
+            heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
+            p.drawCentredString(160, y+40, heading)   
+            p.setFont('Times-Roman',10)  
+            heading = "Karumanamkurussi(PO), Cherupulassery"  
+            p.drawCentredString(160, y+25, heading)   
+            heading = "Palakkad(Dt),Kerala,PIN-679504"  
+            p.drawCentredString(160, y+10, heading)  
+            heading = "PH:466-2280111,2280112,2207585"  
+            p.drawCentredString(160, y-5, heading)  
+            p.drawString(40, y-30, "Name:")  
+            p.drawString(120, y-30, student.student_name);
+            p.drawString(40, y-45, "Guardian Name:")  
+            p.drawString(120, y-45, student.guardian_name);
+            p.drawString(40, y-60, "Course:")  
+            if student.batch.branch:
+                branch_name = student.batch.branch.branch
+            else:
+                branch_name = ''
+            p.drawString(120, y-60, student.course.course+" "+ branch_name);
+            p.drawString(40, y-75, "Batch:")  
+            p.drawString(120, y-75, str(student.batch.start_date)+"-"+str(student.batch.end_date))  
+            address = str(student.address)
+            p.drawString(40,y-90,"Address:")
+            i = 120
+            j = 90
+            for address_line in address.split(","):
+                p.drawString(120, y-j, address_line.lstrip())
+                j = j+15
+            j = y-j
+            p.drawString(40, j, "Date of Birth:")
+            p.drawString(120, j, str(student.dob))
+            p.drawString(40, j-15, "Land Phone:")
+            p.drawString(120, j-15, str(student.land_number))
+            p.drawString(40, j-30, "Blood Group:")
+            p.drawString(120, j-30, str(student.blood_group))
+            try:
+                path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+student.photo.name
+                p.drawImage(path, 230, j-50, width=2*cm, height=2.5*cm, preserveAspectRatio=True)
+            except:
+                pass
         else:
-            branch_name = ''
-        p.drawString(120, y-60, student.course.course+" "+ branch_name);
-        p.drawString(40, y-75, "Batch:")  
-        p.drawString(120, y-75, str(student.batch.start_date)+"-"+str(student.batch.end_date))  
-        address = str(student.address)
-        p.drawString(40,y-90,"Address:")
-        i = 120
-        j = 90
-        for address_line in address.split(","):
-            p.drawString(120, y-j, address_line.lstrip())
-            j = j+15
-        j = y-j
-        p.drawString(40, j, "Date of Birth:")
-        p.drawString(120, j, str(student.dob))
-        p.drawString(40, j-15, "Land Phone:")
-        p.drawString(120, j-15, str(student.land_number))
-        p.drawString(40, j-30, "Blood Group:")
-        p.drawString(120, j-30, str(student.blood_group))
-        try:
-            path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+student.photo.name
-            p.drawImage(path, 200, j-140, width=3.5*cm, height=4.5*cm, preserveAspectRatio=True)
-        except:
-            pass
+            students = Student.objects.filter(course__id=course, batch__id=batch).order_by('roll_number')
+            m = 30
+            n = 940
+            i = 160
+            for student in students:
+                p.rect(m,n,270,270)
+                p.setFont('Times-Bold',10)  
+                heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
+                p.drawCentredString(i, y+40, heading)   
+                # p.setFont('Times-Roman',10)  
+                # heading = "Karumanamkurussi(PO), Cherupulassery"  
+                # p.drawCentredString(i, y+25, heading)   
+                # heading = "Palakkad(Dt),Kerala,PIN-679504"  
+                # p.drawCentredString(i, y+10, heading)  
+                # heading = "PH:466-2280111,2280112,2207585"  
+                # p.drawCentredString(i, y-5, heading)  
+                print i
+                m = m+300
+                if m > 630:
+                    m = 30
+                    n = n-300
+                if n < 40:
+                    m = 30
+                    n = 940
+                    p.showPage()
         p.save()
         return response
 
+
+class CommonFeeReport(View):
+
+    def get(self, request, *args, **kwargs):    
+        status_code = 200
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1250))
+        y = 1150
+        p = header(p, y)
+        p.setFont("Helvetica", 14)  
+        current_date = datetime.now().date()
+        report_type = request.GET.get('report_type', '')
+        if not report_type:
+            return render(request, 'report/common_fee_report.html',{
+                'report_type' : 'common_fees',
+                })
 
 class OutstandingFeesListReport(View):
 

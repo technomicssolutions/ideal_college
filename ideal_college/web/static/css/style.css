@@ -786,3 +786,15 @@ label.block{
 	height: auto !important;
 	width: 50% !important;
 }
+#id_card_generate label {
+    display: block !important;
+    float: left;
+    width: 25%;
+}
+#common_fees_report input[type="text"]{
+	width: 28% !important;
+	margin-right: 2%;
+}
+#common_fees_report label{
+	width: 33% !important;
+}

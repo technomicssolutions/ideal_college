@@ -861,12 +861,25 @@ function CommonFeesPayment($scope, $http, $element) {
             format:'%d/%m/%Y',
         });
         get_course_list($scope, $http);
+        $scope.get_common_heads()
     }
     $scope.get_batch = function(){
         get_course_batch_list($scope, $http);
     }
     $scope.get_student = function(){
         get_course_batch_student_list($scope, $http);
+    }
+    $scope.get_common_heads = function(){
+        $scope.url = '/fees/fees_heads/';
+        show_spinner();
+        $http.get($scope.url).success(function(data)
+        {
+            hide_spinner();
+            $scope.fees_heads = data.fees_heads;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
     }
     $scope.get_fees_head = function(){
         $scope.url = '/fees/get_common_fees_head/'+ $scope.course+ '/'+ $scope.batch+ '/'+$scope.fees_payment.student+'/';
@@ -891,19 +904,11 @@ function CommonFeesPayment($scope, $http, $element) {
     }
     $scope.get_head_details = function() {
         $scope.fees_payment.amount = $scope.head.amount;
-        $scope.fees_payment.paid_head_amount = $scope.head.paid_head_amount;
-        $scope.fees_payment.balance = $scope.head.balance;
     }
     $scope.validate_fees_payment = function() {
         $scope.validation_error = '';
-        if($scope.course == 'select') {
-            $scope.validation_error = "Please Select a course " ;
-            return false
-        } else if($scope.batch == 'select') {
-            $scope.validation_error = "Please Select a batch " ;
-            return false;
-        } else if($scope.fees_payment.student == 'select') {
-            $scope.validation_error = "Please select a student" ;
+        if($scope.fees_payment.name == '' || $scope.fees_payment.name == null) {
+            $scope.validation_error = "Please enter name" ;
             return false;
         } else if($scope.head == '' || $scope.head == undefined) {
             $scope.validation_error = "Please select a head name" ;
@@ -914,15 +919,10 @@ function CommonFeesPayment($scope, $http, $element) {
         } else if ($scope.fees_payment.paid_amount != Number($scope.fees_payment.paid_amount)) {
             $scope.validation_error = "Please enter valid paid amount" ;
             return false;
-        } else if ($scope.fees_payment.paid_amount != $scope.fees_payment.balance) {
-            $scope.validation_error = "Please check the balance amount with paid amount" ;
-            return false;
         } return true; 
     }
     $scope.save_fees_payment = function() {
 
-        $scope.fees_payment.course_id = $scope.course;
-        $scope.fees_payment.batch_id = $scope.batch;
         $scope.fees_payment.head_id = $scope.head.id;
         $scope.fees_payment.paid_date = $$('#paid_date')[0].get('value');
         if($scope.validate_fees_payment()) {
@@ -960,6 +960,7 @@ function FeesReportController($scope, $http, $element) {
     $scope.course = 'select';
     $scope.batch = 'select';
     $scope.fees_type = '';
+    $scope.head = 'All';
     $scope.filtering_option = '';
     $scope.url = '';
     $scope.init = function(csrf_token)
@@ -967,6 +968,21 @@ function FeesReportController($scope, $http, $element) {
         $scope.csrf_token = csrf_token;
         $scope.error_flag = false;
         get_course_list($scope, $http);
+        $scope.get_common_heads();
+        var from_date = new Picker.Date($$('#from_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+        var to_date = new Picker.Date($$('#to_date'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
     }
     $scope.get_batch = function(){
         $scope.filtering_option = '';
@@ -976,7 +992,20 @@ function FeesReportController($scope, $http, $element) {
         $scope.filtering_option = '';
         get_course_batch_student_list($scope, $http);
     }
+    $scope.get_common_heads = function(){
+        $scope.url = '/fees/fees_heads/';
+        show_spinner();
+        $http.get($scope.url).success(function(data)
+        {
+            hide_spinner();
+            $scope.fees_heads = data.fees_heads;
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
     $scope.view_report = function(){
+        console.log($scope.course);
         if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
             $scope.validation_error = 'Please choose course';
         } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {
@@ -990,5 +1019,8 @@ function FeesReportController($scope, $http, $element) {
         } else {
             document.location.href = '/report/outstanding_fees_report/?course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&filtering_option='+$scope.filtering_option+'&fees_type='+$scope.fees_type+'&report_type=outstanding_fees';
         }
+    }
+    $scope.generate_common_report = function(){
+        console.log($scope.head);
     }
 }

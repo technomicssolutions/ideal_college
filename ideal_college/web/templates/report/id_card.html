@@ -23,10 +23,17 @@
 						<option value="">Batch</option>
 					</select>
 				</div>
+				<div class="control">
+					<label>Report Type</label>
+					<input type="radio" ng-model="filtering_option" value="batch_wise" name="filtering_option" ng-click="outstanding_fees_details()"/>
+					<label>Batch wise</label>
+					<input type="radio" ng-model="filtering_option" value="student_wise" name="filtering_option"/>
+					<label>Student wise</label>
+				</div>
 				<p class="error_message">[[no_student_error]]</p>		
 				
 				<div class="control">
-					<select name="student" ng-model="student_id" ng-options="student.id as student.name for student in students">
+					<select name="student" ng-show="filtering_option == 'student_wise'" ng-model="student_id" ng-options="student.id as student.name for student in students">
 						<option value="">Student</option>
 					</select>
 				</div>
