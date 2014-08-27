@@ -1075,4 +1075,16 @@ function FeesReportController($scope, $http, $element) {
         } else
             document.location.href = '/report/common_fee_report/?from='+$scope.from_date+'&to='+$scope.to_date+'&type='+$scope.head;        
     }
+    $scope.generate_fee_collected_report = function(){
+        console.log($scope.batch);
+        if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
+            $scope.validation_error = 'Please choose course';
+        } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {
+            $scope.validation_error = 'Please choose batch';
+        } else if ($scope.student_id == 'select' || $scope.student_id == '' || $scope.student_id == null) {
+            $scope.validation_error = 'Please choose student';
+        } else {
+             document.location.href = '/report/fee_collected_report/?course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&report_type=fee_collected';
+        }
+    }
 }

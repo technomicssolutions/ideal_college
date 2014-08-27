@@ -11,7 +11,6 @@
 			<div class="alert alert-info" align="Center">Fee Collected Report</div>
 			<input type="hidden" name="report_type" value="{{report_type}}">
 			<div class="form_container">	
-				<p class="error_message">[[validation_error]]</p>	
 				<div class="control">
 					<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
 						<option value="">Course</option>
@@ -34,7 +33,9 @@
 				<div class="control">
 					<input type="submit" value="Generate Report" ng-click="generate_fee_collected_report()">
 				</div>
+				<p class="error_message">[[validation_error]]</p>
 			</div>
 		</div>
 	</form>
+
 {% endblock content %}
