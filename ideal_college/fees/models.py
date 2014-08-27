@@ -86,7 +86,7 @@ class FeesPaymentHead(models.Model):
 	fees_head = models.ForeignKey(FeesStructureHead, null=True, blank=True)
 	installment = models.ForeignKey(Installment, null=True, blank=True)
 	total_amount = models.DecimalField('Total Amount', max_digits=14, decimal_places=2, default=0)
-	# fine = models.DecimalField('Fine Amount', max_digits=14, decimal_places=2, default=0)
+	fine = models.DecimalField('Fine Amount', max_digits=14, decimal_places=2, default=0)
 	paid_date = models.DateField('Paid Date', null=True, blank=True)
 	
 	def __unicode__(self):
