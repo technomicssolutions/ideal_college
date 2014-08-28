@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 from academic.views import GetStudent, AddStudent, ListStudent, ViewStudentDetails, EditStudentDetails, \
-DeleteStudentDetails, CheckUidExists
+DeleteStudentDetails, CheckUidExists, SearchStudent
 
 urlpatterns = patterns('',
 	url(r'^get_student/(?P<course_id>\d+)/(?P<batch_id>\d+)/$',login_required(GetStudent.as_view()), name="get_student"),
@@ -13,4 +13,5 @@ urlpatterns = patterns('',
 	url(r'^edit_student_details/(?P<student_id>\d+)/$',login_required (EditStudentDetails.as_view()), name="edit_student_details"),
 	url(r'^delete_student_details/(?P<student_id>\d+)/$',login_required (DeleteStudentDetails.as_view()), name="delete_student_details"),
 	url(r'^check_student_uid_exists/$', login_required(CheckUidExists.as_view()), name="check_student_uid_exists"),
+	url(r'^student_search/$', login_required(SearchStudent.as_view()), name="student_search"),
 )

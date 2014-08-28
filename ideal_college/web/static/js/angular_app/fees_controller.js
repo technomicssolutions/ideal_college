@@ -1,5 +1,7 @@
 function FeesPaymentController($scope, $element, $http, $timeout, share, $location)
-{
+{   
+    $scope.students_listing = false;
+    $scope.student_selected = true;
     $scope.payment_installment = {
         'course_id': '',
         'batch_id': '',
@@ -35,15 +37,20 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
     $scope.get_student = function(){
         get_course_batch_student_list($scope, $http);
     }
-    $scope.get_fees_head = function(){
-        $scope.payment_installment.student_id = $scope.student.id;
-        $scope.payment_installment.u_id = $scope.student.u_id;
+    $scope.get_student_details = function() {
+        course_batch_student_list($scope, $http);
+    }
+    $scope.get_fees_head = function(student){
+        $scope.payment_installment.student_id = student.id;
+        $scope.payment_installment.u_id = student.u_id;
+        $scope.student_selected = true;
+        $scope.student_name = student.student_name;
         if ($scope.payment_installment.u_id == '' || $scope.payment_installment.u_id == undefined) {
             $scope.is_uid_exists = false;
         } else {
             $scope.is_uid_exists = true;
         }
-        $scope.url = '/fees/get_fee_structure_head/'+ $scope.course+ '/'+ $scope.batch+ '/'+$scope.student.id+'/';
+        $scope.url = '/fees/get_fee_structure_head/'+ $scope.course+ '/'+ $scope.batch+ '/'+student.id+'/';
         if ($scope.course !='select' && $scope.batch != 'select' && $scope.payment_installment.student != 'select')
             show_spinner();
             $http.get($scope.url).success(function(data)
@@ -86,7 +93,6 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
     }
     $scope.generate_fee_receipt = function(){
         $scope.validation_error = "";
-        console.log($scope.course);
         if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
             $scope.validation_error = 'Please choose course';
         } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {
@@ -98,7 +104,6 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         } else {
              document.location.href = '/fees/fee_receipt/?student='+$scope.student+'&head='+$scope.head;
         }
-
     }
     $scope.calculate_total_amount = function() {
         $('#head').val($scope.head);
@@ -117,7 +122,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 $scope.validation_error = '';
             }
         }).error(function(data, status){
-
+            console.log('Request failed' || data);
         });
     }
     $scope.validate_fees_payment = function() {
@@ -150,7 +155,6 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         } return true; 
     }
     $scope.save_fees_payment = function() {
-
         $scope.payment_installment.course_id = $scope.course;
         $scope.payment_installment.batch_id = $scope.batch;
         $scope.payment_installment.head_id = $scope.head;
@@ -994,7 +998,6 @@ function CommonFeesPayment($scope, $http, $element) {
         } return true; 
     }
     $scope.save_fees_payment = function() {
-
         $scope.fees_payment.head_id = $scope.head.id;
         $scope.fees_payment.paid_date = $$('#paid_date')[0].get('value');
         if($scope.validate_fees_payment()) {
