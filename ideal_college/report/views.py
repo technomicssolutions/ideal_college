@@ -449,81 +449,113 @@ class FeeCollectedReport(View):
         p = header(p, y)
         p.setFont("Helvetica", 14)  
         current_date = datetime.now().date()
-        report_type = request.GET.get('report_type', '')
+        report_type = request.GET.get('report_filtering_option', '')
         if not report_type:
-            return render(request, 'report/fee_collected_report.html',{
-                'report_type' : 'fee_collected',
-                })
+            return render(request, 'report/fee_collected_report.html',{})
         else:
-            course = request.GET.get('course','')
-            batch = request.GET.get('batch','')
-            student_id = request.GET.get('student','')
-            student = Student.objects.get(id=student_id)
-            p.setFont('Times-Roman',20)  
-            heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
-            p.drawCentredString(500, y+35, heading)   
-            p.setFont('Times-Roman',14)  
-            heading = "Karumanamkurussi(PO), Cherupulassery"  
-            p.drawCentredString(500, y+15, heading)   
-            heading = "Palakkad(Dt),Kerala,PIN-679504"  
-            p.drawCentredString(500, y-5, heading)  
-            heading = "PH:466-2280111,2280112,2207585"  
-            p.drawCentredString(500, y-25, heading)  
-            p.setFontSize(15)
-            p.drawCentredString(500, y-60, "Fee Payment Report")  
-            p.setFontSize(13)
-            p.drawString(50, y - 100, "Student Name")
-            p.drawString(200, y - 100, ":")
-            p.drawString(350, y - 100, student.student_name)
-            p.drawString(50, y - 120, "Unique ID")  
-            p.drawString(200, y - 120, ":")          
-            p.drawString(350, y - 120, str(student.unique_id))
-            p.drawString(50, y - 140, "Roll Number")
-            p.drawString(200, y - 140, ":")          
-            p.drawString(350, y - 140, str(student.roll_number))
-            p.drawString(50, y - 160, "Course")
-            p.drawString(200, y - 160, ":") 
-            if student.batch.branch:
-                branch_name = student.batch.branch.branch
-            else:
-                branch_name = ''
-            p.drawString(350, y - 160, student.course.course+" "+ branch_name);
-            p.drawString(50, y - 180, "Batch")
-            p.drawString(200, y - 180, ":")
-            p.drawString(350, y - 180, str(student.batch.start_date)+"-"+str(student.batch.end_date))   
-            try:
-                student_fee = FeesPayment.objects.get(student__id=student_id)
-                fee_payments = student_fee.payment_heads.all()
-                p.drawString(50, y - 220, "#")
-                p.drawString(80, y - 220, "Fee Head")
-                p.drawString(250, y - 220, "Payment Type")
-                p.drawString(420, y - 220, "Amount Paid")
-                p.drawString(550, y - 220, "Total Amount")
-                p.drawString(700, y - 220, "Fine")
-                p.drawString(800, y - 220, "Date of Payment")
-                j = 260
-                tot_count = 0
+            if report_type == 'batch_wise':
+                course = request.GET.get('course','')
+                batch = request.GET.get('batch','')
+                course = Course.objects.get(id=course)
+                batch = Batch.objects.get(id=batch)
+                from_date = request.GET.get('from', '')
+                to_date = request.GET.get('to', '')
+                p.drawCentredString(500, y-60, "Batch Wise Fee Report") 
+                p.drawString(50, y - 100, "Course")
+                p.drawString(100, y - 100, ":")
+                if batch.branch:
+                    branch_name = batch.branch.branch
+                else:
+                    branch_name = ''
+                p.drawString(120, y - 100, course.course+" "+ branch_name)
+                p.drawString(730, y - 100, "Batch")  
+                p.drawString(780, y - 100, ":")
+                p.drawString(800, y - 100, str(batch.start_date)+"-"+str(batch.end_date)) 
+                p.drawString(50, y - 120, "From")
+                p.drawString(100, y - 120, ":")
+                p.drawString(120, y - 120, str(datetime.strptime(from_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                p.drawString(50, y - 140, "To")  
+                p.drawString(100, y - 140, ":")
+                p.drawString(120, y - 140, str(datetime.strptime(to_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                j = 170
+                p.drawString(50, y - j, "UID")
+                p.drawString(100, y - j, "Student Name")
+                p.drawString(250, y - j, "Fee Head")
+                p.drawString(400, y - j, "Payment Type")
+                p.drawString(530, y - j, "Amount Paid")
+                p.drawString(630, y - j, "Total Amount")
+                p.drawString(730, y - j, "Fine")
+                p.drawString(800, y - j, "Date of Payment")
+                students = Student.objects.filter(course=course, batch=batch)
+                j = 200     
                 total_amount = 0
-                for fee_payment in fee_payments:
-                    tot_count = tot_count + 1
-                    total_amount = total_amount + fee_payment.total_amount
-                    p.drawString(50, y - j, str(tot_count))
-                    p.drawString(80, y - j, fee_payment.fees_head.name)   
-                    p.drawString(250, y - j, fee_payment.installment.name)  
-                    p.drawString(420, y - j, str(fee_payment.total_amount)) 
-                    p.drawString(550, y - j, str(fee_payment.fees_head.amount))  
-                    p.drawString(700, y - j, str(fee_payment.fine))  
-                    p.drawString(800, y - j, str(fee_payment.paid_date.strftime('%d-%m-%Y'))) 
-                    j = j + 30
-                    if j > 1110:
-                        j = 0
-                        p.showPage()
+                for student in students:
+                    try:
+                        student_fees = FeesPaymentHead.objects.filter(student=student, paid_date__range=[from_date, to_date])
+                        for fee_payment in student_fees:
+                            total_amount = total_amount +  fee_payment.total_amount
+                            p.drawString(50, y - j, str(student.unique_id))
+                            p.drawString(100, y - j, str(student.student_name))
+                            p.drawString(250, y - j, fee_payment.fees_head.name)   
+                            p.drawString(400, y - j, fee_payment.installment.name)  
+                            p.drawString(530, y - j, str(fee_payment.total_amount)) 
+                            p.drawString(630, y - j, str(fee_payment.fees_head.amount))  
+                            p.drawString(730, y - j, str(fee_payment.fine))  
+                            p.drawString(800, y - j, str(fee_payment.paid_date.strftime('%d-%m-%Y'))) 
+                            j = j + 30
+                            if j > 1110:
+                                j = 0
+                                p.showPage()
+                    except:
+                        pass
                 j = j + 20
-                p.drawString(50, y - j, "Total Amount Paid:")   
-                p.drawString(200, y - j, ":") 
-                p.drawString(250, y - j, str(total_amount)) 
-            except:
-                p.drawString(50, y - 220, "No fee history found for this student")
+                p.drawString(50, y - j, "Total amount collected ")
+                p.drawString(200, y - j, ":")
+                p.drawString(230, y - j, str(total_amount))
+
+            elif report_type == 'all':
+                from_date = request.GET.get('from', '')
+                to_date = request.GET.get('to', '')
+                p.drawCentredString(500, y-60, "Date Wise Fee Report") 
+                p.drawString(50, y - 100, "From")
+                p.drawString(100, y - 100, ":")
+                p.drawString(120, y - 100, str(datetime.strptime(from_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                p.drawString(50, y - 120, "To")  
+                p.drawString(100, y - 120, ":")
+                p.drawString(120, y - 120, str(datetime.strptime(to_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                j = 160
+                p.drawString(50, y - j, "UID")
+                p.drawString(100, y - j, "Student Name")
+                p.drawString(250, y - j, "Fee Head")
+                p.drawString(400, y - j, "Payment Type")
+                p.drawString(530, y - j, "Amount Paid")
+                p.drawString(630, y - j, "Total Amount")
+                p.drawString(730, y - j, "Fine")
+                p.drawString(800, y - j, "Date of Payment")
+                total_amount = 0
+                j = 190
+                try:
+                    student_fees = FeesPaymentHead.objects.filter(paid_date__range=[from_date, to_date]).order_by('paid_date')
+                    for fee_payment in student_fees:
+                        total_amount = total_amount + fee_payment.total_amount
+                        p.drawString(50, y - j, str(fee_payment.student.unique_id))
+                        p.drawString(100, y - j, str(fee_payment.student.student_name))
+                        p.drawString(250, y - j, fee_payment.fees_head.name)   
+                        p.drawString(400, y - j, fee_payment.installment.name)  
+                        p.drawString(530, y - j, str(fee_payment.total_amount)) 
+                        p.drawString(630, y - j, str(fee_payment.fees_head.amount))  
+                        p.drawString(730, y - j, str(fee_payment.fine))  
+                        p.drawString(800, y - j, str(fee_payment.paid_date.strftime('%d-%m-%Y'))) 
+                        j = j + 30
+                        if j > 1110:
+                            j = 0
+                            p.showPage()
+                except:
+                    pass
+                j = j + 20
+                p.drawString(50, y - j, "Total amount collected ")
+                p.drawString(200, y - j, ":")
+                p.drawString(230, y - j, str(total_amount))
             p.save()
             return response
 

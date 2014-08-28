@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}Fee Collected{% endblock title %}
-{% block body_id %}fee_collected_report{% endblock %}
+{% block title %}Fee Receipt{% endblock title %}
+{% block body_id %}fee_receipt{% endblock %}
 {% block controller %}
 	ng-controller="FeesPaymentController" ng-init="init('{{csrf_token}}')"
 {% endblock controller %}
@@ -8,7 +8,7 @@
 	<form class="" name="fee_collected_report" method="get" action="">
 		{% csrf_token %}
 		<div class="main-title">
-			<div class="alert alert-info" align="Center">Fee Collected Report</div>
+			<div class="alert alert-info" align="Center">Fee Receipt</div>
 			<input type="hidden" name="report_type" value="{{report_type}}">
 			<div class="form_container">	
 				<div class="control">

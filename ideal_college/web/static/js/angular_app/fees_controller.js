@@ -76,6 +76,10 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
             {
                 if(data.result == "ok"){
                     $scope.paid_heads = data.paid_heads;
+                    $scope.paid_heads.push({
+                        'id': 'All',
+                        'name': 'All',
+                    })
                     $scope.validation_error = "";
                 }
                 else{
@@ -1102,7 +1106,7 @@ function FeesReportController($scope, $http, $element) {
         } else
             document.location.href = '/report/common_fee_report/?from='+$scope.from_date+'&to='+$scope.to_date+'&type='+$scope.head;        
     }
-    $scope.generate_fee_collected_report = function(){
+/*    $scope.generate_fee_collected_report = function(){
         if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
             $scope.validation_error = 'Please choose course';
         } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {
@@ -1111,6 +1115,32 @@ function FeesReportController($scope, $http, $element) {
             $scope.validation_error = 'Please choose student';
         } else {
              document.location.href = '/report/fee_collected_report/?course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&report_type=fee_collected';
+        }
+    }*/
+    $scope.generate_fee_report = function(){
+        $scope.from_date =  $$('#from_date')[0].get('value');
+        $scope.to_date =  $$('#to_date')[0].get('value');
+        $scope.validation_error = "";
+        if($scope.report_filtering_option == 'batch_wise'){
+            if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
+                $scope.validation_error = 'Please choose course';
+            } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {
+                $scope.validation_error = 'Please choose batch';
+            } else if($scope.from_date == "" || $scope.from_date == undefined){
+                $scope.validation_error = 'Please enter Start date';
+            } else if($scope.to_date == "" || $scope.to_date == undefined){
+                $scope.validation_error = 'Please enter End date';
+            } else{
+                document.location.href = '/report/fee_collected_report/?course='+$scope.course+'&batch='+$scope.batch+'&from='+$scope.from_date+'&to='+$scope.to_date+'&report_filtering_option='+$scope.report_filtering_option;
+            }
+        } else if($scope.report_filtering_option == 'all'){
+            if($scope.from_date == "" || $scope.from_date == undefined){
+                $scope.validation_error = 'Please enter Start date';
+            } else if($scope.to_date == "" || $scope.to_date == undefined){
+                $scope.validation_error = 'Please enter End date';
+            } else{
+                document.location.href = '/report/fee_collected_report/?from='+$scope.from_date+'&to='+$scope.to_date+'&report_filtering_option='+$scope.report_filtering_option;
+            }
         }
     }
 }
