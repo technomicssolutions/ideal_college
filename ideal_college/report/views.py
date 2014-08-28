@@ -559,7 +559,6 @@ class FeeCollectedReport(View):
             course = request.GET.get('course','')
             batch = request.GET.get('batch','')
             student_id = request.GET.get('student','')
-            student_fee = FeesPaymentHead.objects.get(student__id=student_id)
             student = Student.objects.get(id=student_id)
             p.setFont('Times-Roman',20)  
             heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
@@ -579,7 +578,7 @@ class FeeCollectedReport(View):
             p.drawString(350, y - 100, student.student_name)
             p.drawString(50, y - 120, "Unique ID")  
             p.drawString(200, y - 120, ":")          
-            p.drawString(350, y - 120, student.unique_id)
+            p.drawString(350, y - 120, str(student.unique_id))
             p.drawString(50, y - 140, "Roll Number")
             p.drawString(200, y - 140, ":")          
             p.drawString(350, y - 140, str(student.roll_number))
@@ -593,21 +592,36 @@ class FeeCollectedReport(View):
             p.drawString(50, y - 180, "Batch")
             p.drawString(200, y - 180, ":")
             p.drawString(350, y - 180, str(student.batch.start_date)+"-"+str(student.batch.end_date))   
-            p.drawString(50, y - 200, "Fee Head")
-            p.drawString(200, y - 200, ":")
-            p.drawString(350, y - 200, student_fee.fees_head.name)   
-            p.drawString(50, y - 220, "Payment Type")
-            p.drawString(200, y - 220, ":")
-            p.drawString(350, y - 220, student_fee.installment.name)  
-            p.drawString(50, y - 240, "Total Amount")
-            p.drawString(200, y - 240, ":")
-            p.drawString(350, y - 240, str(student_fee.total_amount))  
-            p.drawString(50, y - 260, "Fine")
-            p.drawString(200, y - 260, ":")
-            p.drawString(350, y - 260, str(student_fee.fine))  
-            p.drawString(50, y - 280, "Date of Payment")
-            p.drawString(200, y - 280, ":")
-            p.drawString(350, y - 280, str(student_fee.paid_date.strftime('%d-%m-%Y')))  
+            try:
+                student_fee = FeesPayment.objects.get(student__id=student_id)
+                fee_payments = student_fee.payment_heads.all()
+                k = y - 200
+                for fee_payment in fee_payments:
+                    p.drawString(50, k - 20, "Fee Head")
+                    p.drawString(200, k - 20, ":")
+                    p.drawString(350, k - 20, fee_payment.fees_head.name)   
+                    p.drawString(50, k - 40, "Payment Type")
+                    p.drawString(200, k - 40, ":")
+                    p.drawString(350, k - 40, fee_payment.installment.name)  
+                    p.drawString(50, k - 60, "Amount Paid")
+                    p.drawString(200, k - 60, ":")
+                    p.drawString(350, k - 60, str(fee_payment.total_amount)) 
+                    p.drawString(50, k - 80, "Total Amount")
+                    p.drawString(200, k - 80, ":")
+                    p.drawString(350, k - 80, str(fee_payment.fees_head.amount))  
+                    p.drawString(50, k - 100, "Fine")
+                    p.drawString(200, k - 100, ":")
+                    p.drawString(350, k - 100, str(fee_payment.fine))  
+                    p.drawString(50, k - 120, "Date of Payment")
+                    p.drawString(200, k - 120, ":")
+                    p.drawString(350, k - 120, str(fee_payment.paid_date.strftime('%d-%m-%Y'))) 
+                    k= k - 140 
+                    print k
+                    if k <= 110:
+                        k = y
+                        p.showPage()
+            except:
+                p.drawString(50, y - 220, "No fee history found for this student")
             p.save()
             return response
 
