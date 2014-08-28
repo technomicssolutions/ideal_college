@@ -252,8 +252,6 @@ class CommonFeeReport(View):
             p.save()
             return response
 
-
-
 class OutstandingFeesListReport(View):
 
     def get(self, request, *args, **kwargs):
@@ -317,7 +315,6 @@ class OutstandingFeesListReport(View):
                                         installment = head.installments.filter(name='Early Payment')
                                 if installment.count() > 0:
                                     if installment[0].end_date < current_date:
-                                        # p.drawString(50, y1, head.name)
                                         data=[[Paragraph(head.name, para_style)]]
                                         table = Table(data, colWidths=[150], rowHeights=100, style=style)      
                                         table.wrapOn(p, 200, 400)
@@ -386,7 +383,6 @@ class OutstandingFeesListReport(View):
                         table = Table(stud_name, colWidths=[130], rowHeights=100, style=style)   
                         table.wrapOn(p, 200, 400)
                         table.drawOn(p, 125, y1-10)
-                        # p.drawString(150, y1, student.student_name)
                         heads = student.applicable_fees_heads.all()
                         for head in heads:
                             data = [[Paragraph(head.name, para_style)]]
@@ -440,99 +436,6 @@ class OutstandingFeesListReport(View):
                                                 p.showPage()
                                                 p = header(p, y)
                                                 p.setFontSize(12)
-                                        
-            else:
-                heads = FeesHead.objects.all()
-                if filtering_option == 'student_wise':
-                    student = Student.objects.get(id=student_id)
-                    course = Course.objects.get(id=request.GET.get('course', ''))
-                    batch = Batch.objects.get(id=request.GET.get('batch', ''))
-                    batch_name = str(batch.start_date) + ' - ' + str(batch.end_date) + ((' - '+ str(batch.branch.branch)) if batch.branch else '')
-                    heading = 'Student Wise Report' + ' - ' + course.course + ' - ' + batch_name + ' - '+ student.student_name+' - Roll no: '+str(student.roll_number)
-                    p.drawCentredString(400, y - 70, heading)
-                    p.setFontSize(13)
-                    
-                    p.drawString(150, y - 100, "Head Name")
-                    p.drawString(320, y - 100, "Total Amount")
-                    p.drawString(420, y - 100, "Paid")
-                    p.drawString(520, y - 100, "Balance")
-                    p.setFontSize(12) 
-                    y1 = y - 110
-                    for head in heads:
-                        try:
-                            fees_payment = CommonFeesPayment.objects.get(head=head, student__id=student_id)
-                            if fees_payment.paid_amount < head.amount:
-                                y1 = y1 - 30
-                                if y1 <= 135:
-                                    y1 = y - 110
-                                    p.showPage()
-                                    p = header(p, y)
-                                    p.setFontSize(12) 
-                                p.drawString(150, y1, str(head.name))
-                                p.drawString(320, y1, str(head.amount))
-                                p.drawString(420, y1, str(fees_payment.paid_amount))
-                                p.drawString(520, y1, str(float(head.amount) - float(fees_payment.paid_amount)))
-                        except:
-                            y1 = y1 - 30
-                            if y1 <= 135:
-                                y1 = y - 110
-                                p.showPage()
-                                p = header(p, y)
-                                p.setFontSize(12) 
-                            p.drawString(150, y1, str(head.name))
-                            p.drawString(320, y1, str(head.amount))
-                            p.drawString(420, y1, str(0))
-                            p.drawString(520, y1, str(float(head.amount)))
-                else:
-                    students = Student.objects.filter(course__id=request.GET.get('course', ''), batch__id=request.GET.get('batch', '')).order_by('roll_number')
-                    course = Course.objects.get(id=request.GET.get('course', ''))
-                    batch = Batch.objects.get(id=request.GET.get('batch', ''))
-                    batch_name = str(batch.start_date) + ' - ' + str(batch.end_date) + ((' - '+ str(batch.branch.branch)) if batch.branch else '')
-                    heading = 'Batch Wise Report' + ' - ' + course.course + ' - ' + batch_name
-                    p.drawCentredString(400, y - 70, heading)
-                    p.setFontSize(13)
-                    p.drawString(50, y - 100, "Roll Number")
-                    p.drawString(150, y - 100, "Student")
-                    p.drawString(320, y - 100, "Head Name")
-                    p.drawString(490, y - 100, "Total Amount")
-                    p.drawString(590, y - 100, "Paid")
-                    p.drawString(690, y - 100, "Balance")
-                    p.setFontSize(12) 
-                    y1 = y - 110
-                    for student in students:
-                        y1 = y1 - 30
-                        if y1 <= 135:
-                            y1 = y - 110
-                            p.showPage()
-                            p = header(p, y)
-                            p.setFontSize(12) 
-                        p.drawString(50, y1, str(student.roll_number))
-                        p.drawString(150, y1, student.student_name)
-                        for head in heads:
-                            try:
-                                fees_payment = CommonFeesPayment.objects.get(head=head, student__id=student_id)
-                                if fees_payment.paid_amount < head.amount:
-                                    y1 = y1 - 30
-                                    if y1 <= 135:
-                                        y1 = y - 110
-                                        p.showPage()
-                                        p = header(p, y)
-                                        p.setFontSize(12) 
-                                    p.drawString(320, y1, str(head.name))
-                                    p.drawString(490, y1, str(head.amount))
-                                    p.drawString(590, y1, str(fees_payment.paid_amount))
-                                    p.drawString(690, y1, str(float(head.amount) - float(fees_payment.paid_amount))) 
-                            except:
-                                y1 = y1 - 30
-                                if y1 <= 135:
-                                    y1 = y - 110
-                                    p.showPage()
-                                    p = header(p, y)
-                                    p.setFontSize(12) 
-                                p.drawString(320, y1, str(head.name))
-                                p.drawString(490, y1, str(head.amount))
-                                p.drawString(590, y1, str(0))
-                                p.drawString(690, y1, str(float(head.amount))) 
             p.save()
         return response
 

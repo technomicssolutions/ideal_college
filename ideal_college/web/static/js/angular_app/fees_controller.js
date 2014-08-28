@@ -189,7 +189,7 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
     $scope.student_id = 'select';
     $scope.course = 'select';
     $scope.batch = 'select';
-    $scope.fees_type = '';
+    $scope.fees_type = 'course';
     $scope.filtering_option = '';
     $scope.url = '';
     $scope.init = function(csrf_token)
@@ -1027,7 +1027,7 @@ function FeesReportController($scope, $http, $element) {
     $scope.student_id = 'select';
     $scope.course = 'select';
     $scope.batch = 'select';
-    $scope.fees_type = '';
+    $scope.fees_type = 'course';
     $scope.head = 'All';
     $scope.filtering_option = '';
     $scope.url = '';
