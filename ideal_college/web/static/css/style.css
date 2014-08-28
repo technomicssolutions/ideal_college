@@ -252,6 +252,11 @@ textarea{
 	float: left;
 	padding: 10px;
 }
+.form_container .control_report {
+	width: 100%;
+	height: 30px;
+	padding: 10px;
+}
 .form_container label{
 	display: block !important;
     float: left;
@@ -798,3 +803,12 @@ label.block{
 #common_fees_report label{
 	width: 33% !important;
 }
+#fee_collected_report label{
+	width: 27% !important;
+	margin-left: 2%;
+}
+#fee_collected_report input[type="text"]{
+	width: 28% !important;
+	margin-right: 2%;
+}
+
