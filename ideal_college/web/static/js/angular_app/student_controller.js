@@ -345,7 +345,9 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
                 "csrfmiddlewaretoken" : $scope.csrf_token
             }
             var fd = new FormData();
-            fd.append('photo_img', $scope.photo_img.src)   
+            console.log($scope.photo_img)
+            if ($scope.photo_img != undefined)
+                fd.append('photo_img', $scope.photo_img.src)   
             for(var key in params){
                 fd.append(key, params[key]);          
             }
@@ -369,14 +371,6 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
                 $scope.error_flag=true;
                 $scope.message = data.message;
             });
-            // $http({
-            //     method : 'post',
-            //     url : $scope.url,
-            //     data : $.param(params),
-            //     headers : {
-            //         'Content-Type' : 'application/x-www-form-urlencoded'
-            //     }
-            // }).
         }
     }
 }
