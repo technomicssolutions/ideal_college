@@ -157,12 +157,14 @@ function clear_fees_payment_details($scope) {
 }
 
 function get_course_batch_student_list($scope, $http) {
+    $scope.paid_completely = '';
     if (($scope.course != 'select') && (($scope.batch != 'select'))) {
         $http.get('/academic/get_student/'+ $scope.course+ '/'+ $scope.batch+ '/').success(function(data)
         {
             $scope.students = data.students;
             $scope.no_head_error = '';
             $scope.no_installment_error = '';
+
             if ($scope.students.length == 0) {
                 $scope.no_student_error = 'No students in this batch';
                 $scope.heads = [];
