@@ -123,7 +123,7 @@ class GetStudent(View):
         batch_id = kwargs['batch_id']
         if request.is_ajax():
             try:
-                students = Student.objects.filter(course__id=course_id, batch__id=batch_id)
+                students = Student.objects.filter(course__id=course_id, batch__id=batch_id).order_by('roll_number')
                 student_list = []
                 for student in students:
                     student_list.append({

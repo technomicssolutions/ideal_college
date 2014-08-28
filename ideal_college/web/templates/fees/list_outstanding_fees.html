@@ -53,28 +53,27 @@
 			<table id="list" class="table striped" ng-show="filtering_option == 'student_wise' && fees_details.head_details.length > 0">
 				<tr class="success" style="font-size: 12px" style="width:auto">
 					<th>Head</th>
-					<th>Total Amt</th>
-					<th>No. Inst.</th>
-					<th>Inst.Name</th>
-					<th>Inst.Amt</th>
-					<th>Inst.Due date</th>
-					<th>Inst.Fine Amt</th>
+					<th>Amount</th>
+					<th>Payment Type</th>
+					<th>Start Date</th>
+					<th>End Date</th>
+					<th>Fine</th>
+					<!-- <th>Inst.Fine Amt</th>
 					<th>Inst.Paid Amt</th>
-					<th>Inst.Balance Amt</th>
+					<th>Inst.Balance Amt</th> -->
 				</tr>
 				<tr ng-repeat="head in fees_details.head_details" ng-show="filtering_option == 'student_wise'">
 					<td>[[head.head]]</td>
 					<td>[[head.amount]]</td>
-					<td>[[head.no_installments]]</td>
 					<td colspan="6" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px;">
 						<table style="width:100%">
 							<tr ng-repeat="installment in head.installments">
-								<td style="width : 10%;"> [[installment.name]] </td>
-								<td style="width : 10%;"> [[installment.amount]] </td>
-								<td style="width : 15%;"> [[installment.due_date]] </td>
-								<td style="width : 15%;"> [[installment.fine_amount]] </td>
-								<td style="width : 15%;"> [[installment.paid_installment_amount]] </td>
-								<td style="width : 15%;"> [[installment.balance]] </td>
+								<td style="width : 34%;"> [[installment.type]] </td>
+								<td style="width : 26%;"> [[installment.start_date]] </td>
+								<td style="width : 26%;"> [[installment.end_date]] </td>
+								<td style="width : 15%;"> [[installment.fine]] </td>
+								<!-- <td style="width : 15%;"> [[installment.paid_installment_amount]] </td>
+								<td style="width : 15%;"> [[installment.balance]] </td> -->
 							</tr>
 						</table>
 					</td>
