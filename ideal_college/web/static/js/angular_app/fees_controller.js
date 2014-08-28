@@ -188,6 +188,7 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
         if ($scope.student_id == '' || $scope.student_id == undefined) {
             $scope.student_id = 'select';
             $scope.fees_details = [];
+            $scope.paid_completely = '';
         }
         if (($scope.fees_type != '' || $scope.fees_type != undefined) && ($scope.filtering_option != '' || $scope.filtering_option != undefined)) {
             if ($scope.course != '' && $scope.batch != '') {
@@ -204,8 +205,15 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
             hide_spinner();
             if (data.result == 'ok') 
                 $scope.fees_details = data.fees_details[0];
-                if($scope.fees_details.students)
-                    paginate($scope.fees_details.students, $scope, 2);
+                if ($scope.fees_details != undefined) {
+                    if ($scope.fees_details.head_details.length == 0) {
+                        $scope.paid_completely = 'Paid Completely';
+                    } else {
+                        $scope.paid_completely = '';
+                    }
+                    if($scope.fees_details.students)
+                        paginate($scope.fees_details.students, $scope, 2);
+                }
             else {
                 $scope.no_student_error = data.message;
             }

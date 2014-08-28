@@ -36,10 +36,14 @@
 				<label>Student wise</label>
 				<div class="clear"></div>
 			</div>
+
 			<div class="control" ng-show="filtering_option == 'student_wise'">
 				<select name="student" ng-model="student_id" ng-change="outstanding_fees_details()" ng-options="student.id as student.student for student in students">
 					<option value="">Student</option>
 				</select>
+				<div class="control" ng-show="paid_completely">
+					<p class="error_message" style="float:left;">[[paid_completely]]</p>
+				</div>
 				<div class="control">
 					<label> Roll No:  </label> <label> [[fees_details.roll_no]] </label>
 				 	<label> Student Name:  </label> <label> [[fees_details.student_name]] </label>
@@ -93,21 +97,21 @@
 					<th>Inst.Paid Amt</th>
 					<th>Inst.Balance Amt</th> -->
 				</tr>
-				<tr ng-repeat="student in visible_list track by index">
+				<tr ng-repeat="student in visible_list">
 					<td>[[student.roll_no]]</td>
 					<td>[[student.name]]</td>
 					<td colspan="10" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px;"> 
 						<table style="width:100%;">
 							<tr ng-repeat="head in student.head_details" ng-show="filtering_option == 'batch_wise'">
-								<td style="width: 6%;">[[head.head]]</td>
-								<td style="width: 11%;">[[head.amount]]</td>
+								<td style="width: 12%;">[[head.head]]</td>
+								<td style="width: 14%;">[[head.amount]]</td>
 								<!-- <td style="width: 6%;">[[head.no_installments]]</td> -->
 								<td colspan="6" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px;">
 									<table style="width:100%">
 										<tr ng-repeat="installment in head.installments">
-											<td style="width : 16%;"> [[installment.type]] </td>
-											<td style="width : 12%;"> [[installment.start_date]] </td>
-											<td style="width : 20%;"> [[installment.end_date]] </td>
+											<td style="width : 34%;"> [[installment.type]] </td>
+											<td style="width : 27%;"> [[installment.start_date]] </td>
+											<td style="width : 26%;"> [[installment.end_date]] </td>
 											<td style="width : 14%;"> [[installment.fine]] </td>
 											<!-- <td style="width : 18%;"> [[installment.paid_installment_amount]] </td>
 											<td style="width : 15%;"> [[installment.balance]] </td> -->

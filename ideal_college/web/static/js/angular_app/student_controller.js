@@ -345,7 +345,6 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
                 "csrfmiddlewaretoken" : $scope.csrf_token
             }
             var fd = new FormData();
-            console.log($scope.photo_img)
             if ($scope.photo_img != undefined)
                 fd.append('photo_img', $scope.photo_img.src)   
             for(var key in params){
