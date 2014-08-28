@@ -795,21 +795,36 @@ label.block{
     display: block !important;
     float: left;
     width: 25%;
+    margin-left: 2%;
+}
+#id_card_generate input[type="submit"] {
+	margin-left: 27%;
+}
+#fee_receipt input[type="submit"] {
+	margin-left: 25%;
 }
 #common_fees_report input[type="text"]{
 	width: 28% !important;
 	margin-right: 2%;
 }
 #common_fees_report label{
-	width: 33% !important;
+	width: 25% !important;
+	margin-top: 1%;
 }
 #fee_collected_report label{
 	width: 27% !important;
 	margin-left: 2%;
+	margin-top: 1%;
 }
 #fee_collected_report input[type="text"]{
 	width: 28% !important;
 	margin-right: 2%;
+}
+#fee_collected_report input[type="submit"]{
+	margin-left: 29%;
+}
+#common_fees_report input[type="submit"]{
+	margin-left: 25%;
 }
 
 .student_list {
@@ -827,4 +842,8 @@ label.block{
     height: 20px;
     padding: 10px;
     width: 92%;
+}
+#fee_receipt label{
+	width: 25% !important;
+	margin-top: 1%;
 }

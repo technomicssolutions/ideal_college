@@ -383,6 +383,9 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
         $scope.error_flag = false;
         $scope.popup = '';      
         $scope.pages = 1;
+        $scope.student_id = '';
+        $scope.students_listing = false;
+        $scope.student_selected = true;
         var date_pick = new Picker.Date($$('#dob'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
@@ -400,34 +403,47 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
         reset_student($scope);
     }
     $scope.get_batch = function(){   
-        show_spinner();     
-        var url = '/college/get_batch/'+ $scope.course+ '/';
-        $http.get(url).success(function(data)
-        {
-            $scope.batches = data.batches;
-            hide_spinner();
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
+        if($scope.course != null){
+            show_spinner();     
+            var url = '/college/get_batch/'+ $scope.course+ '/';
+            $http.get(url).success(function(data)
+            {
+                $scope.batches = data.batches;
+                hide_spinner();
+            }).error(function(data, status)
+            {
+                console.log(data || "Request failed");
+            });
+        }
     }
     $scope.get_fees_head = function() {
         console.log('hii'); 
         get_fee_structure_head_details($scope, $http);
     }
     $scope.get_students = function(){
-        show_spinner();
         var url = '/academic/list_student/?batch_id='+ $scope.batch;
-        $http.get(url).success(function(data)
-        {
-            $scope.students = data.students;
-            console.log($scope.students);
-            paginate(data.students, $scope);
-            hide_spinner();
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
+        if($scope.batch != null){
+            show_spinner();
+            $http.get(url).success(function(data)
+            {
+                $scope.students = data.students;
+                console.log($scope.students);
+                paginate(data.students, $scope);
+                hide_spinner();
+            }).error(function(data, status)
+            {
+                console.log(data || "Request failed");
+            });
+        }
+    }
+    $scope.select_student = function(student){
+        $scope.student_name = student.student_name;
+        $scope.student_id = student.id;
+        $scope.students_listing = false;
+        $scope.student_selected = true;
+    }
+    $scope.get_student_details = function() {
+        course_batch_student_list($scope, $http);
     }
     $scope.add_new_student  = function(){
         add_new_student($http, $scope);
@@ -436,13 +452,17 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
         save_new_student($http, $scope);
     }
     $scope.generate_id_card = function(){
-        console.log($scope.student_id);
+        console.log($scope.filtering_option);
         if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
             $scope.validation_error = 'Please choose course';
         } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {
             $scope.validation_error = 'Please choose batch';
-        } else if ($scope.student_id == undefined && $scope.filtering_option == "student_wise") {
+        } else if (($scope.student_name == undefined || $scope.student_name == "" )&& $scope.filtering_option == "student_wise") {
             $scope.validation_error = 'Please choose student';
+        } else if (($scope.student_id == undefined || $scope.student_id == "" )&& $scope.filtering_option == "student_wise") {
+            $scope.validation_error = 'Please choose student';
+        }  else if ($scope.filtering_option != "student_wise" && $scope.filtering_option != "batch_wise") {
+            $scope.validation_error = 'Please choose report type';
         } else {
            document.location.href = '/report/id_card/?course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&filtering_option='+$scope.filtering_option+'&report_type=id_card';
         }
