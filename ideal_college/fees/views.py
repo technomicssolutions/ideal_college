@@ -382,7 +382,6 @@ class GetOutStandingFeesDetails(View):
             if request.GET.get('fees_type','') == 'course':
                 if filtering_option == 'student_wise':
                     student = Student.objects.get(id=student_id)
-                    heads = fees_structure.head.all()
                     ctx_fees_head_details = []
                     ctx_heads_list = []
                     heads = student.applicable_fees_heads.all()
@@ -436,61 +435,57 @@ class GetOutStandingFeesDetails(View):
                     students = Student.objects.filter(course__id=request.GET.get('course', ''), batch__id=request.GET.get('batch', '')).order_by('roll_number')
                     ctx_student_fees_details = []
                     for student in students:
-                        heads = fees_structure.head.all()
                         ctx_fees_head_details = []
+                        ctx_heads_list = []
+                        heads = student.applicable_fees_heads.all()
                         for head in heads:
-                            is_not_paid = False
                             ctx_installments = []
-                            i = 0
                             for installment in head.installments.all():
-                                try:
-                                    fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student=student)
-                                    fees_payment_installments = fees_payment.payment_installment.filter(installment=installment)
-                                    if fees_payment_installments.count() > 0:
-                                        if fees_payment_installments[0].installment_amount < installment.amount:
-                                            is_not_paid = True
-                                            ctx_installments.append({
-                                                'id': installment.id,
-                                                'amount':installment.amount,
-                                                'due_date': installment.due_date.strftime('%d/%m/%Y'),
-                                                'fine_amount': installment.fine_amount,
-                                                'name':'installment'+str(i + 1),
-                                                'paid_installment_amount': fees_payment_installments[0].installment_amount,
-                                                'balance': float(installment.amount) - float(fees_payment_installments[0].installment_amount),
-                                            })
-                                    elif fees_payment_installments.count() == 0:
-                                        is_not_paid = True
-                                        ctx_installments.append({
-                                            'id': installment.id,
-                                            'amount':installment.amount,
-                                            'due_date': installment.due_date.strftime('%d/%m/%Y'),
-                                            'fine_amount': installment.fine_amount,
-                                            'name':'installment'+str(i + 1),
-                                            'paid_installment_amount': 0,
-                                            'balance': float(installment.amount),
-                                        })
-                                except Exception:
-                                    if current_date >= installment.due_date:
-                                        is_not_paid = True
-                                        ctx_installments.append({
-                                            'id': installment.id,
-                                            'amount':installment.amount,
-                                            'due_date': installment.due_date.strftime('%d/%m/%Y'),
-                                            'fine_amount': installment.fine_amount,
-                                            'name':'installment'+str(i + 1),
-                                            'paid_installment_amount': 0,
-                                            'balance': float(installment.amount),
-                                        })
-                                i = i + 1
-                            if is_not_paid:
-                                ctx_fees_head_details.append({
-                                    'head': head.name,
-                                    'amount': head.amount,
-                                    'no_installments': head.no_installments,
-                                    'installments': ctx_installments,
+                                ctx_installments.append({
+                                    'type': installment.name,
+                                    'start_date': installment.start_date.strftime('%d/%m/%Y'),
+                                    'end_date': installment.end_date.strftime('%d/%m/%Y'),
+                                    'fine': installment.fine_amount,
                                 })
-                        ctx_student_fees_details.aGetFeeSppend({
-                            'head_details':ctx_fees_head_details,
+                            try:
+                                fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student=student)
+                                fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
+                                if fees_payment_heads.count() == 0:
+                                    installment = head.installments.filter(name='Late Payment')
+                                    if installment.count() == 0:
+                                        installment = head.installments.filter(name='Standard Payment')
+                                        if installment.count() == 0:
+                                            installment = head.installments.filter(name='Early Payment')
+                                    if installment.count() > 0:
+                                        if installment[0].end_date < current_date:
+                                            ctx_heads_list.append({
+                                                'id': head.id,
+                                                'head': head.name,
+                                                'amount': head.amount,
+                                                'installments': ctx_installments,
+                                            })
+                            except Exception as ex:
+                                print str(ex)
+                                installment = head.installments.filter(name='Late Payment')
+                                if installment.count() == 0:
+                                    installment = head.installments.filter(name='Standard Payment')
+                                    if installment.count() == 0:
+                                        installment = head.installments.filter(name='Early Payment')
+                                if installment.count() > 0:
+                                    if installment[0].end_date < current_date:
+                                        ctx_heads_list.append({
+                                            'id': head.id,
+                                            'head': head.name,
+                                            'amount': head.amount,
+                                            'installments': ctx_installments,
+                                        })
+                        # ctx_fees_details.append({
+                        #     'head_details': ctx_heads_list,
+                        #     'student_name': student.student_name,
+                        #     'roll_no': student.roll_number,
+                        # })
+                        ctx_student_fees_details.append({
+                            'head_details':ctx_heads_list,
                             'name': student.student_name,
                             'roll_no': student.roll_number,
                         })
@@ -688,7 +683,9 @@ class GetFeesHeadDateRanges(View):
                 fine = 0
                 if installment.name == 'Late Payment':
                     no_of_days = (paid_date - installment.start_date).days
-                    fine = no_of_days*installment.fine_amount
+                    if no_of_days >= 0:
+                        no_of_days = no_of_days + 1
+                        fine = no_of_days*installment.fine_amount
                 head_installments.append({
                     'name': installment.name,
                     'id': installment.id,
@@ -709,13 +706,15 @@ class GetFeesHeadDateRanges(View):
                     installment = head.installments.filter(end_date__lte=paid_date, name='Early Payment')
             if installment:
                 no_of_days = (paid_date - installment[0].start_date).days
-                fine = no_of_days*installment[0].fine_amount
-                head_installments.append({
-                    'name': installment[0].name,
-                    'id': installment[0].id,
-                    'fine': fine,
-                    'message': 'ok'
-                })
+                if no_of_days >= 0:
+                    no_of_days = no_of_days + 1
+                    fine = no_of_days*installment[0].fine_amount
+                    head_installments.append({
+                        'name': installment[0].name,
+                        'id': installment[0].id,
+                        'fine': fine,
+                        'message': 'ok'
+                    })
         res = {
             'result': 'ok',
             'head_details': head_installments,
