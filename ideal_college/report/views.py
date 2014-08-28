@@ -6,15 +6,28 @@ from PIL import Image
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.units import inch,cm, mm
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_RIGHT, TA_JUSTIFY, TA_CENTER
+from reportlab.platypus import Paragraph, Table, TableStyle
 
 from django.shortcuts import render
 from django.views.generic.base import View
 from django.http import HttpResponse
+from django.conf import settings
 
 from fees.models import Installment, FeesHead, FeesStructureHead, FeesStructure, FeesPaymentHead, FeesPayment, CommonFeesPayment
 from college.models import College, Course, Batch
 from academic.models import Student
-from django.conf import settings
+
+style = [
+    ('FONTSIZE', (0,0), (-1, -1), 12),
+    ('FONTNAME',(0,0),(-1,-1),'Helvetica') 
+]
+
+para_style = ParagraphStyle('fancy')
+para_style.fontSize = 12
+para_style.fontName = 'Helvetica'
+
 
 def header(canvas, y):
 
@@ -239,8 +252,6 @@ class CommonFeeReport(View):
             p.save()
             return response
 
-
-
 class OutstandingFeesListReport(View):
 
     def get(self, request, *args, **kwargs):
@@ -278,81 +289,72 @@ class OutstandingFeesListReport(View):
                     p.drawCentredString(400, y - 70, heading)
                     p.setFontSize(13)
                     p.drawString(50, y - 100, "Head")
-                    p.drawString(160, y - 100, "Total amount")
-                    p.drawString(250, y - 100, "Inst. Name")
-                    p.drawString(390, y - 100, "Inst. Amount")
-                    p.drawString(490, y - 100, "Inst. Fine")
-                    p.drawString(590, y - 100, "Inst. Due Date")
-                    p.drawString(690, y - 100, "Inst. Paid")
-                    p.drawString(790, y - 100, "Inst. Balance")
+                    p.drawString(200, y - 100, "Total amount")
+                    p.drawString(300, y - 100, "Payment Type")
+                    p.drawString(430, y - 100, "Start Date")
+                    p.drawString(530, y - 100, "End Date")
+                    p.drawString(630, y - 100, "Fine")
                     p.setFontSize(12)  
-                    heads = fees_structure.head.all()
+                    heads = student.applicable_fees_heads.all()
                     y1 = y - 110
                     for head in heads:
-                        is_not_paid = False
-                        i = 0
-                        for installment in head.installments.all():
-                            try:
-                                fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student__id=student_id)
-                                fees_payment_installments = fees_payment.payment_installment.filter(installment=installment)
-                                if fees_payment_installments.count() > 0:
-                                    if fees_payment_installments[0].installment_amount < installment.amount:
-                                        is_not_paid = True
-                                        y1 = y1 - 30
-                                        if y1 <= 135:
-                                            y1 = y - 110
-                                            p.showPage()
-                                            p = header(p, y)
-                                            p.setFontSize(12) 
-                                        
-                                        p.drawString(250, y1, str('installment'+str(i + 1)))
-                                        p.drawString(390, y1, str(installment.amount))
-                                        p.drawString(490, y1, str(installment.fine_amount))
-                                        p.drawString(590, y1, installment.due_date.strftime('%d/%m/%Y'))
-                                        p.drawString(690, y1, str(fees_payment_installments[0].installment_amount))
-                                        p.drawString(790, y1, str(float(installment.amount) - float(fees_payment_installments[0].installment_amount)))
-                                elif fees_payment_installments.count() == 0:
-                                    is_not_paid = True
-                                    y1 = y1 - 30
-                                    if y1 <= 135:
-                                        y1 = y - 110
-                                        p.showPage()
-                                        p = header(p, y)
-                                        p.setFontSize(12) 
-
-                                    p.drawString(250, y1, str('installment'+str(i + 1)))
-                                    p.drawString(390, y1, str(installment.amount))
-                                    p.drawString(490, y1, str(installment.fine_amount))
-                                    p.drawString(590, y1, installment.due_date.strftime('%d/%m/%Y'))
-                                    p.drawString(690, y1, str(0))
-                                    p.drawString(790, y1, str(installment.amount))
-                            except Exception as ex:
-                                if current_date >= installment.due_date:
-                                    is_not_paid = True
-                                    y1 = y1 - 30
-                                    if y1 <= 135:
-                                        y1 = y - 110
-                                        p.showPage()
-                                        p = header(p, y)
-                                        p.setFontSize(12) 
-
-                                    p.drawString(250, y1, str('installment'+str(i + 1)))
-                                    p.drawString(390, y1, str(installment.amount))
-                                    p.drawString(490, y1, str(installment.fine_amount))
-                                    p.drawString(590, y1, installment.due_date.strftime('%d/%m/%Y'))
-                                    p.drawString(690, y1, str(0))
-                                    p.drawString(790, y1, str(installment.amount))
-                            i = i + 1
-                        if is_not_paid:
-                            p.drawString(50, y1, head.name)
-                            p.drawString(180, y1, str(head.amount))
                         y1 = y1 - 30
                         if y1 <= 135:
                             y1 = y - 110
                             p.showPage()
                             p = header(p, y)
                             p.setFontSize(12) 
-                        
+                        try:
+                            fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student=student)
+                            fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
+                            if fees_payment_heads.count() == 0:
+                                installment = head.installments.filter(name='Late Payment')
+                                if installment.count() == 0:
+                                    installment = head.installments.filter(name='Standard Payment')
+                                    if installment.count() == 0:
+                                        installment = head.installments.filter(name='Early Payment')
+                                if installment.count() > 0:
+                                    if installment[0].end_date < current_date:
+                                        data=[[Paragraph(head.name, para_style)]]
+                                        table = Table(data, colWidths=[150], rowHeights=100, style=style)      
+                                        table.wrapOn(p, 200, 400)
+                                        table.drawOn(p, 45, y1-10)
+                                        p.drawString(200, y1, str(head.amount))
+                                        for installment in head.installments.all():
+                                            p.drawString(300, y1, installment.name)
+                                            p.drawString(430, y1, installment.start_date.strftime('%d/%m/%Y'))
+                                            p.drawString(530, y1, installment.end_date.strftime('%d/%m/%Y'))
+                                            p.drawString(630, y1, str(installment.fine_amount))
+                                            y1 = y1 - 10
+                                            if y1 <= 135:
+                                                y1 = y - 110
+                                                p.showPage()
+                                                p = header(p, y)
+                                                p.setFontSize(12)
+                        except Exception as ex:
+                            installment = head.installments.filter(name='Late Payment')
+                            if installment.count() == 0:
+                                installment = head.installments.filter(name='Standard Payment')
+                                if installment.count() == 0:
+                                    installment = head.installments.filter(name='Early Payment')
+                            if installment.count() > 0:
+                                if installment[0].end_date < current_date:
+                                    data=[[Paragraph(head.name, para_style)]]
+                                    table = Table(data, colWidths=[150], rowHeights=100, style=style)      
+                                    table.wrapOn(p, 200, 400)
+                                    table.drawOn(p, 45, y1-10) 
+                                    p.drawString(200, y1, str(head.amount))
+                                    for installment in head.installments.all():
+                                        p.drawString(300, y1, installment.name)
+                                        p.drawString(430, y1, installment.start_date.strftime('%d/%m/%Y'))
+                                        p.drawString(530, y1, installment.end_date.strftime('%d/%m/%Y'))
+                                        p.drawString(630, y1, str(installment.fine_amount))
+                                        y1 = y1 - 25
+                                        if y1 <= 135:
+                                            y1 = y - 110
+                                            p.showPage()
+                                            p = header(p, y)
+                                            p.setFontSize(12)
                 else:
                     students = Student.objects.filter(course__id=request.GET.get('course', ''), batch__id=request.GET.get('batch', '')).order_by('roll_number')
                     batch = Batch.objects.get(id=request.GET.get('batch', ''))
@@ -361,15 +363,13 @@ class OutstandingFeesListReport(View):
                     p.drawCentredString(400, y - 70, heading)
                     p.setFontSize(13)
                     p.drawString(50, y - 100, "Roll Number")
-                    p.drawString(150, y - 100, "Student")
+                    p.drawString(130, y - 100, "Student")
                     p.drawString(250, y - 100, "Head")
-                    p.drawString(350, y - 100, "Total amount")
-                    p.drawString(450, y - 100, "Inst. Name")
-                    p.drawString(550, y - 100, "Inst. Amount")
-                    p.drawString(650, y - 100, "Inst. Fine")
-                    p.drawString(730, y - 100, "Inst. Due Date")
-                    p.drawString(830, y - 100, "Inst. Paid")
-                    p.drawString(900, y - 100, "Inst. Balance")
+                    p.drawString(450, y - 100, "Total amount")
+                    p.drawString(550, y - 100, "Payment Type")
+                    p.drawString(680, y - 100, "Start Date")
+                    p.drawString(780, y - 100, "End Date")
+                    p.drawString(860, y - 100, "Fine")
                     y1 = y - 110
                     for student in students:
                         y1 = y1 - 30
@@ -379,164 +379,63 @@ class OutstandingFeesListReport(View):
                             p = header(p, y)
                             p.setFontSize(12) 
                         p.drawString(50, y1, str(student.roll_number))
-                        p.drawString(150, y1, student.student_name)
-                        heads = fees_structure.head.all()
+                        stud_name = [[Paragraph(student.student_name, para_style)]]
+                        table = Table(stud_name, colWidths=[130], rowHeights=100, style=style)   
+                        table.wrapOn(p, 200, 400)
+                        table.drawOn(p, 125, y1-10)
+                        heads = student.applicable_fees_heads.all()
                         for head in heads:
-                            is_not_paid = False
-                            i = 0
-                            y1 = y1 - 30
-                            if y1 <= 135:
-                                y1 = y - 110
-                                p.showPage()
-                                p = header(p, y)
-                                p.setFontSize(12) 
-                            for installment in head.installments.all():
-                                try:
-                                    fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student=student)
-                                    fees_payment_installments = fees_payment.payment_installment.filter(installment=installment)
-                                    if fees_payment_installments.count() > 0:
-                                        if fees_payment_installments[0].installment_amount < installment.amount:
-                                            is_not_paid = True
-                                            y1 = y1 - 30
+                            data = [[Paragraph(head.name, para_style)]]
+                            table = Table(data, colWidths=[200], rowHeights=100, style=style)       
+                            try:
+                                fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student=student)
+                                fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
+                                if fees_payment_heads.count() == 0:
+                                    installment = head.installments.filter(name='Late Payment')
+                                    if installment.count() == 0:
+                                        installment = head.installments.filter(name='Standard Payment')
+                                        if installment.count() == 0:
+                                            installment = head.installments.filter(name='Early Payment')
+                                    if installment.count() > 0:
+                                        if installment[0].end_date < current_date:
+                                            # p.drawString(250, y1, head.name)
+                                            table.wrapOn(p, 200, 400)
+                                            table.drawOn(p, 245, y1-10)
+                                            p.drawString(450, y1, str(head.amount))
+                                            for installment in head.installments.all():
+                                                p.drawString(550, y1, installment.name)
+                                                p.drawString(680, y1, installment.start_date.strftime('%d/%m/%Y'))
+                                                p.drawString(780, y1, installment.end_date.strftime('%d/%m/%Y'))
+                                                p.drawString(860, y1, str(installment.fine_amount))
+                                                y1 = y1 - 25
+                                                if y1 <= 135:
+                                                    y1 = y - 110
+                                                    p.showPage()
+                                                    p = header(p, y)
+                                                    p.setFontSize(12)
+                            except Exception as ex:
+                                installment = head.installments.filter(name='Late Payment')
+                                if installment.count() == 0:
+                                    installment = head.installments.filter(name='Standard Payment')
+                                    if installment.count() == 0:
+                                        installment = head.installments.filter(name='Early Payment')
+                                if installment.count() > 0:
+                                    if installment[0].end_date < current_date:
+                                        # p.drawString(250, y1, head.name)
+                                        table.wrapOn(p, 200, 400)
+                                        table.drawOn(p, 245, y1-10)
+                                        p.drawString(450, y1, str(head.amount))
+                                        for installment in head.installments.all():
+                                            p.drawString(550, y1, installment.name)
+                                            p.drawString(680, y1, installment.start_date.strftime('%d/%m/%Y'))
+                                            p.drawString(780, y1, installment.end_date.strftime('%d/%m/%Y'))
+                                            p.drawString(860, y1, str(installment.fine_amount))
+                                            y1 = y1 - 25
                                             if y1 <= 135:
                                                 y1 = y - 110
                                                 p.showPage()
                                                 p = header(p, y)
-                                                p.setFontSize(12) 
-                                            
-                                            p.drawString(450, y1, str('installment'+str(i + 1)))
-                                            p.drawString(550, y1, str(installment.amount))
-                                            p.drawString(650, y1, str(installment.fine_amount))
-                                            p.drawString(730, y1, installment.due_date.strftime('%d/%m/%Y'))
-                                            p.drawString(830, y1, str(fees_payment_installments[0].installment_amount))
-                                            p.drawString(900, y1, str(float(installment.amount) - float(fees_payment_installments[0].installment_amount)))
-                                    elif fees_payment_installments.count() == 0:
-                                        is_not_paid = True
-                                        y1 = y1 - 30
-                                        if y1 <= 135:
-                                            y1 = y - 110
-                                            p.showPage()
-                                            p = header(p, y)
-                                            p.setFontSize(12) 
-
-                                        p.drawString(450, y1, str('installment'+str(i + 1)))
-                                        p.drawString(550, y1, str(installment.amount))
-                                        p.drawString(650, y1, str(installment.fine_amount))
-                                        p.drawString(730, y1, installment.due_date.strftime('%d/%m/%Y'))
-                                        p.drawString(830, y1, str(0))
-                                        p.drawString(900, y1, str(installment.amount))
-                                except Exception as ex:
-                                    is_not_paid = True
-                                    if current_date >= installment.due_date:
-                                        y1 = y1 - 30
-                                        if y1 <= 135:
-                                            y1 = y - 110
-                                            p.showPage()
-                                            p = header(p, y)
-                                            p.setFontSize(12) 
-
-                                        p.drawString(450, y1, str('installment'+str(i + 1)))
-                                        p.drawString(550, y1, str(installment.amount))
-                                        p.drawString(650, y1, str(installment.fine_amount))
-                                        p.drawString(730, y1, installment.due_date.strftime('%d/%m/%Y'))
-                                        p.drawString(830, y1, str(0))
-                                        p.drawString(900, y1, str(installment.amount))
-                                i = i + 1
-                            if is_not_paid:
-                                p.drawString(250, y1, head.name)
-                                p.drawString(350, y1, str(head.amount))
-            else:
-                heads = FeesHead.objects.all()
-                if filtering_option == 'student_wise':
-                    student = Student.objects.get(id=student_id)
-                    course = Course.objects.get(id=request.GET.get('course', ''))
-                    batch = Batch.objects.get(id=request.GET.get('batch', ''))
-                    batch_name = str(batch.start_date) + ' - ' + str(batch.end_date) + ((' - '+ str(batch.branch.branch)) if batch.branch else '')
-                    heading = 'Student Wise Report' + ' - ' + course.course + ' - ' + batch_name + ' - '+ student.student_name+' - Roll no: '+str(student.roll_number)
-                    p.drawCentredString(400, y - 70, heading)
-                    p.setFontSize(13)
-                    
-                    p.drawString(150, y - 100, "Head Name")
-                    p.drawString(320, y - 100, "Total Amount")
-                    p.drawString(420, y - 100, "Paid")
-                    p.drawString(520, y - 100, "Balance")
-                    p.setFontSize(12) 
-                    y1 = y - 110
-                    for head in heads:
-                        try:
-                            fees_payment = CommonFeesPayment.objects.get(head=head, student__id=student_id)
-                            if fees_payment.paid_amount < head.amount:
-                                y1 = y1 - 30
-                                if y1 <= 135:
-                                    y1 = y - 110
-                                    p.showPage()
-                                    p = header(p, y)
-                                    p.setFontSize(12) 
-                                p.drawString(150, y1, str(head.name))
-                                p.drawString(320, y1, str(head.amount))
-                                p.drawString(420, y1, str(fees_payment.paid_amount))
-                                p.drawString(520, y1, str(float(head.amount) - float(fees_payment.paid_amount)))
-                        except:
-                            y1 = y1 - 30
-                            if y1 <= 135:
-                                y1 = y - 110
-                                p.showPage()
-                                p = header(p, y)
-                                p.setFontSize(12) 
-                            p.drawString(150, y1, str(head.name))
-                            p.drawString(320, y1, str(head.amount))
-                            p.drawString(420, y1, str(0))
-                            p.drawString(520, y1, str(float(head.amount)))
-                else:
-                    students = Student.objects.filter(course__id=request.GET.get('course', ''), batch__id=request.GET.get('batch', '')).order_by('roll_number')
-                    course = Course.objects.get(id=request.GET.get('course', ''))
-                    batch = Batch.objects.get(id=request.GET.get('batch', ''))
-                    batch_name = str(batch.start_date) + ' - ' + str(batch.end_date) + ((' - '+ str(batch.branch.branch)) if batch.branch else '')
-                    heading = 'Batch Wise Report' + ' - ' + course.course + ' - ' + batch_name
-                    p.drawCentredString(400, y - 70, heading)
-                    p.setFontSize(13)
-                    p.drawString(50, y - 100, "Roll Number")
-                    p.drawString(150, y - 100, "Student")
-                    p.drawString(320, y - 100, "Head Name")
-                    p.drawString(490, y - 100, "Total Amount")
-                    p.drawString(590, y - 100, "Paid")
-                    p.drawString(690, y - 100, "Balance")
-                    p.setFontSize(12) 
-                    y1 = y - 110
-                    for student in students:
-                        y1 = y1 - 30
-                        if y1 <= 135:
-                            y1 = y - 110
-                            p.showPage()
-                            p = header(p, y)
-                            p.setFontSize(12) 
-                        p.drawString(50, y1, str(student.roll_number))
-                        p.drawString(150, y1, student.student_name)
-                        for head in heads:
-                            try:
-                                fees_payment = CommonFeesPayment.objects.get(head=head, student__id=student_id)
-                                if fees_payment.paid_amount < head.amount:
-                                    y1 = y1 - 30
-                                    if y1 <= 135:
-                                        y1 = y - 110
-                                        p.showPage()
-                                        p = header(p, y)
-                                        p.setFontSize(12) 
-                                    p.drawString(320, y1, str(head.name))
-                                    p.drawString(490, y1, str(head.amount))
-                                    p.drawString(590, y1, str(fees_payment.paid_amount))
-                                    p.drawString(690, y1, str(float(head.amount) - float(fees_payment.paid_amount))) 
-                            except:
-                                y1 = y1 - 30
-                                if y1 <= 135:
-                                    y1 = y - 110
-                                    p.showPage()
-                                    p = header(p, y)
-                                    p.setFontSize(12) 
-                                p.drawString(320, y1, str(head.name))
-                                p.drawString(490, y1, str(head.amount))
-                                p.drawString(590, y1, str(0))
-                                p.drawString(690, y1, str(float(head.amount))) 
+                                                p.setFontSize(12)
             p.save()
         return response
 

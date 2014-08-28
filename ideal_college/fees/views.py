@@ -135,8 +135,11 @@ class EditFeesStructure(View):
         fees_structure_details = ast.literal_eval(request.POST['fee_structure'])
         removed_heads = fees_structure_details['removed_heads']
         for head in removed_heads:
-            fees_head = FeesStructureHead.objects.get(id=head['id'])
-            fees_head.delete()
+            try:
+                fees_head = FeesStructureHead.objects.get(id=head['id'])
+                fees_head.delete()
+            except: 
+                pass
         fee_head_details = fees_structure_details['fees_head']
         for fee_head in fee_head_details:
             try:
@@ -328,7 +331,6 @@ class FeesPaymentSave(View):
                     'result': 'ok',
                 }
             except Exception as Ex:
-                print str(Ex)
                 res = {
                     'result': 'error: '+str(Ex),
                     'message': 'Already Paid',
@@ -360,7 +362,6 @@ class GetFeeStructureHeadList(View):
                                 'head': head.name,
                             })
                     except Exception as ex:
-                        print str(ex)
                         ctx_heads_list.append({
                            'id': head.id,
                             'head': head.name,
@@ -449,6 +450,7 @@ class GetOutStandingFeesDetails(View):
                                         installment = head.installments.filter(name='Early Payment')
                                 if installment.count() > 0:
                                     if installment[0].end_date < current_date:
+
                                         ctx_heads_list.append({
                                             'id': head.id,
                                             'head': head.name,
@@ -456,7 +458,6 @@ class GetOutStandingFeesDetails(View):
                                             'installments': ctx_installments,
                                         })
                         except Exception as ex:
-                            print str(ex)
                             installment = head.installments.filter(name='Late Payment')
                             if installment.count() == 0:
                                 installment = head.installments.filter(name='Standard Payment')
@@ -509,7 +510,6 @@ class GetOutStandingFeesDetails(View):
                                                 'installments': ctx_installments,
                                             })
                             except Exception as ex:
-                                print str(ex)
                                 installment = head.installments.filter(name='Late Payment')
                                 if installment.count() == 0:
                                     installment = head.installments.filter(name='Standard Payment')
@@ -523,16 +523,12 @@ class GetOutStandingFeesDetails(View):
                                             'amount': head.amount,
                                             'installments': ctx_installments,
                                         })
-                        # ctx_fees_details.append({
-                        #     'head_details': ctx_heads_list,
-                        #     'student_name': student.student_name,
-                        #     'roll_no': student.roll_number,
-                        # })
-                        ctx_student_fees_details.append({
-                            'head_details':ctx_heads_list,
-                            'name': student.student_name,
-                            'roll_no': student.roll_number,
-                        })
+                        if len(ctx_heads_list) != 0:
+                            ctx_student_fees_details.append({
+                                'head_details': ctx_heads_list,
+                                'name': student.student_name,
+                                'roll_no': student.roll_number,
+                            })
                     ctx_fees_details.append({
                         'students': ctx_student_fees_details,
                     })    

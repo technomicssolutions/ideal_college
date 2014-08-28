@@ -193,7 +193,7 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
     $scope.student_id = 'select';
     $scope.course = 'select';
     $scope.batch = 'select';
-    $scope.fees_type = '';
+    $scope.fees_type = 'course';
     $scope.filtering_option = '';
     $scope.url = '';
     $scope.init = function(csrf_token)
@@ -243,13 +243,16 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
             if (data.result == 'ok') 
                 $scope.fees_details = data.fees_details[0];
                 if ($scope.fees_details != undefined) {
-                    if ($scope.fees_details.head_details.length == 0) {
-                        $scope.paid_completely = 'Paid Completely';
-                    } else {
-                        $scope.paid_completely = '';
+                    if ($scope.fees_details.head_details != undefined) {
+                        if ($scope.fees_details.head_details.length == 0) {
+                            $scope.paid_completely = 'Paid Completely';
+                        } else {
+                            $scope.paid_completely = '';
+                        }
                     }
-                    if($scope.fees_details.students)
+                    if($scope.fees_details.students) {
                         paginate($scope.fees_details.students, $scope, 2);
+                    }
                 }
             else {
                 $scope.no_student_error = data.message;
@@ -1028,7 +1031,7 @@ function FeesReportController($scope, $http, $element) {
     $scope.student_id = 'select';
     $scope.course = 'select';
     $scope.batch = 'select';
-    $scope.fees_type = '';
+    $scope.fees_type = 'course';
     $scope.head = 'All';
     $scope.filtering_option = '';
     $scope.url = '';
