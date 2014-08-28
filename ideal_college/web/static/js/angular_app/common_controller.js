@@ -225,14 +225,17 @@ function date_conversion(date_val) {
     return converted_date;
 }
 
-function calculate_total_fee_amount(head_id) {
+function calculate_total_fee_amount(head_id, student_id) {
     if ($('#fees_payment').length >0) {
         var head_id = head_id;
+        var student_id = student_id;
+        if (student_id == undefined)
+            var student_id = $$('#student_id')[0].get('value')
         if (head_id == undefined)
             var head_id = $$('#head')[0].get('value');
         var paid_date = $$('#paid_date')[0].get('value');
         $.ajax({
-            url: '/fees/get_fee_head_details/?head_id='+head_id+'&paid_date='+paid_date,
+            url: '/fees/get_fee_head_details/?head_id='+head_id+'&paid_date='+paid_date+'&student_id='+student_id,
             method: 'get',
             success: get_fees_head_installment_details,
         });
@@ -247,6 +250,7 @@ function get_fees_head_installment_details(response){
         $('#fee_amount').val('');
         $('#fine_amount').val('');
         $('#total_fee_amount').val('');
+        $('#amount_paid').val('');
     } else {
         $('#error_payment_type').text('');
         $('#payment_type').val(head_details['name']);
@@ -254,6 +258,7 @@ function get_fees_head_installment_details(response){
         $('#fine_amount').val(head_details['fine']);
         $('#total_fee_amount').val(head_details['fine']+response['fees_amount']);
         $('#installment').val(head_details['id']);
+        $('#amount_paid').val(head_details['paid_head_amount']);
     }
 }
 function get_fees_head_details($scope, $http, fees_head_id) {

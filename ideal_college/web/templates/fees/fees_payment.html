@@ -34,9 +34,6 @@
 			</div>
 			<div class="control">
 				<label> Student</label>
-				<!-- <select name="student" ng-model="student" ng-change="get_fees_head()" ng-options="student as student.student for student in students">
-					<option value="select">Select</option>
-				</select> -->
 				<input type="text" ng-change="get_student_details()" ng-model="student_name">
 			</div>
 			<div class="student_list" ng-show="students_listing" ng-hide="student_selected">
@@ -54,6 +51,7 @@
 				</select>
 				<input type="hidden" readonly id="head">
 				<input type="hidden" readonly id="installment">
+				<input type="text" readonly id="student_id">
 			</div>
 			<div class="control">
 				<label>Paid Date</label>
@@ -77,6 +75,10 @@
 			<div class="control">
 				<label>Fine</label>
 				<input type="text" name="fine" id="fine_amount" ng-model="payment_installment.fine" readonly /> 
+			</div>
+			<div class="control">
+				<label>Amount Paid</label>
+				<input type="text" name="amount_paid" id="amount_paid" ng-model="payment_installment.amount_paid" readonly /> 
 			</div>
 			<div class="control">
 				<label>Total amount to pay</label>

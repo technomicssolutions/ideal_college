@@ -41,6 +41,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         course_batch_student_list($scope, $http);
     }
     $scope.get_fees_head = function(student){
+        $('#student_id').val(student.id);
         $scope.payment_installment.student_id = student.id;
         $scope.payment_installment.u_id = student.u_id;
         $scope.student_selected = true;
@@ -107,7 +108,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
     }
     $scope.calculate_total_amount = function() {
         $('#head').val($scope.head);
-        calculate_total_fee_amount($scope.head);
+        calculate_total_fee_amount($scope.head, $scope.payment_installment.student_id);
 
     }
     $scope.check_student_uid_exists = function() {
@@ -149,10 +150,12 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         } else if ($scope.payment_installment.paid_amount != Number($scope.payment_installment.paid_amount)) {
             $scope.validation_error = "Please enter valid paid amount" ;
             return false;
-        } else if ($scope.payment_installment.paid_amount != $scope.payment_installment.total_amount) {
-            $scope.validation_error = "Please check the Total Amount with Paid Amount" ;
-            return false;
-        } return true; 
+        } 
+        // else if ($scope.payment_installment.paid_amount != $scope.payment_installment.total_amount) {
+        //     $scope.validation_error = "Please check the Total Amount with Paid Amount" ;
+        //     return false;
+        // } 
+        return true; 
     }
     $scope.save_fees_payment = function() {
         $scope.payment_installment.course_id = $scope.course;
@@ -958,6 +961,7 @@ function CommonFeesPayment($scope, $http, $element) {
         });
     }
     $scope.get_fees_head = function(){
+        $('#student_id').val($scope.fees_payment.student);
         $scope.url = '/fees/get_common_fees_head/'+ $scope.course+ '/'+ $scope.batch+ '/'+$scope.fees_payment.student+'/';
         if ($scope.course !='select' && $scope.batch != 'select' && $scope.fees_payment.student != 'select')
         show_spinner();       

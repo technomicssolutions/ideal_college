@@ -71,6 +71,9 @@ class FeesPaymentHead(models.Model):
 	total_amount = models.DecimalField('Total Amount', max_digits=14, decimal_places=2, default=0)
 	fine = models.DecimalField('Fine Amount', max_digits=14, decimal_places=2, default=0)
 	paid_date = models.DateField('Paid Date', null=True, blank=True)
+	paid_amount = models.DecimalField('Paid amount', max_digits=14, decimal_places=2, default=0)
+	paid_fee_amount = models.DecimalField('Paid fee amount', max_digits=14, decimal_places=2, default=0)
+	paid_fine_amount = models.DecimalField('Paid fine amount', max_digits=14, decimal_places=2, default=0)
 	
 	def __unicode__(self):
 
