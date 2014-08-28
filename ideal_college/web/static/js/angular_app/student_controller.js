@@ -130,6 +130,9 @@ validate_new_student = function($scope) {
     } else if($scope.roll_number == '' || $scope.roll_number == undefined) {
         $scope.validation_error = "Please Enter the Roll Number" ;
         return false;
+    } else if($scope.roll_number!='' && !Number($scope.roll_number)) {
+        $scope.validation_error = "Please Enter a valid Roll Number" ;
+        return false;
     } else if($scope.course == '' || $scope.course == undefined) {
         $scope.validation_error = "Please Enter Course";
         return false;
