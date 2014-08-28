@@ -1,5 +1,15 @@
 /************************** Common JS F************/
-
+empty = function( x ) {
+    // undefined, '', null, 0, empty array
+    if ( !x || 0 == x.length ) return true
+    // empty {}
+    if ('object'  == Object.prototype.toString.call(x).slice(8, -1).toLowerCase() ) {
+        for ( var n in x ) if ( x.hasOwnProperty(n) ) return false
+        return true
+    }
+    // convert to string and match single non-space character
+    return !(x+'').match(/S/)
+}
 function show_spinner (){
     $('#spinner_overlay').css('display', 'block');
     $('#spinner').css('display', 'block');
@@ -179,27 +189,33 @@ function get_course_batch_student_list($scope, $http) {
 }
 
 function course_batch_student_list($scope, $http) {
-    
+    console.log($scope.student_name);
     if (($scope.course != 'select') && (($scope.batch != 'select'))) {
-        $http.get('/academic/student_search/?course='+ $scope.course+ '&batch='+ $scope.batch+ '&student_name='+$scope.student_name).success(function(data)
-        {
-            $scope.students_list = data.students;
-            $scope.no_head_error = '';
-            $scope.no_installment_error = '';
-            if ($scope.students_list.length == 0) {
-                $scope.student_selected = true;
-                $scope.no_student_error = 'No students in this batch';
-                $scope.heads = [];
-                clear_fees_payment_details($scope);
-            } else {
-                $scope.students_listing = true;
-                $scope.student_selected = false;
-                $scope.no_student_error = '';
-            }
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
+        console.log($scope.student_name.length);
+        if(($scope.student_name.length > 0)) {
+            console.log('in if')
+            $http.get('/academic/student_search/?course='+ $scope.course+ '&batch='+ $scope.batch+ '&student_name='+$scope.student_name).success(function(data)
+            {
+                $scope.students_list = data.students;
+                $scope.no_head_error = '';
+                $scope.no_installment_error = '';
+                if ($scope.students_list.length == 0) {
+                    $scope.student_selected = true;
+                    $scope.no_student_error = 'No such student in this batch';
+                    $scope.heads = [];
+                    clear_fees_payment_details($scope);
+                } else {
+                    $scope.students_listing = true;
+                    $scope.student_selected = false;
+                    $scope.no_student_error = '';
+                }
+            }).error(function(data, status)
+            {
+                console.log(data || "Request failed");
+            });
+        } else {
+            $scope.student_selected = true;
+        }
     }
 }
 

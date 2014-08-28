@@ -819,8 +819,8 @@ label.block{
     left: 49%;
     margin: auto;
     position: absolute;
-    top: 98%;
     width: 20%;
+    margin: 130px auto auto;
 }
 .student_list div{
 	border: 1px solid #ADD8E6;
