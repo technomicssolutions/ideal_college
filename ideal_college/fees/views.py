@@ -135,8 +135,11 @@ class EditFeesStructure(View):
         fees_structure_details = ast.literal_eval(request.POST['fee_structure'])
         removed_heads = fees_structure_details['removed_heads']
         for head in removed_heads:
-            fees_head = FeesStructureHead.objects.get(id=head['id'])
-            fees_head.delete()
+            try:
+                fees_head = FeesStructureHead.objects.get(id=head['id'])
+                fees_head.delete()
+            except: 
+                pass
         fee_head_details = fees_structure_details['fees_head']
         for fee_head in fee_head_details:
             try:
