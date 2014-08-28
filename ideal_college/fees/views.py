@@ -13,19 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from fees.models import *
 from datetime import datetime
-
-
-def header(canvas, y):
-
-    try:
-        college = College.objects.latest('id')
-    except:
-        college = ''
-    canvas.setFont("Helvetica", 35)  
-    if college:
-        canvas.drawString(80, y - 5, college.name)
-    canvas.line(50, y - 30, 950, y - 30)
-    return canvas
+from report.views import header
 
 
 class CreateFeesStructure(View):
@@ -835,16 +823,6 @@ class FeesReceipt(View):
         else:
             student_id = request.GET.get('student','')
             student = Student.objects.get(id=student_id)
-            p.setFont('Times-Roman',20)  
-            heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
-            p.drawCentredString(500, y+35, heading)   
-            p.setFont('Times-Roman',14)  
-            heading = "Karumanamkurussi(PO), Cherupulassery"  
-            p.drawCentredString(500, y+15, heading)   
-            heading = "Palakkad(Dt),Kerala,PIN-679504"  
-            p.drawCentredString(500, y-5, heading)  
-            heading = "PH:466-2280111,2280112,2207585"  
-            p.drawCentredString(500, y-25, heading)  
             p.setFontSize(15)
             p.drawCentredString(500, y-60, "Fee Payment Receipt")  
             p.setFontSize(13)

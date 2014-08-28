@@ -12,12 +12,14 @@
 			<input type="hidden" name="report_type" value="{{report_type}}">
 			<div class="form_container">	
 				<div class="control">
+					<label>Select Course</label>
 					<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
 						<option value="">Course</option>
 					</select>
 				</div>
 				<p class="error_message">[[no_batch_error]]</p>
 				<div class="control">
+					<label>Select Batch</label>
 					<select name="batch" ng-model="batch" ng-change="get_student()" ng-options="batch.id as batch.name for batch in batches">
 						<option value="">Batch</option>
 					</select>
@@ -26,11 +28,16 @@
 				<p class="error_message">[[no_student_error]]</p>		
 				
 				<div class="control">
-					<select name="student" ng-model="student" ng-change="get_paid_heads()" ng-options="student.id as student.student for student in students">
-						<option value="">Student</option>
-					</select>
+					<label>Select Student</label>
+					<input type="text" ng-change="get_student_details()" ng-model="student_name">
+				</div>
+				<div class="student_list" ng-show="students_listing" ng-hide="student_selected">
+					<div ng-repeat="student in students_list" ng-click="get_paid_heads(student)">
+						<span>[[student.student]]</span>
+					</div>
 				</div>
 				<div class="control">
+					<label>Select Head</label>
 					<select name="head" ng-model="head" ng-options="head.id as head.name for head in paid_heads" >
 						<option value="">Select Head</option>
 					</select>
@@ -38,9 +45,8 @@
 				<div class="control">
 					<input type="submit" value="Generate Receipt" ng-click="generate_fee_receipt()">
 				</div>
-				<p class="error_message">[[validation_error]]</p>
 			</div>
 		</div>
 	</form>
-
+<p class="error_message">[[validation_error]]</p>
 {% endblock content %}

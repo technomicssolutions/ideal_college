@@ -13,6 +13,10 @@ class College(models.Model):
 	name = models.CharField('College Name', null=True, blank=True, max_length=200)
 	logo = models.ImageField(upload_to = "uploads/logo/", null=True, blank=True)
 	address = models.CharField('College Address', null=True, blank=True, max_length=200 )
+	district = models.CharField('District', null=True, blank=True, max_length=200 )
+	state = models.CharField('State', null=True, blank=True, max_length=200 )
+	PIN = models.CharField('PIN', null=True, blank=True, max_length=200 )
+	contact = models.CharField('Contact', null=True, blank=True, max_length=200 )
 	registration_number = models.CharField('College Registration Number', null=True, blank=True, max_length=200)
 	def __unicode__(self):
 		return (self.name)

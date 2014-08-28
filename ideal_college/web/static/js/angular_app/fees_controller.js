@@ -71,8 +71,13 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 console.log(data || "Request failed");
             });
     }
-    $scope.get_paid_heads = function(){
-        $scope.url = '/fees/get_paid_heads/?student='+$scope.student;
+    $scope.get_paid_heads = function(student){
+        $scope.student_name = student.student_name;
+        $scope.students_listing = false;
+        $scope.student_selected = true;
+        $scope.student = student.id
+        $scope.head = "";
+        $scope.url = '/fees/get_paid_heads/?student='+student.id;
         $http.get($scope.url).success(function(data)
             {
                 if(data.result == "ok"){
@@ -94,6 +99,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
     }
     $scope.generate_fee_receipt = function(){
         $scope.validation_error = "";
+        console.log($scope.head);
         if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
             $scope.validation_error = 'Please choose course';
         } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {

@@ -37,7 +37,12 @@ def header(canvas, y):
         college = ''
     canvas.setFont("Helvetica", 35)  
     if college:
-        canvas.drawString(80, y - 5, college.name)
+        canvas.setFont('Times-Roman',20)  
+        canvas.drawCentredString(500, y+45, college.name) 
+        canvas.setFont('Times-Roman',14)  
+        canvas.drawCentredString(500, y+25, college.address) 
+        canvas.drawCentredString(500, y+5, college.district+","+college.state+",PIN-"+college.PIN)           
+        canvas.drawCentredString(500, y-15, "PH: "+college.contact)   
     canvas.line(50, y - 30, 950, y - 30)
     return canvas
 
@@ -50,6 +55,10 @@ class IdcardReport(View):
     y = 1150
     current_date = datetime.now().date()
     report_type = request.GET.get('report_type', '')
+    try:
+        college = College.objects.latest('id')
+    except:
+        college = ''
     if not report_type:
         return render(request, 'report/id_card.html',{
             'report_type' : 'id_card',
@@ -59,19 +68,15 @@ class IdcardReport(View):
         course = request.GET.get('course','')
         batch = request.GET.get('batch', '')
         if filtering_option == 'student_wise':
-            p.rect(30,940,270,270)
-            p.setFont('Times-Bold',10)  
             student_id = request.GET.get('student', '')
             student = Student.objects.get(id=student_id)
-            heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
-            p.drawCentredString(160, y+40, heading)   
+            p.rect(30,940,270,270)
+            p.setFont('Times-Bold',10)  
+            p.drawCentredString(160, y+40, college.name) 
             p.setFont('Times-Roman',10)  
-            heading = "Karumanamkurussi(PO), Cherupulassery"  
-            p.drawCentredString(160, y+25, heading)   
-            heading = "Palakkad(Dt),Kerala,PIN-679504"  
-            p.drawCentredString(160, y+10, heading)  
-            heading = "PH:466-2280111,2280112,2207585"  
-            p.drawCentredString(160, y-5, heading)  
+            p.drawCentredString(160, y+25, college.address) 
+            p.drawCentredString(160, y+10, college.district+","+college.state+",PIN-"+college.PIN)           
+            p.drawCentredString(160, y-5, "PH: "+college.contact)
             p.drawString(40, y-30, "Name:")  
             p.drawString(120, y-30, student.student_name);
             p.drawString(40, y-45, "Guardian Name:")  
@@ -151,16 +156,6 @@ class CommonFeeReport(View):
         else:
             from_date = request.GET.get('from', '')
             to_date = request.GET.get('to', '')
-            p.setFont('Times-Roman',20)  
-            heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
-            p.drawCentredString(500, y+35, heading)   
-            p.setFont('Times-Roman',14)  
-            heading = "Karumanamkurussi(PO), Cherupulassery"  
-            p.drawCentredString(500, y+15, heading)   
-            heading = "Palakkad(Dt),Kerala,PIN-679504"  
-            p.drawCentredString(500, y-5, heading)  
-            heading = "PH:466-2280111,2280112,2207585"  
-            p.drawCentredString(500, y-25, heading)  
             p.setFontSize(15)
             p.drawCentredString(500, y-60, "Common Fee Payment Report")  
             p.drawString(50, y - 120, "#")
@@ -195,20 +190,20 @@ class CommonFeeReport(View):
                     p.showPage()
                 j = y-j-10
                 p.drawString(80, j, "From ")
-                p.drawString(230, j, ":")
-                p.drawString(250, j, str(datetime.strptime(from_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                p.drawString(280, j, ":")
+                p.drawString(300, j, str(datetime.strptime(from_date, '%Y-%m-%d').strftime('%d-%m-%y')))
                 p.drawString(80, j-20, "To ")
-                p.drawString(230, j-20, ":")
-                p.drawString(250, j-20, str(datetime.strptime(to_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                p.drawString(280, j-20, ":")
+                p.drawString(300, j-20, str(datetime.strptime(to_date, '%Y-%m-%d').strftime('%d-%m-%y')))
                 p.drawString(80, j-40, "Total count ")
-                p.drawString(230, j-40, ":")
-                p.drawString(250, j-40, str(tot_count))
+                p.drawString(280, j-40, ":")
+                p.drawString(300, j-40, str(tot_count))
                 p.drawString(80, j-60, "Total amount ")
-                p.drawString(230, j-60, ":")
-                p.drawString(250, j-60, str(tot_amount))
+                p.drawString(280, j-60, ":")
+                p.drawString(300, j-60, str(tot_amount))
                 p.drawString(80, j-80, "Total amount collected ")
-                p.drawString(230, j-80, ":")
-                p.drawString(250, j-80, str(paid_amount))
+                p.drawString(280, j-80, ":")
+                p.drawString(300, j-80, str(paid_amount))
             else:
                 tot_amount = 0
                 paid_amount = 0
@@ -235,20 +230,20 @@ class CommonFeeReport(View):
                     p.showPage()
                 j = y-j-10
                 p.drawString(80, j, "From ")
-                p.drawString(230, j, ":")
-                p.drawString(250, j, str(datetime.strptime(from_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                p.drawString(280, j, ":")
+                p.drawString(300, j, str(datetime.strptime(from_date, '%Y-%m-%d').strftime('%d-%m-%y')))
                 p.drawString(80, j-20, "To ")
-                p.drawString(230, j-20, ":")
-                p.drawString(250, j-20, str(datetime.strptime(to_date, '%Y-%m-%d').strftime('%d-%m-%y')))
+                p.drawString(280, j-20, ":")
+                p.drawString(300, j-20, str(datetime.strptime(to_date, '%Y-%m-%d').strftime('%d-%m-%y')))
                 p.drawString(80, j-40, "Total count ")
-                p.drawString(230, j-40, ":")
-                p.drawString(250, j-40, str(tot_count))
+                p.drawString(280, j-40, ":")
+                p.drawString(300, j-40, str(tot_count))
                 p.drawString(80, j-60, "Total amount ")
-                p.drawString(230, j-60, ":")
-                p.drawString(250, j-60, str(tot_amount))
+                p.drawString(280, j-60, ":")
+                p.drawString(300, j-60, str(tot_amount))
                 p.drawString(80, j-80, "Total amount collected ")
-                p.drawString(230, j-80, ":")
-                p.drawString(250, j-80, str(paid_amount))
+                p.drawString(280, j-80, ":")
+                p.drawString(300, j-80, str(paid_amount))
             p.save()
             return response
 
