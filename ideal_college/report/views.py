@@ -595,31 +595,34 @@ class FeeCollectedReport(View):
             try:
                 student_fee = FeesPayment.objects.get(student__id=student_id)
                 fee_payments = student_fee.payment_heads.all()
-                k = y - 200
+                p.drawString(50, y - 220, "#")
+                p.drawString(80, y - 220, "Fee Head")
+                p.drawString(250, y - 220, "Payment Type")
+                p.drawString(420, y - 220, "Amount Paid")
+                p.drawString(550, y - 220, "Total Amount")
+                p.drawString(700, y - 220, "Fine")
+                p.drawString(800, y - 220, "Date of Payment")
+                j = 260
+                tot_count = 0
+                total_amount = 0
                 for fee_payment in fee_payments:
-                    p.drawString(50, k - 20, "Fee Head")
-                    p.drawString(200, k - 20, ":")
-                    p.drawString(350, k - 20, fee_payment.fees_head.name)   
-                    p.drawString(50, k - 40, "Payment Type")
-                    p.drawString(200, k - 40, ":")
-                    p.drawString(350, k - 40, fee_payment.installment.name)  
-                    p.drawString(50, k - 60, "Amount Paid")
-                    p.drawString(200, k - 60, ":")
-                    p.drawString(350, k - 60, str(fee_payment.total_amount)) 
-                    p.drawString(50, k - 80, "Total Amount")
-                    p.drawString(200, k - 80, ":")
-                    p.drawString(350, k - 80, str(fee_payment.fees_head.amount))  
-                    p.drawString(50, k - 100, "Fine")
-                    p.drawString(200, k - 100, ":")
-                    p.drawString(350, k - 100, str(fee_payment.fine))  
-                    p.drawString(50, k - 120, "Date of Payment")
-                    p.drawString(200, k - 120, ":")
-                    p.drawString(350, k - 120, str(fee_payment.paid_date.strftime('%d-%m-%Y'))) 
-                    k= k - 140 
-                    print k
-                    if k <= 110:
-                        k = y
+                    tot_count = tot_count + 1
+                    total_amount = total_amount + fee_payment.total_amount
+                    p.drawString(50, y - j, str(tot_count))
+                    p.drawString(80, y - j, fee_payment.fees_head.name)   
+                    p.drawString(250, y - j, fee_payment.installment.name)  
+                    p.drawString(420, y - j, str(fee_payment.total_amount)) 
+                    p.drawString(550, y - j, str(fee_payment.fees_head.amount))  
+                    p.drawString(700, y - j, str(fee_payment.fine))  
+                    p.drawString(800, y - j, str(fee_payment.paid_date.strftime('%d-%m-%Y'))) 
+                    j = j + 30
+                    if j > 1110:
+                        j = 0
                         p.showPage()
+                j = j + 20
+                p.drawString(50, y - j, "Total Amount Paid:")   
+                p.drawString(200, y - j, ":") 
+                p.drawString(250, y - j, str(total_amount)) 
             except:
                 p.drawString(50, y - 220, "No fee history found for this student")
             p.save()
