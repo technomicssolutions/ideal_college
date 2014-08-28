@@ -386,4 +386,27 @@ class CheckUidExists(View):
             }
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
+
+class SearchStudent(View):
+
+    def get(self, request, *args, **kwargs):
+
+        student_name = request.GET.get('student_name', '')
+        course = request.GET.get('course', '')
+        batch = request.GET.get('batch', '')
+        students = Student.objects.filter(student_name__istartswith=student_name, course__id=course, batch__id=batch)
+        ctx_student_data = []
+        for student in students:
+            ctx_student_data.append({
+                'student': student.student_name + str(' - ') + str(student.roll_number),
+                'student_name': student.student_name,
+                'id' : student.id,
+                'u_id': student.unique_id if student and student.unique_id else '',
+            })
+        res = {
+            'result': 'ok',
+            'students': ctx_student_data,
+        }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json')
         

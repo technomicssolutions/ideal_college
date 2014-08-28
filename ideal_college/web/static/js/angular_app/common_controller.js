@@ -164,12 +164,36 @@ function get_course_batch_student_list($scope, $http) {
             $scope.students = data.students;
             $scope.no_head_error = '';
             $scope.no_installment_error = '';
-
             if ($scope.students.length == 0) {
                 $scope.no_student_error = 'No students in this batch';
                 $scope.heads = [];
                 clear_fees_payment_details($scope);
             } else {
+                $scope.no_student_error = '';
+            }
+        }).error(function(data, status)
+        {
+            console.log(data || "Request failed");
+        });
+    }
+}
+
+function course_batch_student_list($scope, $http) {
+    
+    if (($scope.course != 'select') && (($scope.batch != 'select'))) {
+        $http.get('/academic/student_search/?course='+ $scope.course+ '&batch='+ $scope.batch+ '&student_name='+$scope.student_name).success(function(data)
+        {
+            $scope.students_list = data.students;
+            $scope.no_head_error = '';
+            $scope.no_installment_error = '';
+            if ($scope.students_list.length == 0) {
+                $scope.student_selected = true;
+                $scope.no_student_error = 'No students in this batch';
+                $scope.heads = [];
+                clear_fees_payment_details($scope);
+            } else {
+                $scope.students_listing = true;
+                $scope.student_selected = false;
                 $scope.no_student_error = '';
             }
         }).error(function(data, status)

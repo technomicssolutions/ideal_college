@@ -1,5 +1,7 @@
 function FeesPaymentController($scope, $element, $http, $timeout, share, $location)
-{
+{   
+    $scope.students_listing = false;
+    $scope.student_selected = true;
     $scope.payment_installment = {
         'course_id': '',
         'batch_id': '',
@@ -35,15 +37,20 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
     $scope.get_student = function(){
         get_course_batch_student_list($scope, $http);
     }
-    $scope.get_fees_head = function(){
-        $scope.payment_installment.student_id = $scope.student.id;
-        $scope.payment_installment.u_id = $scope.student.u_id;
+    $scope.get_student_details = function() {
+        course_batch_student_list($scope, $http);
+    }
+    $scope.get_fees_head = function(student){
+        $scope.payment_installment.student_id = student.id;
+        $scope.payment_installment.u_id = student.u_id;
+        $scope.student_selected = true;
+        $scope.student_name = student.student_name;
         if ($scope.payment_installment.u_id == '' || $scope.payment_installment.u_id == undefined) {
             $scope.is_uid_exists = false;
         } else {
             $scope.is_uid_exists = true;
         }
-        $scope.url = '/fees/get_fee_structure_head/'+ $scope.course+ '/'+ $scope.batch+ '/'+$scope.student.id+'/';
+        $scope.url = '/fees/get_fee_structure_head/'+ $scope.course+ '/'+ $scope.batch+ '/'+student.id+'/';
         if ($scope.course !='select' && $scope.batch != 'select' && $scope.payment_installment.student != 'select')
             show_spinner();
             $http.get($scope.url).success(function(data)

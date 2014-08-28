@@ -798,3 +798,20 @@ label.block{
 #common_fees_report label{
 	width: 33% !important;
 }
+.student_list {
+	background-color: #FFFFFF;
+    border: 1px solid #ADD8E6;
+    border-radius: 5px;
+    left: 49%;
+    margin: auto;
+    position: absolute;
+    top: 98%;
+    width: 20%;
+    /*padding: 10px;*/
+}
+.student_list div{
+	border: 1px solid #ADD8E6;
+    height: 20px;
+    padding: 10px;
+    width: 92%;
+}
