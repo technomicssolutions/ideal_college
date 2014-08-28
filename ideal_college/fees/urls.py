@@ -4,7 +4,8 @@ from django.conf import settings
 
 from fees.views import CreateFeesStructure, EditFeesStructure, DeleteFeesStructure, ListFeesStructure, AddFeesHead, EditFeesHead, \
 	DeleteFeesHead, FeesHeadList, FeesPaymentSave, GetFeeStructureHeadList, ListOutStandingFees, CommonFeesPaymentSave,\
-	 GetFeesHeadList, GetOutStandingFeesDetails, IsFeesStructureExists, GetApplicableFeeStructureHeads, GetFeesHeadDateRanges
+	 GetFeesHeadList, GetOutStandingFeesDetails, IsFeesStructureExists, GetApplicableFeeStructureHeads, GetFeesHeadDateRanges, \
+	 FeesReceipt, GetPaidFeeHeads
 
 urlpatterns = patterns('',
 	url(r'^fees_heads/$',login_required(FeesHeadList.as_view()), name='fees_heads'),
@@ -18,6 +19,7 @@ urlpatterns = patterns('',
 	url(r'^edit_fees_structure_details/(?P<fees_structure_id>\d+)/$',login_required(EditFeesStructure.as_view()), name="edit_fees_structure_details"),
 
 	url(r'^fees_payment/$',login_required(FeesPaymentSave.as_view()), name='fees_payment'),
+	url(r'^fee_receipt/$',login_required(FeesReceipt.as_view()), name='fee_receipt'),
 	url(r'^common_fees_payment/$',login_required(CommonFeesPaymentSave.as_view()), name='common_fees_payment'),
 	
 	url(r'^get_fee_structure_head/(?P<course_id>\d+)/(?P<batch_id>\d+)/(?P<student_id>\d+)/$',login_required(GetFeeStructureHeadList.as_view()), name='get_fee_structure_head'),
@@ -29,4 +31,5 @@ urlpatterns = patterns('',
 
 	url(r'^get_applicable_fee_structure_head/(?P<course_id>\d+)/(?P<batch_id>\d+)/$',login_required(GetApplicableFeeStructureHeads.as_view()), name='get_applicable_fee_structure_head'),
 	url(r'^get_fee_head_details/$',login_required(GetFeesHeadDateRanges.as_view()), name='get_fee_head_details'),
+	url(r'^get_paid_heads/$',login_required(GetPaidFeeHeads.as_view()), name='get_paid_heads'),
 )

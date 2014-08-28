@@ -3,6 +3,9 @@ import simplejson
 import ast
 import datetime as dt
 
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+
 from django.core.urlresolvers import reverse
 from django.views.generic.base import View
 from django.shortcuts import render
@@ -10,6 +13,20 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from fees.models import *
 from datetime import datetime
+
+
+def header(canvas, y):
+
+    try:
+        college = College.objects.latest('id')
+    except:
+        college = ''
+    canvas.setFont("Helvetica", 35)  
+    if college:
+        canvas.drawString(80, y - 5, college.name)
+    canvas.line(50, y - 30, 950, y - 30)
+    return canvas
+
 
 class CreateFeesStructure(View):
 
@@ -353,6 +370,33 @@ class GetFeeStructureHeadList(View):
             status = 200
             response = simplejson.dumps(res)
             return HttpResponse(response, status=status, mimetype='application/json')
+
+
+class GetPaidFeeHeads(View):
+
+    def get(self, request, *args, **kwargs):
+        student_id = request.GET.get('student','')
+        try:
+            payment_heads_list = []
+            fees_payment = FeesPayment.objects.get(student__id=student_id)
+            payment_heads = fees_payment.payment_heads.all()
+            for payment_head in payment_heads:
+                payment_heads_list.append({
+                    'id': payment_head.fees_head.id,
+                    'name': payment_head.fees_head.name,
+                    })
+            res = {
+                'result': 'ok',
+                'paid_heads': payment_heads_list,
+            }
+        except:
+            res = {
+                'result': 'error'
+            }
+        status = 200
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=status, mimetype='application/json')
+
 
 class ListOutStandingFees(View):
     def get(self, request, *args, **kwargs):
@@ -716,4 +760,73 @@ class GetFeesHeadDateRanges(View):
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
         
-            
+
+class FeesReceipt(View):
+
+    def get(self, request, *args, **kwargs):
+        status_code = 200
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1250))
+        y = 1150
+        p = header(p, y)
+        p.setFont("Helvetica", 14)  
+        current_date = datetime.now().date()
+        head = request.GET.get('head', '')
+        if not head:
+            return render(request, 'fees/fee_receipt.html',{})
+        else:
+            student_id = request.GET.get('student','')
+            student = Student.objects.get(id=student_id)
+            p.setFont('Times-Roman',20)  
+            heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
+            p.drawCentredString(500, y+35, heading)   
+            p.setFont('Times-Roman',14)  
+            heading = "Karumanamkurussi(PO), Cherupulassery"  
+            p.drawCentredString(500, y+15, heading)   
+            heading = "Palakkad(Dt),Kerala,PIN-679504"  
+            p.drawCentredString(500, y-5, heading)  
+            heading = "PH:466-2280111,2280112,2207585"  
+            p.drawCentredString(500, y-25, heading)  
+            p.setFontSize(15)
+            p.drawCentredString(500, y-60, "Fee Payment Report")  
+            p.setFontSize(13)
+            p.drawString(50, y - 100, "Student Name")
+            p.drawString(200, y - 100, ":")
+            p.drawString(350, y - 100, student.student_name)
+            p.drawString(50, y - 120, "Unique ID")  
+            p.drawString(200, y - 120, ":")          
+            p.drawString(350, y - 120, str(student.unique_id))
+            p.drawString(50, y - 140, "Roll Number")
+            p.drawString(200, y - 140, ":")          
+            p.drawString(350, y - 140, str(student.roll_number))
+            p.drawString(50, y - 160, "Course")
+            p.drawString(200, y - 160, ":") 
+            if student.batch.branch:
+                branch_name = student.batch.branch.branch
+            else:
+                branch_name = ''
+            p.drawString(350, y - 160, student.course.course+" "+ branch_name);
+            p.drawString(50, y - 180, "Batch")
+            p.drawString(200, y - 180, ":")
+            p.drawString(350, y - 180, str(student.batch.start_date)+"-"+str(student.batch.end_date))   
+            fee_payment = FeesPaymentHead.objects.get(student = student,fees_head__id=head)
+            p.drawString(50, y - 220, "Fee Head")
+            p.drawString(200, y - 220, ":")
+            p.drawString(350, y - 220, fee_payment.fees_head.name)  
+            p.drawString(50, y - 240, "Payment Type")
+            p.drawString(200, y - 240, ":")
+            p.drawString(350, y - 240, fee_payment.installment.name)  
+            p.drawString(50, y - 260, "Amount Paid")
+            p.drawString(200, y - 260, ":")
+            p.drawString(350, y - 260, str(fee_payment.total_amount))
+            p.drawString(50, y - 280, "Total Amount")
+            p.drawString(200, y - 280, ":")
+            p.drawString(350, y - 280, str(fee_payment.fees_head.amount))
+            p.drawString(50, y - 300, "Fine")
+            p.drawString(200, y - 300, ":")
+            p.drawString(350, y - 300, str(fee_payment.fine))
+            p.drawString(50, y - 320, "Date of Payment")
+            p.drawString(200, y - 320, ":")
+            p.drawString(350, y - 320, str(fee_payment.paid_date.strftime('%d-%m-%Y')))
+            p.save()
+            return response

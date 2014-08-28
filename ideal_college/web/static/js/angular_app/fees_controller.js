@@ -63,6 +63,39 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 console.log(data || "Request failed");
             });
     }
+    $scope.get_paid_heads = function(){
+        $scope.url = '/fees/get_paid_heads/?student='+$scope.student;
+        $http.get($scope.url).success(function(data)
+            {
+                if(data.result == "ok"){
+                    $scope.paid_heads = data.paid_heads;
+                    $scope.validation_error = "";
+                }
+                else{
+                    $scope.validation_error = "No heads paid by this student"
+                    $scope.paid_heads = "";
+                }
+            }).error(function(data, status)
+            {
+                console.log(data || "Request failed");
+            });
+    }
+    $scope.generate_fee_receipt = function(){
+        $scope.validation_error = "";
+        console.log($scope.course);
+        if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
+            $scope.validation_error = 'Please choose course';
+        } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {
+            $scope.validation_error = 'Please choose batch';
+        } else if ($scope.student == 'select' || $scope.student == '' || $scope.student == null) {
+            $scope.validation_error = 'Please choose student';
+        } else if ($scope.head == 'select' || $scope.head == '' || $scope.head == null) {
+            $scope.validation_error = 'Please choose head';
+        } else {
+             document.location.href = '/fees/fee_receipt/?student='+$scope.student+'&head='+$scope.head;
+        }
+
+    }
     $scope.calculate_total_amount = function() {
         $('#head').val($scope.head);
         calculate_total_fee_amount($scope.head);
@@ -1057,7 +1090,6 @@ function FeesReportController($scope, $http, $element) {
     $scope.generate_common_report = function(){
         $scope.from_date =  $$('#from_date')[0].get('value');
         $scope.to_date =  $$('#to_date')[0].get('value');
-        console.log($scope.head);
         if($scope.from_date == "" || $scope.from_date == undefined){
             $scope.validation_error = 'Please enter Start date';
         } else if($scope.to_date == "" || $scope.to_date == undefined){
@@ -1068,7 +1100,6 @@ function FeesReportController($scope, $http, $element) {
             document.location.href = '/report/common_fee_report/?from='+$scope.from_date+'&to='+$scope.to_date+'&type='+$scope.head;        
     }
     $scope.generate_fee_collected_report = function(){
-        console.log($scope.batch);
         if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
             $scope.validation_error = 'Please choose course';
         } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {
