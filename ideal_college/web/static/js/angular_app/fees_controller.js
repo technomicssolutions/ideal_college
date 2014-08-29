@@ -1055,6 +1055,7 @@ function FeesReportController($scope, $http, $element) {
     $scope.head = 'All';
     $scope.filtering_option = '';
     $scope.url = '';
+    $scope.student_selected = true;
     $scope.init = function(csrf_token)
     {
         $scope.csrf_token = csrf_token;
@@ -1095,6 +1096,16 @@ function FeesReportController($scope, $http, $element) {
         {
             console.log(data || "Request failed");
         });
+    }
+    $scope.get_student_details = function(){
+        course_batch_student_list($scope, $http);
+    }
+    $scope.outstanding_fees_details = function(student) {
+        if (student != undefined) {
+            $scope.student_id = student.id;
+            $scope.student_name = student.student_name;
+            $scope.student_selected = true;
+        }
     }
     $scope.view_report = function(){
         if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
