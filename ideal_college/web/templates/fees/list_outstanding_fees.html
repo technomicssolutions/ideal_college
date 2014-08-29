@@ -34,7 +34,7 @@
 				<div class="control" ng-show="paid_completely">
 					<p class="error_message" style="float:left;">[[paid_completely]]</p>
 				</div>
-				<div class="control">
+				<div class="control" ng-show="filtering_option == 'student_wise' && fees_details.head_details.length > 0">
 					<label> Roll No:  </label> <label> [[fees_details.roll_no]] </label>
 				 	<label> Student Name:  </label> <label> [[fees_details.student_name]] </label>
 				 	<br /> <br />
