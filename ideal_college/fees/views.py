@@ -329,7 +329,6 @@ class FeesPaymentSave(View):
                         paid_fees_amount = float(fees_payment_head.total_amount) - float(fees_payment_head.fine)
                         if paid_fees_amount > 0:
                             fees_payment_head.paid_fee_amount = paid_fees_amount
-                    print fees_payment_head.total_amount, fees_payment_head.fine, fees_payment_head.paid_fee_amount
                     fees_payment_head.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
                     fees_payment_head.save()
                     fees_payment.payment_heads.add(fees_payment_head)
@@ -485,15 +484,12 @@ class GetOutStandingFeesDetails(View):
                                             'balance': head.amount,
                                         })
                             else:
-                                print "in else"
                                 if fees_payment_heads[0].paid_fee_amount != head.amount:
-                                    print "in if not equal"
                                     installment = head.installments.filter(name='Late Payment')
                                     if installment.count() == 0:
                                         installment = head.installments.filter(name='Standard Payment')
                                         if installment.count() == 0:
                                             installment = head.installments.filter(name='Early Payment')
-                                    print head.amount, fees_payment_heads[0].paid_fee_amount
                                     if installment:
                                         ctx_heads_list.append({
                                             'id': head.id,
