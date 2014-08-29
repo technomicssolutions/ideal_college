@@ -397,10 +397,17 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
         get_branch_list($scope, $http);
     }
     $scope.get_registartion_type = function() {
+        console.log($scope.course_type);
         if ($scope.course_type == 'Distant') {
             $scope.is_distant = true;
+            if ($scope.registration_type == 'Registration Only') {
+                $scope.is_registration_only = true;
+            } else {
+                $scope.is_registration_only = false;
+            }
         } else {
             $scope.is_distant = false;
+            $scope.is_registration_only = false;
         }
     }
     validate_new_college = function($scope) {
