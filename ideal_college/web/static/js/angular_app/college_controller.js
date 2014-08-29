@@ -399,8 +399,10 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
     $scope.get_registartion_type = function() {
         if ($scope.course_type == 'Distant') {
             $scope.is_distant = true;
+            $scope.is_registration_only = true
         } else {
             $scope.is_distant = false;
+            $scope.is_registration_only = false
         }
     }
     validate_new_college = function($scope) {
@@ -473,7 +475,7 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
         } return true;
     }
     $scope.hide_semesters = function(){
-        if ($scope.registration_type == 'Registration Only') {
+        if ($scope.registration_type == 'Registration Only' && $scope.course_type == 'Distant') {
             $scope.is_registration_only = true;
         } else {
             $scope.is_registration_only = false;
