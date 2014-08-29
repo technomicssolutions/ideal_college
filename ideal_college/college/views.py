@@ -48,7 +48,7 @@ class ListCourse(View):
         if request.is_ajax():
             course_list = []
             for course in courses:
-                course_name = course.course + ' - '+course.university+' - '+course.course_type+' - '+course.registration_type
+                course_name = course.course + ' - '+course.university+' - '+course.course_type+(' - '+course.registration_type if course.registration_type else '') 
                 course_list.append({
                     'course': course_name, 
                     'id': course.id                
