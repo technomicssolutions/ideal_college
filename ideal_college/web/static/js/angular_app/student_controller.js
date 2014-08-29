@@ -342,6 +342,9 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
             $scope.error_flag=false;
             $scope.message = '';
             show_spinner();
+            if ($scope.student.uid == null) {
+                $scope.student.uid = '';
+            }
             $scope.student.fee_heads = angular.toJson($scope.student.fee_heads_list);
             params = { 
                 'student': angular.toJson($scope.student),

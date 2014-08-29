@@ -426,7 +426,6 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
             return true;
         } 
     }
-
     validate_new_branch = function($scope) {
         $scope.validation_error = '';
         if($scope.branch_name == '' || $scope.branch_name == undefined) {
