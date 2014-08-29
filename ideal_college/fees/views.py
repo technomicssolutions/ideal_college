@@ -466,7 +466,6 @@ class GetOutStandingFeesDetails(View):
                         try:
                             fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student__id=student_id)
                             fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
-                            print fees_payment_heads.count()
                             if fees_payment_heads.count() == 0:
                                 installment = head.installments.filter(name='Late Payment')
                                 if installment.count() == 0:
@@ -500,7 +499,6 @@ class GetOutStandingFeesDetails(View):
                                             'balance': head.amount - fees_payment_heads[0].paid_fee_amount,
                                         }) 
                         except Exception as ex:
-                            print str(ex)
                             installment = head.installments.filter(name='Late Payment')
                             if installment.count() == 0:
                                 installment = head.installments.filter(name='Standard Payment')
@@ -553,7 +551,25 @@ class GetOutStandingFeesDetails(View):
                                                 'head': head.name,
                                                 'amount': head.amount,
                                                 'installments': ctx_installments,
+                                                'paid_fee_amount': 0,
+                                                'balance': head.amount,
                                             })
+                                else:
+                                    if fees_payment_heads[0].paid_fee_amount != head.amount:
+                                        installment = head.installments.filter(name='Late Payment')
+                                        if installment.count() == 0:
+                                            installment = head.installments.filter(name='Standard Payment')
+                                            if installment.count() == 0:
+                                                installment = head.installments.filter(name='Early Payment')
+                                        if installment:
+                                            ctx_heads_list.append({
+                                                'id': head.id,
+                                                'head': head.name,
+                                                'amount': head.amount,
+                                                'installments': ctx_installments,
+                                                'paid_fee_amount': fees_payment_heads[0].paid_fee_amount,
+                                                'balance': head.amount - fees_payment_heads[0].paid_fee_amount,
+                                            }) 
                             except Exception as ex:
                                 installment = head.installments.filter(name='Late Payment')
                                 if installment.count() == 0:
@@ -567,6 +583,8 @@ class GetOutStandingFeesDetails(View):
                                             'head': head.name,
                                             'amount': head.amount,
                                             'installments': ctx_installments,
+                                            'paid_fee_amount': 0,
+                                            'balance': head.amount,
                                         })
                         if len(ctx_heads_list) != 0:
                             ctx_student_fees_details.append({
