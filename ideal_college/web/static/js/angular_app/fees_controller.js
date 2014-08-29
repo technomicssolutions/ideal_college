@@ -207,6 +207,7 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
     $scope.fees_type = 'course';
     $scope.filtering_option = '';
     $scope.url = '';
+    $scope.student_selected = true;
     $scope.init = function(csrf_token)
     {
         $scope.csrf_token = csrf_token;
@@ -231,7 +232,15 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
     $scope.range = function(n) {
         return new Array(n);
     }
-    $scope.outstanding_fees_details = function(){ 
+    $scope.get_student_details = function(){
+        course_batch_student_list($scope, $http);
+    }
+    $scope.outstanding_fees_details = function(student){ 
+        $scope.student_selected = true;
+        if (student != undefined) {
+            $scope.student_id = student.id;
+            $scope.student_name = student.student_name;
+        }
         $scope.url = '';
         if ($scope.student_id == '' || $scope.student_id == undefined) {
             $scope.student_id = 'select';

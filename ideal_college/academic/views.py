@@ -398,7 +398,7 @@ class SearchStudent(View):
         student_name = request.GET.get('student_name', '')
         course = request.GET.get('course', '')
         batch = request.GET.get('batch', '')
-        students = Student.objects.filter(student_name__istartswith=student_name, course__id=course, batch__id=batch)
+        students = Student.objects.filter(student_name__istartswith=student_name, course__id=course, batch__id=batch).order_by('roll_number')
         ctx_student_data = []
         for student in students:
             ctx_student_data.append({
