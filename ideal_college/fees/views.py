@@ -101,7 +101,7 @@ class EditFeesStructure(View):
                 i = i + 1
             ctx_fees_structure.append({
                 'course': fees.course.course,
-                'batch': fees.batch.branch.branch if fees.batch.branch else '' + ' ' + fees.batch.start_date + '-' + fees.batch.end_date,           
+                'batch': fees.batch.branch.branch if fees.batch.branch else '' + ' ' + str(fees.batch.start_date) + '-' + str(fees.batch.end_date),           
                 'fees_head': ctx_fees_head,
             })
             res = {
@@ -340,7 +340,7 @@ class FeesPaymentSave(View):
                     'result': 'ok',
                 }
             except Exception as Ex:
-                print str(ex)
+                print str(Ex)
                 res = {
                     'result': 'error: '+str(Ex),
                     'message': 'Already Paid',

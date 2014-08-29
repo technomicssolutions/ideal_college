@@ -149,6 +149,9 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         } else if ($scope.uid_exists == true) {
             $scope.validation_error = "Student Unique id already existing" ;
             return false;
+        } else if ($scope.payment_installment.u_id == '' || $scope.payment_installment.u_id == undefined) {
+            $scope.validation_error = "Please enter Student Unique id" ;
+            return false;
         } else if ($scope.payment_installment.paid_amount == '' || $scope.payment_installment.paid_amount == undefined) {
             $scope.validation_error = "Please enter paid amount" ;
             return false;
@@ -918,7 +921,7 @@ function FeesHeadController($scope, $http, $element) {
         {
             hide_spinner();
             $scope.fees_heads = data.fees_heads;
-            paginate($scope.fees_heads, $scope, 2);
+            paginate($scope.fees_heads, $scope, 10);
         }).error(function(data, status)
         {
             console.log(data || "Request failed");

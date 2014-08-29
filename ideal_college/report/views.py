@@ -400,14 +400,14 @@ class OutstandingFeesListReport(View):
                     y1 = y - 130
                     new_y1 = y1
                     for student in students:
-                        if y1 != new_y1:
-                            y1 = y1 - 30
-                            if y1 <= 135:
-                                y1 = y - 130
-                                p.showPage()
-                                p = header(p, y)
-                                p.setFontSize(12)
-                            new_y1 = y1
+                        
+                        y1 = y1 - 30
+                        if y1 <= 135:
+                            y1 = y - 130
+                            p.showPage()
+                            p = header(p, y)
+                            p.setFontSize(12)
+                        new_y1 = y1
                         p.drawString(50, y1, str(student.roll_number))
                         stud_name = [[Paragraph(student.student_name, para_style)]]
                         table = Table(stud_name, colWidths=[130], rowHeights=100, style=style)   

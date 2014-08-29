@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Batch{% endblock title %}
-{% block body_id %}Batch{% endblock %}
+{% block body_id %}batch{% endblock %}
 
 {% block controller %}
 	ng-controller="CollegeController" ng-init="init('{{csrf_token}}')"
@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-		<form class="" name="branch" method="post" action="">
+		<form class="" name="batch" method="post" action="">
 			<div class="main-title">
 				<div class="alert alert-info" align="Center">Batch </div>
 				<div  align="Center">		

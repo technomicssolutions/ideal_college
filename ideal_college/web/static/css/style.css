@@ -853,3 +853,8 @@ label.block{
 	left: 33%;
 	margin: 190px auto auto;
 }
+
+#batch table {
+	margin: auto;
+    width: 75%;
+}
