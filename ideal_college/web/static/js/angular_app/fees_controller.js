@@ -265,7 +265,7 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
                 if ($scope.fees_details != undefined) {
                     if ($scope.fees_details.head_details != undefined) {
                         if ($scope.fees_details.head_details.length == 0) {
-                            $scope.paid_completely = 'Paid Completely';
+                            $scope.paid_completely = 'No Outstanding fees';
                         } else {
                             $scope.paid_completely = '';
                         }
