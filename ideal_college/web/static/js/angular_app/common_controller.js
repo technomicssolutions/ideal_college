@@ -189,11 +189,8 @@ function get_course_batch_student_list($scope, $http) {
 }
 
 function course_batch_student_list($scope, $http) {
-    console.log($scope.student_name);
     if (($scope.course != 'select') && (($scope.batch != 'select'))) {
-        console.log($scope.student_name.length);
         if(($scope.student_name.length > 0)) {
-            console.log('in if')
             $http.get('/academic/student_search/?course='+ $scope.course+ '&batch='+ $scope.batch+ '&student_name='+$scope.student_name).success(function(data)
             {
                 $scope.students_list = data.students;
@@ -244,6 +241,7 @@ function calculate_total_fee_amount(head_id, student_id) {
 function get_fees_head_installment_details(response){
 
     var head_details = response['head_details'][0];
+    $('#head_amount').val(response['head_amount'])
     if (head_details['result'] == 'error') {
         $('#error_payment_type').text(head_details['message']);
         $('#payment_type').val('');

@@ -58,6 +58,7 @@
 				<tr ng-repeat="head in fees_details.head_details" ng-show="filtering_option == 'student_wise'">
 					<td>[[head.head]]</td>
 					<td>[[head.amount]]</td>
+					<td>[[head.paid_fee_amount]]</td>
 					<td colspan="6" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px;">
 						<table style="width:100%">
 							<tr ng-repeat="installment in head.installments">
@@ -89,6 +90,7 @@
 							<tr ng-repeat="head in student.head_details" ng-show="filtering_option == 'batch_wise'">
 								<td style="width: 12%;">[[head.head]]</td>
 								<td style="width: 14%;">[[head.amount]]</td>
+								<td style="width: 14%;">[[head.paid_fee_amount]]</td>
 								<td colspan="6" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px;">
 									<table style="width:100%">
 										<tr ng-repeat="installment in head.installments">

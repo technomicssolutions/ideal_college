@@ -300,26 +300,43 @@ class FeesPaymentSave(View):
             status_code = 200 
             try:
                 fees_payment_details = ast.literal_eval(request.POST['fees_payment'])
-                print fees_payment_details
                 fees_structure = FeesStructure.objects.filter(course__id=fees_payment_details['course_id'], batch__id=fees_payment_details['batch_id'])
                 student = Student.objects.get(id=fees_payment_details['student_id'])
                 fees_payment, created = FeesPayment.objects.get_or_create(fee_structure=fees_structure[0], student=student)
                 fees_head = FeesStructureHead.objects.get(id=fees_payment_details['head_id'])
-                fees_payment_head, created = FeesPaymentHead.objects.get_or_create(student=student, fees_head=fees_head)
-                fees_payment_head.installment = Installment.objects.get(id=fees_payment_details['installment_id'])
-                if created:
-                    fees_payment_head.total_amount = fees_payment_details['paid_amount']
-                    fees_payment_head.fine = fees_payment_details['fine']
-                    fees_payment_head.paid_fee_amount = float(fees_payment_head.total_amount) - float(fees_payment_head.fine)
-                else:
-                    fees_payment_head.total_amount = float(fees_payment_details['paid_amount']) + float(fees_payment_head.total_amount)
-                    fees_payment_head.fine = float(fees_payment_details['fine']) + float(fees_payment_head.fine)
-                    fees_payment_head.paid_fee_amount = float(fees_payment_head.total_amount) - float(fees_payment_head.fine)
-                fees_payment_head.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
-                
-                fees_payment_head.save()
-                fees_payment.payment_heads.add(fees_payment_head)
-                fees_payment.save()
+                if float(fees_payment_details['paid_amount']) > 0:
+                    fees_payment_head, created = FeesPaymentHead.objects.get_or_create(student=student, fees_head=fees_head)
+                    fees_payment_head.installment = Installment.objects.get(id=fees_payment_details['installment_id'])
+                    if created:
+                        fees_payment_head.total_amount = fees_payment_details['paid_amount']
+                        if float(fees_payment_details['fine'] > fees_payment_details['paid_amount']):
+                            fees_payment_head.fine = float(fees_payment_details['paid_amount'])
+                        else:
+                            fees_payment_head.fine = float(fees_payment_details['paid_amount']) - float(fees_payment_details['fine'])
+                        paid_fees_amount = float(fees_payment_head.total_amount) - float(fees_payment_head.fine)
+                        if paid_fees_amount > 0:
+                            fees_payment_head.paid_fee_amount = paid_fees_amount 
+                    else:
+                        print "not created"
+                        fees_payment_head.total_amount = float(fees_payment_details['paid_amount']) + float(fees_payment_head.total_amount)
+                        print float(fees_payment_details['fine'])
+                        if float(fees_payment_details['fine']) > float(fees_payment_details['paid_amount']):
+                            fees_payment_head.fine = float(fees_payment_details['paid_amount']) + float(fees_payment_head.fine)
+                        else:
+                            print "else"
+                            if float(fees_payment_details['fine']) > 0:
+                                fees_amount = float(fees_payment_details['paid_amount']) - float(fees_payment_details['fine'])
+                                print fees_amount, 'fees amount'
+                                print (float(fees_payment_details['paid_amount']) - float(fees_amount)), 'fine'
+                                fees_payment_head.fine = float(fees_payment_head.fine) + (float(fees_payment_details['paid_amount']) - float(fees_amount))
+                        paid_fees_amount = float(fees_payment_head.total_amount) - float(fees_payment_head.fine)
+                        if paid_fees_amount > 0:
+                            fees_payment_head.paid_fee_amount = paid_fees_amount
+                    print fees_payment_head.total_amount, fees_payment_head.fine, fees_payment_head.paid_fee_amount
+                    fees_payment_head.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
+                    fees_payment_head.save()
+                    fees_payment.payment_heads.add(fees_payment_head)
+                    fees_payment.save()
                 if student.unique_id != fees_payment_details['u_id']:
                     student.unique_id = fees_payment_details['u_id']
                     student.save()
@@ -327,11 +344,11 @@ class FeesPaymentSave(View):
                     'result': 'ok',
                 }
             except Exception as Ex:
+                print str(ex)
                 res = {
                     'result': 'error: '+str(Ex),
                     'message': 'Already Paid',
                 }
-
             response = simplejson.dumps(res)
             return HttpResponse(response, status = status_code, mimetype="application/json")
 
@@ -358,6 +375,7 @@ class GetFeeStructureHeadList(View):
                                 'head': head.name,
                                 'paid_fee_amount': 0,
                                 'balance': head.amount,
+                                'head_amount': head.amount,
                             })
                         else:
                             if fees_payment_heads[0].paid_fee_amount != head.amount:
@@ -366,13 +384,15 @@ class GetFeeStructureHeadList(View):
                                     'head': head.name,
                                     'paid_fee_amount': fees_payment_heads[0].paid_fee_amount,
                                     'balance': head.amount - fees_payment_heads[0].paid_fee_amount,
+                                    'head_amount': head.amount,
                                 }) 
                     except Exception as ex:
                         ctx_heads_list.append({
-                           'id': head.id,
+                            'id': head.id,
                             'head': head.name,
                             'paid_fee_amount': 0,
                             'balance': head.amount,
+                            'head_amount': head.amount,
                         })
             res = {
                 'result': 'ok',
@@ -450,6 +470,7 @@ class GetOutStandingFeesDetails(View):
                         try:
                             fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student__id=student_id)
                             fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
+                            print fees_payment_heads.count()
                             if fees_payment_heads.count() == 0:
                                 installment = head.installments.filter(name='Late Payment')
                                 if installment.count() == 0:
@@ -458,14 +479,35 @@ class GetOutStandingFeesDetails(View):
                                         installment = head.installments.filter(name='Early Payment')
                                 if installment.count() > 0:
                                     if installment[0].end_date < current_date:
-
                                         ctx_heads_list.append({
                                             'id': head.id,
                                             'head': head.name,
                                             'amount': head.amount,
                                             'installments': ctx_installments,
+                                            'paid_fee_amount': 0,
+                                            'balance': head.amount,
                                         })
+                            else:
+                                print "in else"
+                                if fees_payment_heads[0].paid_fee_amount != head.amount:
+                                    print "in if not equal"
+                                    installment = head.installments.filter(name='Late Payment')
+                                    if installment.count() == 0:
+                                        installment = head.installments.filter(name='Standard Payment')
+                                        if installment.count() == 0:
+                                            installment = head.installments.filter(name='Early Payment')
+                                    print head.amount, fees_payment_heads[0].paid_fee_amount
+                                    if installment:
+                                        ctx_heads_list.append({
+                                            'id': head.id,
+                                            'head': head.name,
+                                            'amount': head.amount,
+                                            'installments': ctx_installments,
+                                            'paid_fee_amount': fees_payment_heads[0].paid_fee_amount,
+                                            'balance': head.amount - fees_payment_heads[0].paid_fee_amount,
+                                        }) 
                         except Exception as ex:
+                            print str(ex)
                             installment = head.installments.filter(name='Late Payment')
                             if installment.count() == 0:
                                 installment = head.installments.filter(name='Standard Payment')
@@ -478,6 +520,8 @@ class GetOutStandingFeesDetails(View):
                                         'head': head.name,
                                         'amount': head.amount,
                                         'installments': ctx_installments,
+                                        'paid_fee_amount': 0,
+                                        'balance': head.amount,
                                     })
                     ctx_fees_details.append({
                         'head_details': ctx_heads_list,
@@ -726,13 +770,9 @@ class GetFeesHeadDateRanges(View):
         paid_date = datetime.strptime(request.GET.get('paid_date', ''), '%d/%m/%Y').date()
         head = FeesStructureHead.objects.get(id=head_id)
         installments = head.installments.filter(start_date__lte=paid_date, end_date__gte=paid_date)
-        # if installments.count() == 0:
-
-        # print installments
         head_installments = []
         try:
             fees_payment_heads = FeesPaymentHead.objects.filter(fees_head=head, student__id=student_id)
-            print fees_payment_heads
             if fees_payment_heads.count() == 0:
                 paid_fee_amount = 0
                 balance = head.amount
@@ -743,9 +783,6 @@ class GetFeesHeadDateRanges(View):
                 balance = head.amount - fees_payment_heads[0].paid_fee_amount
                 paid_fine = fees_payment_heads[0].fine
                 paid_installment_details = head.installments.filter(start_date__lte=fees_payment_heads[0].paid_date, end_date__gte=fees_payment_heads[0].paid_date)
-                if len(paid_installment_details) > 0:
-                    if paid_installment_details[0].name == 'Late Payment':
-                        start_date = fees_payment_heads[0].paid_date
         except Exception as ex:
             print str(ex)
             paid_fee_amount = 0
@@ -760,9 +797,7 @@ class GetFeesHeadDateRanges(View):
                     if no_of_days >= 0:
                         no_of_days = no_of_days + 1
                         fine_amount = no_of_days*installment.fine_amount
-                        print fine_amount
                         fine = fine_amount - paid_fine
-                        print fine
                 head_installments.append({
                     'name': installment.name,
                     'id': installment.id,
@@ -797,11 +832,11 @@ class GetFeesHeadDateRanges(View):
                         'balance': float(balance) + float(fine),
                         'paid_head_amount': paid_fee_amount,
                     })
-        print head_installments
         res = {
             'result': 'ok',
             'head_details': head_installments,
             'fees_amount': balance,
+            'head_amount': head.amount,
         }
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')

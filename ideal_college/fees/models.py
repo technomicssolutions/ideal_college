@@ -77,7 +77,7 @@ class FeesPaymentHead(models.Model):
 	
 	def __unicode__(self):
 
-		return str(self.fees_head.id)
+		return str(self.fees_head.name) + str(self.student.student_name)
 
 	class Meta:
 

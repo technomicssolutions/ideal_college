@@ -134,7 +134,6 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
     }
     $scope.validate_fees_payment = function() {
         $scope.validation_error = '';
-        console.log($scope.payment_installment);
         if($scope.course == 'select') {
             $scope.validation_error = "Please Select a course " ;
             return false
@@ -156,11 +155,10 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         } else if ($scope.payment_installment.paid_amount != Number($scope.payment_installment.paid_amount)) {
             $scope.validation_error = "Please enter valid paid amount" ;
             return false;
+        } else if (parseFloat($scope.payment_installment.paid_amount) > parseFloat($scope.payment_installment.total_amount)) {
+            $scope.validation_error = "Please check the Total Amount with Paid Amount" ;
+            return false;
         } 
-        // else if ($scope.payment_installment.paid_amount != $scope.payment_installment.total_amount) {
-        //     $scope.validation_error = "Please check the Total Amount with Paid Amount" ;
-        //     return false;
-        // } 
         return true; 
     }
     $scope.save_fees_payment = function() {
