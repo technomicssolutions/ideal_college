@@ -452,6 +452,9 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
         } else if($scope.batch_end == '' || $scope.batch_end == undefined) {
             $scope.validation_error = "Please Enter End Year" ;
             return false;
+        } else if($scope.batch_end < $scope.batch_start) {
+            $scope.validation_error = "Please Check the Strat Year and End Year" ;
+            return false;
         } return true;
     }
     validate_new_course = function($scope) {
@@ -644,7 +647,7 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-               // hide_spinner();
+               hide_spinner();
                 if (data.result == 'error'){
                     $scope.error_flag=true;
                     $scope.message = data.message;

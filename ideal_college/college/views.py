@@ -462,19 +462,30 @@ class AddNewBatch(View):
                 course = Course.objects.get(id = request.POST['course'])
                 if request.POST['branch']:
                     branch = CourseBranch.objects.get(id = request.POST['branch'])
-                    batch, created = Batch.objects.get_or_create(course=course, start_date=request.POST['batch_start'],end_date=request.POST['batch_end'],branch=branch)
+                    try:
+                        batch = Batch.objects.get(course=course, start_date=request.POST['batch_start'],end_date=request.POST['batch_end'],branch=branch)
+                        res = {
+                            'result': 'error',
+                            'message': 'Batch already exist'
+                        }
+                    except Exception as ex:
+                        print str(ex)
+                        batch = Batch.objects.create(course=course, start_date=request.POST['batch_start'],end_date=request.POST['batch_end'],branch=branch)
+                        res = {
+                            'result': 'ok',
+                        } 
                 else:
-                    batch, created = Batch.objects.get_or_create(course=course, start_date=request.POST['batch_start'],end_date=request.POST['batch_end'])
-                if not created:
-                    res = {
-                        'result': 'error',
-                        'message': 'Batch already exist'
-                    }
-                else:
-                    batch.save()
-                    res = {
-                        'result': 'ok',
-                    }  
+                    try:
+                        batch = Batch.objects.get(course=course, start_date=request.POST['batch_start'],end_date=request.POST['batch_end'])
+                        res = {
+                            'result': 'error',
+                            'message': 'Batch already exist'
+                        }
+                    except Exception as ex:
+                        batch = Batch.objects.create(course=course, start_date=request.POST['batch_start'],end_date=request.POST['batch_end'])
+                        res = {
+                            'result': 'ok',
+                        }  
             except Exception as ex:
                 print str(ex), "Exception ===="
                 res = {
