@@ -1012,6 +1012,9 @@ function CommonFeesPayment($scope, $http, $element) {
         } else if ($scope.fees_payment.paid_amount != Number($scope.fees_payment.paid_amount)) {
             $scope.validation_error = "Please enter valid paid amount" ;
             return false;
+        } else if ($scope.fees_payment.paid_amount != Number(fees_payment.amount)) {
+            $scope.validation_error = "Please check the paid amount with fees amount" ;
+            return false;
         } return true; 
     }
     $scope.save_fees_payment = function() {

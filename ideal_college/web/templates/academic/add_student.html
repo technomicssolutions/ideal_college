@@ -37,6 +37,7 @@
 								<select name="batch" ng-model="batch" ng-change="get_fees_head()" ng-options="batch.id as batch.name for batch in batches">
 									<option value="">Select</option>
 								</select>
+								<p class="error_message">[[no_fees_structure_msg]]</p>
 							</div>
 							<div class="formtext" style="width: 57% !important;">
 								<label> Fees Heads</label>  
