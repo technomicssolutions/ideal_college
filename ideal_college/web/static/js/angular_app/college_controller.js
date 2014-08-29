@@ -397,14 +397,17 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
         get_branch_list($scope, $http);
     }
     $scope.get_registartion_type = function() {
+        console.log($scope.course_type);
         if ($scope.course_type == 'Distant') {
             $scope.is_distant = true;
             $scope.is_registration_only = true
-        } else {
+        } else 
+        {
             $scope.is_distant = false;
             $scope.is_registration_only = false
         }
     }
+    
     validate_new_college = function($scope) {
         $scope.validation_error = '';
         if($scope.college_name == '' || $scope.college_name == undefined) {
@@ -421,7 +424,6 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
             return true;
         } 
     }
-
     validate_new_branch = function($scope) {
         $scope.validation_error = '';
         if($scope.branch_name == '' || $scope.branch_name == undefined) {
@@ -447,6 +449,9 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
             return false;
         } else if($scope.batch_end == '' || $scope.batch_end == undefined) {
             $scope.validation_error = "Please Enter End Year" ;
+            return false;
+        } else if($scope.batch_end < $scope.batch_start) {
+            $scope.validation_error = "Please Check the Strat Year and End Year" ;
             return false;
         } return true;
     }
@@ -640,7 +645,7 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
                     'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }).success(function(data, status) {
-               // hide_spinner();
+               hide_spinner();
                 if (data.result == 'error'){
                     $scope.error_flag=true;
                     $scope.message = data.message;

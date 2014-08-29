@@ -134,7 +134,6 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
     }
     $scope.validate_fees_payment = function() {
         $scope.validation_error = '';
-        console.log($scope.payment_installment);
         if($scope.course == 'select') {
             $scope.validation_error = "Please Select a course " ;
             return false
@@ -150,17 +149,19 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         } else if ($scope.uid_exists == true) {
             $scope.validation_error = "Student Unique id already existing" ;
             return false;
+        } else if ($scope.payment_installment.u_id == '' || $scope.payment_installment.u_id == undefined) {
+            $scope.validation_error = "Please enter Student Unique id" ;
+            return false;
         } else if ($scope.payment_installment.paid_amount == '' || $scope.payment_installment.paid_amount == undefined) {
             $scope.validation_error = "Please enter paid amount" ;
             return false;
         } else if ($scope.payment_installment.paid_amount != Number($scope.payment_installment.paid_amount)) {
             $scope.validation_error = "Please enter valid paid amount" ;
             return false;
+        } else if (parseFloat($scope.payment_installment.paid_amount) > parseFloat($scope.payment_installment.total_amount)) {
+            $scope.validation_error = "Please check the Total Amount with Paid Amount" ;
+            return false;
         } 
-        // else if ($scope.payment_installment.paid_amount != $scope.payment_installment.total_amount) {
-        //     $scope.validation_error = "Please check the Total Amount with Paid Amount" ;
-        //     return false;
-        // } 
         return true; 
     }
     $scope.save_fees_payment = function() {
@@ -209,6 +210,7 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
     $scope.fees_type = 'course';
     $scope.filtering_option = '';
     $scope.url = '';
+    $scope.student_selected = true;
     $scope.init = function(csrf_token)
     {
         $scope.csrf_token = csrf_token;
@@ -233,7 +235,15 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
     $scope.range = function(n) {
         return new Array(n);
     }
-    $scope.outstanding_fees_details = function(){ 
+    $scope.get_student_details = function(){
+        course_batch_student_list($scope, $http);
+    }
+    $scope.outstanding_fees_details = function(student){ 
+        $scope.student_selected = true;
+        if (student != undefined) {
+            $scope.student_id = student.id;
+            $scope.student_name = student.student_name;
+        }
         $scope.url = '';
         if ($scope.student_id == '' || $scope.student_id == undefined) {
             $scope.student_id = 'select';
@@ -258,7 +268,7 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
                 if ($scope.fees_details != undefined) {
                     if ($scope.fees_details.head_details != undefined) {
                         if ($scope.fees_details.head_details.length == 0) {
-                            $scope.paid_completely = 'Paid Completely';
+                            $scope.paid_completely = 'No Outstanding fees';
                         } else {
                             $scope.paid_completely = '';
                         }
@@ -911,7 +921,7 @@ function FeesHeadController($scope, $http, $element) {
         {
             hide_spinner();
             $scope.fees_heads = data.fees_heads;
-            paginate($scope.fees_heads, $scope, 2);
+            paginate($scope.fees_heads, $scope, 10);
         }).error(function(data, status)
         {
             console.log(data || "Request failed");
@@ -1005,6 +1015,9 @@ function CommonFeesPayment($scope, $http, $element) {
         } else if ($scope.fees_payment.paid_amount != Number($scope.fees_payment.paid_amount)) {
             $scope.validation_error = "Please enter valid paid amount" ;
             return false;
+        } else if ($scope.fees_payment.paid_amount != Number($scope.fees_payment.amount)) {
+            $scope.validation_error = "Please check the paid amount with fees amount" ;
+            return false;
         } return true; 
     }
     $scope.save_fees_payment = function() {
@@ -1048,6 +1061,7 @@ function FeesReportController($scope, $http, $element) {
     $scope.head = 'All';
     $scope.filtering_option = '';
     $scope.url = '';
+    $scope.student_selected = true;
     $scope.init = function(csrf_token)
     {
         $scope.csrf_token = csrf_token;
@@ -1088,6 +1102,16 @@ function FeesReportController($scope, $http, $element) {
         {
             console.log(data || "Request failed");
         });
+    }
+    $scope.get_student_details = function(){
+        course_batch_student_list($scope, $http);
+    }
+    $scope.outstanding_fees_details = function(student) {
+        if (student != undefined) {
+            $scope.student_id = student.id;
+            $scope.student_name = student.student_name;
+            $scope.student_selected = true;
+        }
     }
     $scope.view_report = function(){
         if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {

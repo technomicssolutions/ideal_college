@@ -33,9 +33,15 @@
 					<label>Student wise</label>
 				</div>
 				<div class="control" ng-show="filtering_option == 'student_wise'">
-					<select name="student" ng-model="student_id" ng-change="outstanding_fees_details()" ng-options="student.id as student.student for student in students">
-						<option value="">Student</option>
-					</select>
+					<input type="text" ng-model="student_name" ng-change="get_student_details()">
+					<div class="control" ng-show="paid_completely">
+						<p class="error_message" style="float:left;">[[paid_completely]]</p>
+					</div>
+				</div>
+				<div class="student_list" ng-show="students_listing" ng-hide="student_selected">
+					<div ng-repeat="student in students_list" ng-click="outstanding_fees_details(student)">
+						<span>[[student.student]]</span>
+					</div>
 				</div>
 				<div class="control">
 					<input type="submit" value="View" ng-click="view_report()">

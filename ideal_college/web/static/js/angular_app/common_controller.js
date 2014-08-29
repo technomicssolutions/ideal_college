@@ -1,15 +1,4 @@
 /************************** Common JS F************/
-empty = function( x ) {
-    // undefined, '', null, 0, empty array
-    if ( !x || 0 == x.length ) return true
-    // empty {}
-    if ('object'  == Object.prototype.toString.call(x).slice(8, -1).toLowerCase() ) {
-        for ( var n in x ) if ( x.hasOwnProperty(n) ) return false
-        return true
-    }
-    // convert to string and match single non-space character
-    return !(x+'').match(/S/)
-}
 function show_spinner (){
     $('#spinner_overlay').css('display', 'block');
     $('#spinner').css('display', 'block');
@@ -189,11 +178,8 @@ function get_course_batch_student_list($scope, $http) {
 }
 
 function course_batch_student_list($scope, $http) {
-    console.log($scope.student_name);
     if (($scope.course != 'select') && (($scope.batch != 'select'))) {
-        console.log($scope.student_name.length);
         if(($scope.student_name.length > 0)) {
-            console.log('in if')
             $http.get('/academic/student_search/?course='+ $scope.course+ '&batch='+ $scope.batch+ '&student_name='+$scope.student_name).success(function(data)
             {
                 $scope.students_list = data.students;
@@ -244,6 +230,7 @@ function calculate_total_fee_amount(head_id, student_id) {
 function get_fees_head_installment_details(response){
 
     var head_details = response['head_details'][0];
+    $('#head_amount').val(response['head_amount'])
     if (head_details['result'] == 'error') {
         $('#error_payment_type').text(head_details['message']);
         $('#payment_type').val('');
@@ -272,16 +259,25 @@ function get_fees_head_details($scope, $http, fees_head_id) {
 function get_fee_structure_head_details($scope, $http) {
     $http.get('/fees/get_applicable_fee_structure_head/'+$scope.course+'/'+$scope.batch+'/').success(function(data){
         $scope.heads = data.heads;
-        $scope.student.fee_heads_list = [];
-        if($('#edit_student').length > 0 ) {
-            for(var i=0; i<$scope.heads.length; i++) {
-                for(var j=0; j<$scope.student.applicable_fees_heads.length; j++) {
-                    if ($scope.student.applicable_fees_heads[j].id == $scope.heads[i].id) {
-                        $scope.heads[i].selected = true;
-                        $scope.student.fee_heads_list.push($scope.heads[i].id);
+        console.log($scope.heads.length);
+        if ($scope.heads.length > 0) {
+            if ($scope.student != undefined) {
+                $scope.student.fee_heads_list = [];
+                $scope.no_fees_structure_msg = '';
+                if($('#edit_student').length > 0 ) {
+                    for(var i=0; i<$scope.heads.length; i++) {
+                        for(var j=0; j<$scope.student.applicable_fees_heads.length; j++) {
+                            if ($scope.student.applicable_fees_heads[j].id == $scope.heads[i].id) {
+                                $scope.heads[i].selected = true;
+                                $scope.student.fee_heads_list.push($scope.heads[i].id);
+                            }
+                        }
                     }
                 }
             }
+        } else {
+            // $scope.student.fee_heads_list = [];
+            $scope.no_fees_structure_msg = 'No Fee structure for this batch';
         }
     }).error(function(data, status){
         console.log(data || 'Request failed');

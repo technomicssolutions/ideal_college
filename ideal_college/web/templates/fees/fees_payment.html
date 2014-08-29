@@ -51,7 +51,7 @@
 				</select>
 				<input type="hidden" readonly id="head">
 				<input type="hidden" readonly id="installment">
-				<input type="text" readonly id="student_id">
+				<input type="hidden" readonly id="student_id">
 			</div>
 			<div class="control">
 				<label>Paid Date</label>
@@ -69,7 +69,11 @@
 				<input type="text" id="payment_type" ng-model="payment_installment.payment_type" name="payment_type"/>
 			</div>
 			<div class="control">
-				<label>Fees Amount</label>
+				<label>Total Fees Amount</label>
+				<input type="text" name="head_amount" id="head_amount" readonly/> 
+			</div>
+			<div class="control">
+				<label>Balance Fees Amount to pay</label>
 				<input type="text" name="amount" id="fee_amount" ng-model="payment_installment.amount"  readonly/> 
 			</div>
 			<div class="control">

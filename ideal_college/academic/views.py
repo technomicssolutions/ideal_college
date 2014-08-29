@@ -14,7 +14,6 @@ from fees.models import FeesStructureHead
 class AddStudent(View):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            print request.POST
             try:
                 course = Course.objects.get(id = request.POST['course'])
                 batch = Batch.objects.get(id = request.POST['batch'])
@@ -69,6 +68,10 @@ class AddStudent(View):
                                 student.applicable_fees_heads.add(fees_head) 
                             except Exception as ex:
                                 print str(ex) 
+                                res = {
+                                    'result': 'error',
+                                    'message': str(ex)
+                                }
                         student.save()
                     except Exception as ex:
                         print str(ex)
@@ -195,6 +198,7 @@ class ViewStudentDetails(View):
                     'qualified_exam': qualified_exam if qualified_exam else 'xxx',
                     'technical_qualification': technical_qualification if technical_qualification else 'xxx',
                     'fees_head': fees_heads if fees_heads else 'xxx',
+                    'uid': student.unique_id,
                 })
                 res = {
                     'result': 'ok',
@@ -277,6 +281,7 @@ class EditStudentDetails(View):
                     'qualified_exams': qualified_exam if qualified_exam else '',
                     'technical_exams': technical_qualification if technical_qualification else '',
                     'applicable_fees_heads': ctx_fee_heads,
+                    'uid': student.unique_id,
                 })
                 res = {
                     'result': 'ok',
@@ -297,7 +302,6 @@ class EditStudentDetails(View):
         student_id = kwargs['student_id']
         student = Student.objects.get(id = student_id)
         student_data = ast.literal_eval(request.POST['student'])
-        print student_data
         try:
             student.student_name = student_data['student_name']
             student.roll_number = student_data['roll_number']
@@ -394,7 +398,7 @@ class SearchStudent(View):
         student_name = request.GET.get('student_name', '')
         course = request.GET.get('course', '')
         batch = request.GET.get('batch', '')
-        students = Student.objects.filter(student_name__istartswith=student_name, course__id=course, batch__id=batch)
+        students = Student.objects.filter(student_name__istartswith=student_name, course__id=course, batch__id=batch).order_by('roll_number')
         ctx_student_data = []
         for student in students:
             ctx_student_data.append({

@@ -847,3 +847,14 @@ label.block{
 	width: 25% !important;
 	margin-top: 1%;
 }
+#list_outstanding_fees .student_list {
+	font-weight: normal;
+	font-size: 15px;
+	left: 33%;
+	margin: 190px auto auto;
+}
+
+#batch table {
+	margin: auto;
+    width: 75%;
+}
