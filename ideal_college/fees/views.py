@@ -309,25 +309,22 @@ class FeesPaymentSave(View):
                     fees_payment_head.installment = Installment.objects.get(id=fees_payment_details['installment_id'])
                     if created:
                         fees_payment_head.total_amount = fees_payment_details['paid_amount']
-                        if float(fees_payment_details['fine'] > fees_payment_details['paid_amount']):
+                        if float(fees_payment_details['fine']) > float(fees_payment_details['paid_amount']):
                             fees_payment_head.fine = float(fees_payment_details['paid_amount'])
                         else:
-                            fees_payment_head.fine = float(fees_payment_details['paid_amount']) - float(fees_payment_details['fine'])
+                            if float(fees_payment_details['fine']) > 0:
+                                fees_amount = float(fees_payment_details['paid_amount']) - float(fees_payment_details['fine'])
+                                fees_payment_head.fine = float(fees_payment_details['paid_amount']) - float(fees_amount)
                         paid_fees_amount = float(fees_payment_head.total_amount) - float(fees_payment_head.fine)
                         if paid_fees_amount > 0:
                             fees_payment_head.paid_fee_amount = paid_fees_amount 
                     else:
-                        print "not created"
                         fees_payment_head.total_amount = float(fees_payment_details['paid_amount']) + float(fees_payment_head.total_amount)
-                        print float(fees_payment_details['fine'])
                         if float(fees_payment_details['fine']) > float(fees_payment_details['paid_amount']):
                             fees_payment_head.fine = float(fees_payment_details['paid_amount']) + float(fees_payment_head.fine)
                         else:
-                            print "else"
                             if float(fees_payment_details['fine']) > 0:
                                 fees_amount = float(fees_payment_details['paid_amount']) - float(fees_payment_details['fine'])
-                                print fees_amount, 'fees amount'
-                                print (float(fees_payment_details['paid_amount']) - float(fees_amount)), 'fine'
                                 fees_payment_head.fine = float(fees_payment_head.fine) + (float(fees_payment_details['paid_amount']) - float(fees_amount))
                         paid_fees_amount = float(fees_payment_head.total_amount) - float(fees_payment_head.fine)
                         if paid_fees_amount > 0:
