@@ -98,7 +98,7 @@ class IdcardReport(View):
                 j = j+15
             j = y-j
             p.drawString(40, j, "Date of Birth:")
-            p.drawString(120, j, str(student.dob))
+            p.drawString(120, j, student.dob.strftime('%d/%m/%Y'))
             p.drawString(40, j-15, "Land Phone:")
             p.drawString(120, j-15, str(student.land_number))
             p.drawString(40, j-30, "Blood Group:")
