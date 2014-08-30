@@ -212,6 +212,7 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
         show_spinner();
         $http.get($scope.url).success(function(data)
         {
+            console.log(data);
             $scope.student = data.student[0];
             if ($scope.student.course_id)
                 $scope.get_batch($scope.student.course_id);

@@ -606,13 +606,16 @@ function EditStaffController($scope, $http, $element, $location, $timeout) {
                 'staff': angular.toJson($scope.staff),
                 "csrfmiddlewaretoken" : $scope.csrf_token
             }
+            var fd = new FormData();
+            if ($scope.photo_img != undefined)
+                fd.append('photo_img', $scope.photo_img.src) 
+            for(var key in params){
+                fd.append(key, params[key]);          
+            }
             show_spinner();
-            $http({
-                method : 'post',
-                url : $scope.edit_staff_url,
-                data : $.param(params),
-                headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded'
+            $http.post($scope.edit_staff_url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined
                 }
             }).success(function(data, status) {
                 hide_spinner();

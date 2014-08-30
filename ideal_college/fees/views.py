@@ -304,6 +304,14 @@ class FeesPaymentSave(View):
                 student = Student.objects.get(id=fees_payment_details['student_id'])
                 fees_payment, created = FeesPayment.objects.get_or_create(fee_structure=fees_structure[0], student=student)
                 fees_head = FeesStructureHead.objects.get(id=fees_payment_details['head_id'])
+                try:
+                    fee_paid = FeesPaid()
+                    fee_paid.fees_payment = fees_payment
+                    fee_paid.amount = float(fees_payment_details['paid_amount'])
+                    fee_paid.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
+                    fee_paid.save()
+                except Exception as Ex:
+                    print str(Ex)
                 if float(fees_payment_details['paid_amount']) > 0:
                     fees_payment_head, created = FeesPaymentHead.objects.get_or_create(student=student, fees_head=fees_head)
                     fees_payment_head.installment = Installment.objects.get(id=fees_payment_details['installment_id'])
@@ -872,25 +880,25 @@ class FeesReceipt(View):
             p.setFontSize(15)
             p.drawCentredString(500, y-60, "Fee Payment Receipt")  
             p.setFontSize(13)
-            p.drawString(50, y - 100, "Student Name")
-            p.drawString(200, y - 100, ":")
-            p.drawString(350, y - 100, student.student_name)
-            p.drawString(50, y - 120, "Unique ID")  
-            p.drawString(200, y - 120, ":")          
-            p.drawString(350, y - 120, str(student.unique_id))
-            p.drawString(50, y - 140, "Roll Number")
-            p.drawString(200, y - 140, ":")          
-            p.drawString(350, y - 140, str(student.roll_number))
-            p.drawString(50, y - 160, "Course")
-            p.drawString(200, y - 160, ":") 
+            p.drawString(300, y - 100, "Student Name")
+            p.drawString(450, y - 100, ":")
+            p.drawString(550, y - 100, student.student_name)
+            p.drawString(300, y - 120, "Unique ID")  
+            p.drawString(450, y - 120, ":")          
+            p.drawString(550, y - 120, str(student.unique_id))
+            p.drawString(300, y - 140, "Roll Number")
+            p.drawString(450, y - 140, ":")          
+            p.drawString(550, y - 140, str(student.roll_number))
+            p.drawString(300, y - 160, "Course")
+            p.drawString(450, y - 160, ":") 
             if student.batch.branch:
                 branch_name = student.batch.branch.branch
             else:
                 branch_name = ''
-            p.drawString(350, y - 160, student.course.course+" "+ branch_name);
-            p.drawString(50, y - 180, "Batch")
-            p.drawString(200, y - 180, ":")
-            p.drawString(350, y - 180, str(student.batch.start_date)+"-"+str(student.batch.end_date))
+            p.drawString(550, y - 160, student.course.course+" "+ branch_name);
+            p.drawString(300, y - 180, "Batch")
+            p.drawString(450, y - 180, ":")
+            p.drawString(550, y - 180, str(student.batch.start_date)+"-"+str(student.batch.end_date))
             if head == 'All':
                 student_fee = FeesPayment.objects.get(student=student)
                 fee_payments = student_fee.payment_heads.all()
@@ -925,23 +933,33 @@ class FeesReceipt(View):
 
             else:
                 fee_payment = FeesPaymentHead.objects.get(student = student,fees_head__id=head)
-                p.drawString(50, y - 220, "Fee Head")
-                p.drawString(200, y - 220, ":")
-                p.drawString(350, y - 220, fee_payment.fees_head.name)  
-                p.drawString(50, y - 240, "Payment Type")
-                p.drawString(200, y - 240, ":")
-                p.drawString(350, y - 240, fee_payment.installment.name)  
-                p.drawString(50, y - 260, "Amount Paid")
-                p.drawString(200, y - 260, ":")
-                p.drawString(350, y - 260, str(fee_payment.total_amount))
-                p.drawString(50, y - 280, "Total Amount")
-                p.drawString(200, y - 280, ":")
-                p.drawString(350, y - 280, str(fee_payment.fees_head.amount))
-                p.drawString(50, y - 300, "Fine")
-                p.drawString(200, y - 300, ":")
-                p.drawString(350, y - 300, str(fee_payment.fine))
-                p.drawString(50, y - 320, "Date of Payment")
-                p.drawString(200, y - 320, ":")
-                p.drawString(350, y - 320, str(fee_payment.paid_date.strftime('%d-%m-%Y')))
+                p.drawString(300, y - 220, "Fee Head")
+                p.drawString(450, y - 220, ":")
+                p.drawString(550, y - 220, fee_payment.fees_head.name)  
+                p.drawString(300, y - 240, "Payment Type")
+                p.drawString(450, y - 240, ":")
+                p.drawString(550, y - 240, fee_payment.installment.name) 
+                if request.GET.get('amount',''):
+                    p.drawString(300, y - 260, "Amount Paid")
+                    p.drawString(450, y - 260, ":")
+                    p.drawString(550, y - 260, str(request.GET.get('amount','')))
+                    p.drawString(300, y - 280, "Total Amount Paid")
+                    p.drawString(450, y - 280, ":")
+                    p.drawString(550, y - 280, str(fee_payment.total_amount))
+                    y = y - 280
+                else:
+                    p.drawString(300, y - 260, "Amount Paid")
+                    p.drawString(450, y - 260, ":")
+                    p.drawString(550, y - 260, str(fee_payment.total_amount))
+                    y = y - 260
+                p.drawString(300, y - 20, "Fee Amount")
+                p.drawString(450, y - 20, ":")
+                p.drawString(550, y - 20, str(fee_payment.fees_head.amount))
+                p.drawString(300, y - 40, "Fine")
+                p.drawString(450, y - 40, ":")
+                p.drawString(550, y - 40, str(fee_payment.fine))
+                p.drawString(300, y - 60, "Date of Payment")
+                p.drawString(450, y - 60, ":")
+                p.drawString(550, y - 60, str(fee_payment.paid_date.strftime('%d-%m-%Y')))
             p.save()
             return response

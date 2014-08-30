@@ -97,6 +97,21 @@ class FeesPayment(models.Model):
 
 		verbose_name_plural = 'Fees Payment'
 
+
+class FeesPaid(models.Model):
+	
+	fees_payment = models.ForeignKey(FeesPayment, null=True, blank=True)
+	amount = models.DecimalField('Paid amount', max_digits=14, decimal_places=2, default=0)
+	paid_date = models.DateField('Paid Date', null=True, blank=True)
+	
+	def __unicode__(self):
+		return str(self.fees_payment)
+
+	class Meta:
+
+		verbose_name_plural = 'Fees Paid'
+
+
 class CommonFeesPayment(models.Model):
 
 	student = models.CharField('Name',max_length=200, null=True, blank=True)

@@ -37,7 +37,7 @@
 					<label>Select Student</label>
 					<input type="text" ng-change="get_student_details()" ng-model="student_name">
 				</div>
-				<div class="student_list" ng-show="students_listing" ng-hide="student_selected || filtering_option=='batch_wise'">
+				<div class="student_list_id_card" ng-show="students_listing" ng-hide="student_selected || filtering_option=='batch_wise'">
 					<div ng-repeat="student in students_list" ng-click="select_student(student)">
 						<span>[[student.student]]</span>
 					</div>

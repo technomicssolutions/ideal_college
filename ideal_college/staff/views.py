@@ -179,6 +179,9 @@ class EditStaffDetails(View):
             staff.designation = designation
             staff.qualifications = staff_data['qualifications']
             staff.experiance = staff_data['experiance']
+            print request.FILES.get('photo_img', '')
+            if request.FILES.get('photo_img', ''):
+                staff.photo = request.FILES.get('photo_img', '') 
             staff.role = staff_data['role']
             if staff_data['role'] == 'admin':
                 staff.user.is_superuser = True

@@ -332,7 +332,8 @@ class EditStudentDetails(View):
             student.email = student_data['email']
             student.blood_group = student_data['blood_group']
             student.doj = datetime.strptime(student_data['doj'], '%d/%m/%Y')
-            student.photo = request.FILES.get('photo_img', '')                       
+            if request.FILES.get('photo_img', ''):
+                student.photo = request.FILES.get('photo_img', '')                       
             student.certificates_submitted = student_data['certificates_submitted']
             student.certificates_remarks = student_data['certificates_remarks']
             student.certificates_file = student_data['certificates_file']

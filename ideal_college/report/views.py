@@ -113,19 +113,60 @@ class IdcardReport(View):
             m = 30
             n = 940
             i = 160
+            x1 = 40
+            x2 = 120
+            c1 = 230
             for student in students:
                 p.rect(m,n,270,270)
                 p.setFont('Times-Bold',10)  
-                heading = 'IDEAL ARTS AND SCIENCE COLLEGE'
-                p.drawCentredString(i, y+40, heading)   
-                # p.setFont('Times-Roman',10)  
-                # heading = "Karumanamkurussi(PO), Cherupulassery"  
-                # p.drawCentredString(i, y+25, heading)   
-                # heading = "Palakkad(Dt),Kerala,PIN-679504"  
-                # p.drawCentredString(i, y+10, heading)  
-                # heading = "PH:466-2280111,2280112,2207585"  
-                # p.drawCentredString(i, y-5, heading)  
-                print i
+                p.drawCentredString(i, y + 40, college.name)   
+                p.setFont('Times-Roman',10)  
+                p.drawCentredString(i, y + 25, college.address)   
+                p.drawCentredString(i, y + 10, college.district+","+college.state+",PIN-"+college.PIN)           
+                p.drawCentredString(i, y - 5, "PH: "+college.contact)
+                p.drawString(x1, y-30, "Name:")  
+                p.drawString(x2, y-30, student.student_name);
+                p.drawString(x1, y-45, "Guardian Name:")  
+                p.drawString(x2, y-45, student.guardian_name);
+                p.drawString(x1, y-60, "Course:")  
+                if student.batch.branch:
+                    branch_name = student.batch.branch.branch
+                else:
+                    branch_name = ''
+                p.drawString(x2, y-60, student.course.course+" "+ branch_name);
+                p.drawString(x1, y-75, "Batch:")  
+                p.drawString(x2, y-75, str(student.batch.start_date)+"-"+str(student.batch.end_date))  
+                address = str(student.address)
+                p.drawString(x1, y-90,"Address:")
+                i1 = 120
+                j1 = 90
+                for address_line in address.split(","):
+                    p.drawString(x2, y-j1, address_line.lstrip())
+                    j1 = j1+15
+                j1 = y-j1
+                p.drawString(x1, j1, "Date of Birth:")
+                p.drawString(x2, j1, student.dob.strftime('%d/%m/%Y'))
+                p.drawString(x1, j1-15, "Land Phone:")
+                p.drawString(x2, j1-15, str(student.land_number))
+                p.drawString(x1, j1-30, "Blood Group:")
+                p.drawString(x2, j1-30, str(student.blood_group))
+                try:
+                    path = settings.PROJECT_ROOT.replace("\\", "/")+"/media/"+student.photo.name
+                    p.drawImage(path, c1, j1-50, width=2*cm, height=2.5*cm, preserveAspectRatio=True)
+                except:
+                    pass
+                c1 = c1 + 300
+                x1 = x1 + 300
+                x2 = x2 + 300
+                i = i + 300
+                if i > 760:
+                    i = 160
+                    y = y - 300
+                    x1 = 40
+                    x2 = 120
+                    c1 = 230
+                if y < 250:
+                    y = 1150
                 m = m+300
                 if m > 630:
                     m = 30

@@ -193,7 +193,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 if (data.result == 'error'){
                     $scope.validation_error = data.message;
                 } else {              
-                    document.location.href = '/fees/fee_receipt/?student='+$scope.payment_installment.student_id+'&head='+$scope.payment_installment.head_id;
+                    document.location.href = '/fees/fee_receipt/?student='+$scope.payment_installment.student_id+'&head='+$scope.payment_installment.head_id+'&amount='+$scope.payment_installment.paid_amount;
                 }
             }).error(function(data, success){
                 $scope.error_flag=true;
