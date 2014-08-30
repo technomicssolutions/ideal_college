@@ -327,6 +327,31 @@ function EditFeeStructureController($scope, $http, $element) {
                                     $scope.validation_error = "Duplicate entry for payment type in "+$scope.fees_structure.fees_head[i].head;
                                     return false;  
                                 }
+                                var date_value = $scope.fees_structure.fees_head[i].installments[j].start_date.split('/');
+                                var start_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                                var date_value = $scope.fees_structure.fees_head[i].installments[j].end_date.split('/');
+                                var end_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                                if($scope.fees_structure.fees_head[i].installments[k].start_date != "" && $scope.fees_structure.fees_head[i].installments[k].end_date != "" && (j!=k)){
+                                    var date_value = $scope.fees_structure.fees_head[i].installments[k].start_date.split('/');
+                                    var start_date_current = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                                    var date_value = $scope.fees_structure.fees_head[i].installments[k].end_date.split('/');
+                                    var end_date_current = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                                    if($scope.fees_structure.fees_head[i].installments[j].type == "Early Payment" && ( $scope.fees_structure.fees_head[i].installments[k].type == "Standard Payment" || $scope.fees_structure.fees_head[i].installments[k].type == "Late Payment") ){
+                                        if(end_date >= start_date_current){
+                                            $scope.validation_error = "Please Check the End Date of Early Payment and Start Date of "+$scope.fees_structure.fees_head[i].installments[k].type+" in "+$scope.fees_structure.fees_head[i].head;
+                                            return false;  
+                                        }
+                                    }
+                                    if($scope.fees_structure.fees_head[i].installments[j].type == "Standard Payment" && $scope.fees_structure.fees_head[i].installments[k].type  == "Late Payment"){
+                                        if(end_date >= start_date_current){
+                                            $scope.validation_error = "Please Check the End Date of Standard Payment and Start Date of Late Payment in "+$scope.fees_structure.fees_head[i].head;
+                                            return false;  
+                                        }
+                                    }
+                                }
+
+
+
                             }
                             if($scope.fees_structure.fees_head[i].installments[j].start_date == ""){
                                 $scope.validation_error = "Please enter the start date in "+$scope.fees_structure.fees_head[i].installments[j].type+" for head "+$scope.fees_structure.fees_head[i].head;
@@ -695,13 +720,33 @@ function FeesStructureController($scope, $http, $element) {
                             return false; 
                         } 
                         if ($scope.fees_head_details[i].payment.length > 0) {
-                            console.log("inside");
                             for(var k=0; k<$scope.fees_head_details[i].payment.length; k++){
-                                console.log("inside k")
+                                var date_value = $scope.fees_head_details[i].payment[j].start_date.split('/');
+                                var start_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                                var date_value = $scope.fees_head_details[i].payment[j].end_date.split('/');
+                                var end_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
                                 if($scope.fees_head_details[i].payment[j].type == $scope.fees_head_details[i].payment[k].type && (j!=k) ){
                                     $scope.validation_error = "Duplicate entry for payment type in "+$scope.fees_head_details[i].head;
                                     return false;  
                                 } 
+                                if($scope.fees_head_details[i].payment[k].start_date != "" && $scope.fees_head_details[i].payment[k].end_date != "" && (j!=k)){
+                                    var date_value = $scope.fees_head_details[i].payment[k].start_date.split('/');
+                                    var start_date_current = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                                    var date_value = $scope.fees_head_details[i].payment[k].end_date.split('/');
+                                    var end_date_current = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                                    if($scope.fees_head_details[i].payment[j].type == "Early Payment" && ( $scope.fees_head_details[i].payment[k].type == "Standard Payment" || $scope.fees_head_details[i].payment[k].type == "Late Payment") ){
+                                        if(end_date >= start_date_current){
+                                            $scope.validation_error = "Please Check the End Date of Early Payment and Start Date of "+$scope.fees_head_details[i].payment[k].type+" in "+$scope.fees_head_details[i].head;
+                                            return false;  
+                                        }
+                                    }
+                                    if($scope.fees_head_details[i].payment[j].type == "Standard Payment" && $scope.fees_head_details[i].payment[k].type == "Late Payment"){
+                                        if(end_date >= start_date_current){
+                                            $scope.validation_error = "Please Check the End Date of Standard Payment and Start Date of Late Payment in "+$scope.fees_head_details[i].head;
+                                            return false;  
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
