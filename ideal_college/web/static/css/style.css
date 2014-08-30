@@ -858,3 +858,20 @@ label.block{
 	margin: auto;
     width: 75%;
 }
+
+.student_list_fee_payment {
+    background-color: #FFFFFF;
+    border: 1px solid #ADD8E6;
+    border-radius: 5px;
+    left: 26%;
+    margin: 99px auto auto;
+    position: absolute;
+    width: 16%;
+}
+.student_list_fee_payment div{
+ 	border: 1px solid #ADD8E6;
+    height: 20px;
+    padding: 10px;
+    width: 90%;
+}
+
