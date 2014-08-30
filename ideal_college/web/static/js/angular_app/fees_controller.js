@@ -193,7 +193,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 if (data.result == 'error'){
                     $scope.validation_error = data.message;
                 } else {              
-                    document.location.href ="/fees/fees_payment/";
+                    document.location.href = '/fees/fee_receipt/?student='+$scope.payment_installment.student_id+'&head='+$scope.payment_installment.head_id;
                 }
             }).error(function(data, success){
                 $scope.error_flag=true;
@@ -334,20 +334,20 @@ function EditFeeStructureController($scope, $http, $element) {
                             } else if($scope.fees_structure.fees_head[i].installments[j].end_date == ""){
                                 $scope.validation_error = "Please enter the end date in "+$scope.fees_structure.fees_head[i].installments[j].type+" for head "+$scope.fees_structure.fees_head[i].head;
                                 return false;    
-                            } else if($scope.fees_structure.fees_head[i].installments[j].fine_amount != Number($scope.fees_structure.fees_head[i].installments[j].fine_amount)){
-                                $scope.validation_error = "Please enter valid fine amount in "+$scope.fees_structure.fees_head[i].installments[j].type+" for head "+$scope.fees_structure.fees_head[i].head;
-                                return false; 
-                            } else if (j > 0) {
+                            } else if($scope.fees_structure.fees_head[i].installments[j].start_date != "" && $scope.fees_structure.fees_head[i].installments[j].end_date != ""){
                                 var date_value = $scope.fees_structure.fees_head[i].installments[j].start_date.split('/');
                                 var start_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
-                                var date_value = $scope.fees_structure.fees_head[i].installments[j - 1].end_date.split('/');
+                                var date_value = $scope.fees_structure.fees_head[i].installments[j].end_date.split('/');
                                 var end_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
-                                var diff = start_date.getDate() - end_date.getDate();
-                                if (diff > 1) {
+                                if (start_date >= end_date){
                                     $scope.validation_error = "Please check the start date and end date for the payment type "+$scope.fees_structure.fees_head[i].installments[j].type+" in "+$scope.fees_structure.fees_head[i].head;
                                     return false;
                                 }
                             }
+                            if($scope.fees_structure.fees_head[i].installments[j].fine_amount != Number($scope.fees_structure.fees_head[i].installments[j].fine_amount)){
+                                $scope.validation_error = "Please enter valid fine amount in "+$scope.fees_structure.fees_head[i].installments[j].type+" for head "+$scope.fees_structure.fees_head[i].head;
+                                return false; 
+                            }  
                         }
                     }
                     if($scope.flag == 0){
@@ -676,30 +676,32 @@ function FeesStructureController($scope, $http, $element) {
                         } else if($scope.fees_head_details[i].payment[j].end_date == ""){
                             $scope.validation_error = "Please enter the end date in "+$scope.fees_head_details[i].payment[j].type+" for head "+$scope.fees_head_details[i].head;
                             return false;    
-                        } else if($scope.fees_head_details[i].payment[j].fine != Number($scope.fees_head_details[i].payment[j].fine)){
+                        } else if($scope.fees_head_details[i].payment[j].start_date != "" && $scope.fees_head_details[i].payment[j].end_date != ""){
+                            var date_value = $scope.fees_head_details[i].payment[j].start_date.split('/');
+                            var start_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                            var date_value = $scope.fees_head_details[i].payment[j].end_date.split('/');
+                            var end_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                            if (start_date >= end_date) {
+                                $scope.validation_error = "Please check the dates for the payment type "+$scope.fees_head_details[i].payment[j].type+" in "+$scope.fees_head_details[i].head;
+                                return false;
+                            }
+                        } 
+                        if($scope.fees_head_details[i].payment[j].fine != Number($scope.fees_head_details[i].payment[j].fine)){
                             $scope.validation_error = "Please enter valid fine amount in "+$scope.fees_head_details[i].payment[j].type+" for head "+$scope.fees_head_details[i].head;
                             return false; 
-                        } else if($scope.fees_head_details[i].payment.length == 0){
+                        } 
+                        if($scope.fees_head_details[i].payment.length == 0){
                             $scope.validation_error = "Please add payments";
                             return false; 
-                        } else if ($scope.fees_head_details[i].payment.length > 0) {
+                        } 
+                        if ($scope.fees_head_details[i].payment.length > 0) {
+                            console.log("inside");
                             for(var k=0; k<$scope.fees_head_details[i].payment.length; k++){
+                                console.log("inside k")
                                 if($scope.fees_head_details[i].payment[j].type == $scope.fees_head_details[i].payment[k].type && (j!=k) ){
                                     $scope.validation_error = "Duplicate entry for payment type in "+$scope.fees_head_details[i].head;
                                     return false;  
                                 } 
-                            }
-                        }
-                        if (j > 0) {
-                            var date_value = $scope.fees_head_details[i].payment[j].start_date.split('/');
-                            var start_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
-                            var date_value = $scope.fees_head_details[i].payment[j - 1].end_date.split('/');
-                            var end_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
-                            var diff = start_date.getDate() - end_date.getDate();
-                            if (diff > 1) {
-                                console.log('greater');
-                                $scope.validation_error = "Please check the start date for the for payment type "+$scope.fees_head_details[i].payment[j].type+" in "+$scope.fees_head_details[i].head;
-                                return false;
                             }
                         }
                     }

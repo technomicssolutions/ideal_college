@@ -10,89 +10,123 @@
 	<div id="main-title">
 		<div class="alert alert-info" align="Center"><h4>Fees Payment</h4></div>
 	</div>
-	<div class="form_container">
-		<form class="" name="payment" method="post" action="">
-			{% csrf_token %}
-			<div class="control">
-				<label> Course</label> 
-				<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
-					<option value="">Select</option>
-					</option>
-				</select>
-			</div>
-			<div class"error_message">
-				<p class='error_message'>[[no_batch_error]]</p>
-			</div>
-			<div class="control">
-				<label> Batch</label>
-				<select name="batch" ng-model="batch" ng-change="get_student()" ng-options="batch.id as batch.name for batch in batches">
-					<option value="select">Select</option>
-				</select>
-			</div>
-			<div class"error_message">
-				<p class='error_message'>[[no_student_error]]</p>
-			</div>
-			<div class="control">
-				<label> Student</label>
-				<input type="text" ng-change="get_student_details()" ng-model="student_name">
-			</div>
-			<div class="student_list" ng-show="students_listing" ng-hide="student_selected">
-				<div ng-repeat="student in students_list" ng-click="get_fees_head(student)">
-					<span>[[student.student]]</span>
+
+<div class="staff_form_container">	
+	<div class = "section_1">	
+	<form class="" name="payment" method="post" action="">	
+		<div class = "formrow">		
+				{% csrf_token %}
+				<div class = "form_text">
+					<label> Course</label> 
+				</div>
+				<div class = "form_input">
+					<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
+						<option value="">Select</option>
+						</option>
+					</select>
+				</div>
+				<div class"error_message">
+					<p class='error_message'>[[no_batch_error]]</p>
+				</div>
+				<div class = "form_text">
+					<label> Batch</label>
+				</div>
+				<div class = "form_input">
+					<select name="batch" ng-model="batch" ng-change="get_student()" ng-options="batch.id as batch.name for batch in batches">
+						<option value="select">Select</option>
+					</select>
+				</div>
+				<div class"error_message">
+					<p class='error_message'>[[no_student_error]]</p>
+				</div>
+				<div class="form_text">
+					<label> Student</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" ng-change="get_student_details()" ng-model="student_name">
+				</div>
+				<div class="student_list_fee_payment" ng-show="students_listing" ng-hide="student_selected">
+					<div ng-repeat="student in students_list" ng-click="get_fees_head(student)">
+						<span>[[student.student]]</span>
+					</div>
+				</div>
+				<div class"error_message">
+					<p class='error_message'>[[no_head_error]]</p>
+				</div>
+				<div class="form_text">
+					<label> Fees Head</label>  
+				</div>
+				<div class = "form_input">
+					<select name="head" ng-model="head" ng-options="head.id as head.head for head in heads" ng-change="calculate_total_amount()">
+						<option value="">Select</option>
+					</select>
+					<input type="hidden" readonly id="head">
+					<input type="hidden" readonly id="installment">
+					<input type="hidden" readonly id="student_id">
+				</div>
+				<div class="form_text">
+					<label>Paid Date</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="paid_date" id="paid_date" value="{{current_date}}" onSelect="calculate_total_amount()"/> 
+				</div>
+				<div class"error_message">
+					<p class='error_message' id="error_payment_type">[[no_installment_error]]</p>
+				</div>
+				<div class="form_text">
+					<label> Student Unique ID</label>  
+				</div>
+				<div class = "form_input">
+					<input type="text" id="u_id" ng-model="payment_installment.u_id" name="u_id" ng-readonly="is_uid_exists" ng-change="check_student_uid_exists()"/>
+				</div>
+				<div class="form_text">
+					<label> Payment Type </label>  
+				</div>
+				<div class = "form_input">
+					<input type="text" id="payment_type" ng-model="payment_installment.payment_type" name="payment_type"/>
 				</div>
 			</div>
-			<div class"error_message">
-				<p class='error_message'>[[no_head_error]]</p>
+			<div class = "formrow">	
+
+				<div class="form_text">
+					<label>Total Fees Amount</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="head_amount" id="head_amount" readonly/> 
+				</div>
+				<div class="form_text">
+					<label>Balance Fees Amount to pay</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="amount" id="fee_amount" ng-model="payment_installment.amount"  readonly/> 
+				</div>
+				<div class="form_text">
+					<label>Fine</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="fine" id="fine_amount" ng-model="payment_installment.fine" readonly /> 
+				</div>
+				<div class="form_text">
+					<label>Amount Paid</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="amount_paid" id="amount_paid" ng-model="payment_installment.amount_paid" readonly /> 
+				</div>
+				<div class="form_text">
+					<label>Total amount to pay</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="total_amount" id="total_fee_amount" ng-model="payment_installment.total_amount" readonly/> 
+				</div>
+				<div class="form_text">
+					<label>Paid Amount</label>
+				</div>
+				<div class = "form_input">
+					<input type="text" name="paid_amount" ng-model="payment_installment.paid_amount"/> 
+				</div>
 			</div>
-			<div class="control">
-				<label> Fees Head</label>  
-				<select name="head" ng-model="head" ng-options="head.id as head.head for head in heads" ng-change="calculate_total_amount()">
-					<option value="">Select</option>
-				</select>
-				<input type="hidden" readonly id="head">
-				<input type="hidden" readonly id="installment">
-				<input type="hidden" readonly id="student_id">
-			</div>
-			<div class="control">
-				<label>Paid Date</label>
-				<input type="text" name="paid_date" id="paid_date" value="{{current_date}}" onSelect="calculate_total_amount()"/> 
-			</div>
-			<div class"error_message">
-				<p class='error_message' id="error_payment_type">[[no_installment_error]]</p>
-			</div>
-			<div class="control">
-				<label> Student Unique ID</label>  
-				<input type="text" id="u_id" ng-model="payment_installment.u_id" name="u_id" ng-readonly="is_uid_exists" ng-change="check_student_uid_exists()"/>
-			</div>
-			<div class="control">
-				<label> Payment Type </label>  
-				<input type="text" id="payment_type" ng-model="payment_installment.payment_type" name="payment_type"/>
-			</div>
-			<div class="control">
-				<label>Total Fees Amount</label>
-				<input type="text" name="head_amount" id="head_amount" readonly/> 
-			</div>
-			<div class="control">
-				<label>Balance Fees Amount to pay</label>
-				<input type="text" name="amount" id="fee_amount" ng-model="payment_installment.amount"  readonly/> 
-			</div>
-			<div class="control">
-				<label>Fine</label>
-				<input type="text" name="fine" id="fine_amount" ng-model="payment_installment.fine" readonly /> 
-			</div>
-			<div class="control">
-				<label>Amount Paid</label>
-				<input type="text" name="amount_paid" id="amount_paid" ng-model="payment_installment.amount_paid" readonly /> 
-			</div>
-			<div class="control">
-				<label>Total amount to pay</label>
-				<input type="text" name="total_amount" id="total_fee_amount" ng-model="payment_installment.total_amount" readonly/> 
-			</div>
-			<div class="control">
-				<label>Paid Amount</label>
-				<input type="text" name="paid_amount" ng-model="payment_installment.paid_amount"/> 
-			</div>
-			<div  align="Center">
+		</div>
+		<div  align="Center">
 				<div class="buttons">
 					<p class="error_message"> [[validation_error]] </p>
 					<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/'">
@@ -100,6 +134,9 @@
 				</div>
 			</div>
 		</form>
-	</div>	
+	</div>
+</div>
 
 {% endblock content %}
+
+
