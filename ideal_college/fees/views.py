@@ -986,7 +986,6 @@ class FeesReceipt(View):
                 j = 340
                 tot_count = 0
                 total_amount = 0
-                print fee_payment.id;
                 fees_paids = FeesPaid.objects.filter(fees_payment=fee_payment)
                 for fees_paid in fees_paids:
                     tot_count = tot_count + 1
@@ -996,7 +995,7 @@ class FeesReceipt(View):
                     p.drawString(420, y - j, str(fees_paid.fine)) 
                     p.drawString(550, y - j, str(fees_paid.amount))  
                     p.drawString(800, y - j, str(fees_paid.paid_date.strftime('%d-%m-%Y'))) 
-                    j = j + 30
+                    j = j + 20
                     if j > 1110:
                         j = 0
                         p.showPage()
