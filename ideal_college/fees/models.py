@@ -100,10 +100,12 @@ class FeesPayment(models.Model):
 
 class FeesPaid(models.Model):
 	
-	fees_payment = models.ForeignKey(FeesPayment, null=True, blank=True)
+	fees_payment = models.ForeignKey(FeesPaymentHead, null=True, blank=True)
+	installment = models.ForeignKey(Installment, null=True, blank=True)
 	amount = models.DecimalField('Paid amount', max_digits=14, decimal_places=2, default=0)
 	paid_date = models.DateField('Paid Date', null=True, blank=True)
-	
+	fine = models.DecimalField('Fine Amount', max_digits=14, decimal_places=2, default=0)
+
 	def __unicode__(self):
 		return str(self.fees_payment)
 

@@ -304,14 +304,6 @@ class FeesPaymentSave(View):
                 student = Student.objects.get(id=fees_payment_details['student_id'])
                 fees_payment, created = FeesPayment.objects.get_or_create(fee_structure=fees_structure[0], student=student)
                 fees_head = FeesStructureHead.objects.get(id=fees_payment_details['head_id'])
-                try:
-                    fee_paid = FeesPaid()
-                    fee_paid.fees_payment = fees_payment
-                    fee_paid.amount = float(fees_payment_details['paid_amount'])
-                    fee_paid.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
-                    fee_paid.save()
-                except Exception as Ex:
-                    print str(Ex)
                 if float(fees_payment_details['paid_amount']) > 0:
                     fees_payment_head, created = FeesPaymentHead.objects.get_or_create(student=student, fees_head=fees_head)
                     fees_payment_head.installment = Installment.objects.get(id=fees_payment_details['installment_id'])
@@ -338,6 +330,16 @@ class FeesPaymentSave(View):
                         if paid_fees_amount > 0:
                             fees_payment_head.paid_fee_amount = paid_fees_amount
                     fees_payment_head.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
+                    try:
+                        fee_paid = FeesPaid()
+                        fee_paid.fees_payment = fees_payment_head
+                        fee_paid.amount = float(fees_payment_details['paid_amount'])
+                        fee_paid.paid_date = datetime.strptime(fees_payment_details['paid_date'], '%d/%m/%Y')
+                        fee_paid.installment = Installment.objects.get(id=fees_payment_details['installment_id'])
+                        fee_paid.fine = float(fees_payment_details['fine'])
+                        fee_paid.save()
+                    except Exception as Ex:
+                        print str(Ex)
                     fees_payment_head.save()
                     fees_payment.payment_heads.add(fees_payment_head)
                     fees_payment.save()
@@ -930,8 +932,7 @@ class FeesReceipt(View):
                 p.drawString(50, y - j, "Total Amount Paid:")   
                 p.drawString(200, y - j, ":") 
                 p.drawString(250, y - j, str(total_amount)) 
-
-            else:
+            elif request.GET.get('amount',''):
                 fee_payment = FeesPaymentHead.objects.get(student = student,fees_head__id=head)
                 p.drawString(300, y - 220, "Fee Head")
                 p.drawString(450, y - 220, ":")
@@ -957,9 +958,55 @@ class FeesReceipt(View):
                 p.drawString(550, y - 20, str(fee_payment.fees_head.amount))
                 p.drawString(300, y - 40, "Fine")
                 p.drawString(450, y - 40, ":")
-                p.drawString(550, y - 40, str(fee_payment.fine))
+                p.drawString(550, y - 40, str(request.GET.get('fine','')))
                 p.drawString(300, y - 60, "Date of Payment")
                 p.drawString(450, y - 60, ":")
                 p.drawString(550, y - 60, str(fee_payment.paid_date.strftime('%d-%m-%Y')))
+            else:
+                student_fee = FeesPayment.objects.get(student=student)
+                fee_payment = FeesPaymentHead.objects.get(student = student,fees_head__id=head)
+                print fee_payment
+                p.drawString(300, y - 200, "Fee Head")
+                p.drawString(450, y - 200, ":")          
+                p.drawString(550, y - 200, fee_payment.fees_head.name)
+                p.drawString(300, y - 220, "Total Amount")
+                p.drawString(450, y - 220, ":")          
+                p.drawString(550, y - 220, str(fee_payment.fees_head.amount))
+                p.drawString(300, y - 240, "Amount Paid")
+                p.drawString(450, y - 240, ":")          
+                p.drawString(550, y - 240, str(fee_payment.total_amount))
+                p.setFontSize(15)
+                p.drawCentredString(500, y-280, "Fee Payment History")  
+                p.setFontSize(13)
+                p.drawString(50, y - 320, "#")
+                p.drawString(150, y - 320, "Payment Type")
+                p.drawString(420, y - 320, "Fine")
+                p.drawString(550, y - 320, "Amount Paid")
+                p.drawString(800, y - 320, "Date of Payment")
+                j = 340
+                tot_count = 0
+                total_amount = 0
+                print fee_payment.id;
+                fees_paids = FeesPaid.objects.filter(fees_payment=fee_payment)
+                for fees_paid in fees_paids:
+                    tot_count = tot_count + 1
+                    total_amount = total_amount + fees_paid.amount
+                    p.drawString(50, y - j, str(tot_count))
+                    p.drawString(150, y - j, fees_paid.installment.name)   
+                    p.drawString(420, y - j, str(fees_paid.fine)) 
+                    p.drawString(550, y - j, str(fees_paid.amount))  
+                    p.drawString(800, y - j, str(fees_paid.paid_date.strftime('%d-%m-%Y'))) 
+                    j = j + 30
+                    if j > 1110:
+                        j = 0
+                        p.showPage()
+                j = j + 20
+                p.drawString(50, y - j, "Total Amount Paid:")   
+                p.drawString(200, y - j, ":") 
+                p.drawString(250, y - j, str(total_amount)) 
+
+
+
+
             p.save()
             return response
