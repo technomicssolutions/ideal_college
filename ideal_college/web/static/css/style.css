@@ -287,6 +287,7 @@ form {
 .error_message {
 	text-align: center;
 	color: red;
+	width: 451px;
 }
 .buttons {
 	margin: auto;
