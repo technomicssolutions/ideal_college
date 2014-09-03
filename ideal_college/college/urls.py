@@ -33,4 +33,6 @@ urlpatterns = patterns('',
     url(r'^get_batch/(?P<id>\d+)/$',login_required (GetBatch.as_view()), name="get_batch"),
     url(r'^get_semester/$',login_required (GetSemester.as_view()), name="get_semester"),  
 
+    url(r'^add_university/$',login_required(AddUniversity.as_view()), name="add_university"),
+    url(r'^university_list/$',login_required(UniversityList.as_view()), name="university_list"),
 )

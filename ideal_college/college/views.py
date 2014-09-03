@@ -768,3 +768,35 @@ class GetSemester(View):
             response = simplejson.dumps(res)
             return HttpResponse(response, status=status, mimetype='application/json')
 
+class AddUniversity(View):
+
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'college/add_university.html', {})
+
+    def post(self, request, *args, **kwargs):
+
+        try:
+            university = University.objects.get(name=request.POST['name'])
+            res = {
+                'result': 'error',
+                'message': 'University already existing',
+            }
+        except Exception as ex:
+            print str(ex)
+            university = University.objects.create(name=request.POST['name'])
+            res = {
+                'result': 'ok',
+            }
+        response = simplejson.dumps(res)
+        return HttpResponse(response, status=200, mimetype='application/json') 
+
+class UniversityList(View):
+
+    def get(self, request, *args, **kwargs):
+
+        university_list = University.objects.all()
+        context = {
+            'university_list': university_list,
+        }
+        return render(request, 'college/university_list.html', context)

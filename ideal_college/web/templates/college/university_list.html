@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}University{% endblock title %}
+{% block body_id %}university_list{% endblock %}
+
+{% block content %}	
+	<div class="main-title">
+		<div class="alert alert-info" align="Center">University </div>
+		<div class="new_button">
+			<a class="btn btn-info" href="{% url 'add_university' %}">New University</a>	
+		</div>
+	</div>
+	<div class="branch_list">
+		<table id="list" class="table table-striped" >
+			<tr>
+			  <th>Name</th>
+			  <th>Edit</th>
+			  <th>Delete</th>		  
+			</tr>						
+			{% for university in university_list %} 
+				<tr>
+					<td>{{university.name}}</td>					 
+					<td><a href="{% url 'edit_course_branch' university.id %}" >Edit</td>
+					<td><a href="{% url 'delete_course_branch' university.id %}" >Delete</td>
+				</tr>
+			{% endfor %}										
+		</table> 
+	</div>
+{% endblock content %}

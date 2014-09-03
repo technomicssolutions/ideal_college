@@ -800,5 +800,38 @@ function BranchController($scope, $http, $element) {
     }
 }
 
+function UniversityController($scope, $http) {
+    $scope.init = function(csrf_token){
+        $scope.csrf_token = csrf_token;
+    }
+    $scope.add_university = function() {
+        if ($scope.university == '' || $scope.university == undefined) {
+            $scope.message = 'Please enter the university';
+        } else {
+            params = {
+                'name': $scope.university,
+                'csrfmiddlewaretoken': $scope.csrf_token,
+            }
+            show_spinner();
+            $http({
+                method: 'post',
+                url: "/college/add_university/",
+                data: $.param(params),
+                headers: {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(data, status) {
+                hide_spinner();                
+                if (data.result == 'error'){
+                    $scope.message = data.message;
+                } else {
+                    document.location.href ='/college/university_list/';
+                }
+            }).error(function(data, success){
+                $scope.message = data.message;
+            });
+        }
+    }
+}
 
 

@@ -9,6 +9,14 @@ REGISTRATION_TYPE = (
 	('With Contact Classes', 'With Contact Classes'),
 )
 
+class University(models.Model):
+	name = models.CharField('university', null=True, blank=True, max_length=200)
+
+	def __unicode__(self):
+		return (self.name)
+	class Meta:
+		verbose_name_plural = 'University'
+
 class College(models.Model):
 	name = models.CharField('College Name', null=True, blank=True, max_length=200)
 	logo = models.ImageField(upload_to = "uploads/logo/", null=True, blank=True)
@@ -53,7 +61,7 @@ class Semester(models.Model):
 class Course(models.Model):
 	course = models.CharField('Course Name', null=True, blank=True, max_length=200,unique=False)
 	semester = models.ManyToManyField(Semester, null=True, blank=True)
-	university = models.CharField('University', null=True, blank=True, max_length=200)
+	university = models.ForeignKey(University, null=True, blank=True)
 	course_type = models.CharField('Course type', null=True, blank=True, choices=COURSE_TYPE, max_length=200)
 	registration_type = models.CharField('Registration Type', null=True, blank=True, choices=REGISTRATION_TYPE,max_length=200)
 	def __unicode__(self):
