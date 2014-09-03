@@ -279,11 +279,11 @@ function get_fee_structure_head_details($scope, $http) {
                 if($('#edit_student').length > 0 ) {
                     for(var i=0; i<$scope.heads.length; i++) {
                         console.log($scope.heads[i].id);
+                        console.log($scope.student.applicable_fees_heads);
                         for(var j=0; j<$scope.student.applicable_fees_heads.length; j++) {
                             if ($scope.student.applicable_fees_heads[j].id == $scope.heads[i].id) {
-                                
                                 $scope.heads[i].selected = true;
-                                $scope.student.fee_heads_list.push($scope.heads[i].id);
+                                $scope.student.fee_heads_list.push($scope.heads[i]);
                             }
                         }
                     }

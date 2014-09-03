@@ -790,6 +790,7 @@ class GetFeesHeadDateRanges(View):
 
         head_id = request.GET.get('head_id', '')
         student_id = request.GET.get('student_id', '')
+        paid_date = datetime.strptime(request.GET.get('paid_date', ''), '%d/%m/%Y').date()
         head = FeesStructureHead.objects.get(id=head_id)
         student = Student.objects.get(id=student_id)
         if student.applicable_to_special_fees:
