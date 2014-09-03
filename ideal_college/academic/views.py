@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 
 from college.models import Course, Branch, Batch, Semester, QualifiedExam, TechnicalQualification
-from academic.models import Student
+from academic.models import Student, StudentFees
 from fees.models import FeesStructureHead
 
 class AddStudent(View):
@@ -60,7 +60,9 @@ class AddStudent(View):
                         student.guardian_mobile_number = request.POST['guardian_mobile_number']
                         student.guardian_land_number = request.POST['guardian_land_number']
                         student.guardian_email = request.POST['guardian_email']  
+                        student.applicable_to_special_fees = request.POST['applicable_to_special_fees']
                         student.save()
+                       
                         fees_heads = ast.literal_eval(request.POST['applicable_fee_heads']) 
                         for fee_head in fees_heads:
                             fees_head = FeesStructureHead.objects.get(id=fee_head) 
@@ -72,6 +74,22 @@ class AddStudent(View):
                                     'result': 'error',
                                     'message': str(ex)
                                 }
+                        if  student.applicable_to_special_fees:
+                            student_fees = ast.literal_eval(request.POST['student_fees'])
+                            for student_fee in student_fees:
+                                print student_fee,"asdas"
+                                studentfee = StudentFees()
+                                studentfee.feeshead = FeesStructureHead.objects.get(id=student_fee['id'])
+                                studentfee.amount = student_fee['amount']
+                                studentfee.save()
+                                try:
+                                    student.student_fees.add(studentfee) 
+                                except Exception as ex:
+                                    print str(ex) 
+                                    res = {
+                                        'result': 'error',
+                                        'message': str(ex)
+                                    }
                         student.save()
                     except Exception as ex:
                         print str(ex)
@@ -251,6 +269,13 @@ class EditStudentDetails(View):
                         'head': fees_head.name,
                         'id': fees_head.id,
                     })
+                ctx_student_fees = []
+                for student_fee in student.student_fees.all():
+                    ctx_student_fees.append({
+                        'feeshead': student_fee.feeshead.name,
+                        'amount': student_fee.amount,
+                    })
+                
                 ctx_student_data.append({
                     'student_name': student.student_name if student.student_name else '',
                     'roll_number': student.roll_number if student.roll_number else '',
@@ -280,7 +305,9 @@ class EditStudentDetails(View):
                     'guardian_email': student.guardian_email if student.guardian_email else '',
                     'qualified_exams': qualified_exam if qualified_exam else '',
                     'technical_exams': technical_qualification if technical_qualification else '',
+                    'applicable_to_special_fees': student.applicable_to_special_fees ,
                     'applicable_fees_heads': ctx_fee_heads,
+                    'ctx_student_fees':ctx_student_fees if ctx_student_fees else '',
                     'uid': student.unique_id,
                 })
                 res = {
@@ -345,8 +372,12 @@ class EditStudentDetails(View):
             student.relationship = student_data['relationship']
             student.guardian_mobile_number = student_data['guardian_mobile_number']
             student.guardian_land_number = student_data['guardian_land_number']
-            student.guardian_email = student_data['guardian_email']   
+            student.guardian_email = student_data['guardian_email']  
+            student.applicable_to_special_fees = student_data['applicable_to_special_fees'] 
             student.save()
+            student_fees = ast.literal_eval(student_data['student_fees'])
+            
+
             fees_heads = ast.literal_eval(student_data['fee_heads'])
             if student.applicable_fees_heads.count() > 0 :
                 student.applicable_fees_heads.clear()
@@ -354,6 +385,13 @@ class EditStudentDetails(View):
                 if fees_head not in student.applicable_fees_heads.all():
                     fee_head = FeesStructureHead.objects.get(id=fees_head)
                     student.applicable_fees_heads.add(fee_head)
+            if student.student_fees.count() > 0 :
+                student.student_fees.clear()
+            for student_fee in student_fees:
+                if student_fee not in student.student_fees.all():
+                    studentfee = StudentFees()
+                    studentfee.feeshead = FeesStructureHead.objects.get(id=fee_head_id)
+                    studentfee.amount = student_fee.amount 
             res = {
                 'result': 'ok',
             }

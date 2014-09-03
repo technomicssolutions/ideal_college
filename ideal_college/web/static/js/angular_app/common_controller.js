@@ -100,6 +100,7 @@ function get_fee_structure_details($scope, $http, fees_structure_id) {
         $scope.fees_structure.removed_heads = [];
         if ($('#edit_fee_structure').length > 0) {
             for (var i=0; i<$scope.fees_structure.fees_head.length; i++) {
+
                 for(var j=0; j<$scope.fees_structure.fees_head[i].installments.length; j++){
                     if ($scope.fees_structure.fees_head[i].installments[j].is_not_late_payment == 'true') {
                         $scope.fees_structure.fees_head[i].installments[j].is_not_late_payment = true;
@@ -260,14 +261,17 @@ function get_fee_structure_head_details($scope, $http) {
     $http.get('/fees/get_applicable_fee_structure_head/'+$scope.course+'/'+$scope.batch+'/').success(function(data){
         $scope.heads = data.heads;
         console.log($scope.heads.length);
+
         if ($scope.heads.length > 0) {
             if ($scope.student != undefined) {
                 $scope.student.fee_heads_list = [];
                 $scope.no_fees_structure_msg = '';
                 if($('#edit_student').length > 0 ) {
                     for(var i=0; i<$scope.heads.length; i++) {
+                        console.log($scope.heads[i].id);
                         for(var j=0; j<$scope.student.applicable_fees_heads.length; j++) {
                             if ($scope.student.applicable_fees_heads[j].id == $scope.heads[i].id) {
+                                
                                 $scope.heads[i].selected = true;
                                 $scope.student.fee_heads_list.push($scope.heads[i].id);
                             }

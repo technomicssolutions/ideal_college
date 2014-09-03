@@ -15,6 +15,11 @@ function add_new_student($http, $scope){
     $scope.popup.show_content();
     $scope.course = '';
     $scope.batch = '';
+    $scope.student_fees = [{
+            'fee_head_id': '',
+            'fees_head': '',
+            'amount': '',
+        }];
 }
 function save_new_student($http, $scope) {
     if(validate_new_student($scope)) {
@@ -27,6 +32,8 @@ function save_new_student($http, $scope) {
             'course': $scope.course,
             'batch': $scope.batch,
             'applicable_fee_heads': angular.toJson($scope.fee_heads),
+            'applicable_to_special_fees': $scope.applicable_to_special_fees,
+            'student_fees':  angular.toJson($scope.student_fees) ,      
             'semester': $scope.semester,           
             'qualified_exam': $scope.qualified_exam,
             'technical_qualification': $scope.technical_qualification,
@@ -72,7 +79,7 @@ function save_new_student($http, $scope) {
             }
             else {
                 
-                document.location.href ="/academic/list_student/";
+                // document.location.href ="/academic/list_student/";
             }
             hide_spinner();
         }).error(function(data, status){
@@ -97,6 +104,7 @@ function reset_student($scope) {
     $scope.course = '';
     $scope.batch = '';
     $scope.semester = '';
+    // $scope.applicable_to_special_fee =false;
     $scope.qualified_exam = '';
     $scope.technical_qualification = '';
     $scope.dob = '';
@@ -221,6 +229,17 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
                 $scope.batch = $scope.student.batch;
                 get_fee_structure_head_details($scope, $http);
             }
+            console.log($scope.student.applicable_to_special_fees)
+            if ($scope.student.applicable_to_special_fees){
+
+                get_fee_structure_head_details($scope, $http);
+                $scope.student.applicable_to_special_fees = true;
+                $scope.applicable_to_special_fee = true;
+                $scope.student_fees = $scope.student.ctx_student_fees;
+            }else{
+                $scope.applicable_to_special_fee = false;
+            }
+
             hide_spinner();
         }).error(function(data, status)
         {
@@ -242,6 +261,18 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
         });
         get_course_list($scope, $http);
         get_semester_list($scope, $http);
+        $scope.selected_special_fee= function(){
+            console.log($scope.applicable_to_special_fees)
+            if ($scope.student.applicable_to_special_fees){
+                get_fee_structure_head_details($scope, $http);
+                $scope.student.applicable_to_special_fees = true;
+                $scope.applicable_to_special_fee = true;
+                $scope.student_fees = $scope.student.ctx_student_fees;
+            }
+            else{
+                $scope.applicable_to_special_fee = false;
+            }
+        }
     }
     $scope.get_batch = function(course){
         show_spinner(); 
@@ -346,6 +377,7 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
             if ($scope.student.uid == null) {
                 $scope.student.uid = '';
             }
+            $scope.student.applicable_to_special_fees = "True";
             $scope.student.fee_heads = angular.toJson($scope.student.fee_heads_list);
             params = { 
                 'student': angular.toJson($scope.student),
@@ -383,16 +415,57 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
 function StudentListController($scope, $http, $element, $location, $timeout) {
     $scope.init = function(csrf_token){
         get_course_list($scope, $http);
+       
         $scope.page_interval = 10;
         $scope.visible_list = [];
         $scope.students = [];
+        $scope.fees_head_id = [];
+        $scope.student_fees_head = [];
+        $scope.amount = [];
+        $scope.student_fees = [{
+            'fee_head_id': '',
+            'fees_head': '',
+            'amount': '',
+        }];
         $scope.csrf_token = csrf_token;
         $scope.error_flag = false;
         $scope.popup = '';      
         $scope.pages = 1;
         $scope.student_id = '';
         $scope.students_listing = false;
+        $scope.applicable_to_special_fee = false;
         $scope.student_selected = true;
+        $scope.selected_special_fee= function(){
+            console.log($scope.fee_heads)
+            $scope.selected_heads = $scope.fee_heads;
+           
+
+                get_fee_structure_head_details($scope, $http);
+                
+                for(var i=0; i<$scope.heads.length; i++) {
+                    for(var j=0; j<$scope.selected_heads.length; j++){
+                        if ($scope.selected_heads[j] == $scope.heads[i].id) {
+                            $scope.student_fees = $scope.heads[i];
+                            $scope.fees_head_id[i] = $scope.heads[i].id;
+                            console.log($scope.fees_head_id)
+                            $scope.amount[i] = $scope.heads[i].amount;
+                            $scope.student_fees_head[i] = $scope.heads[i].head;
+                            console.log($scope.student_fees)
+                    }
+                }
+            }   
+
+           
+        }
+        $scope.applicable_check = function(){
+            if ($scope.applicable_to_special_fees){
+                $scope.applicable_to_special_fees = true;
+                $scope.applicable_to_special_fee = true;
+            }
+            else{
+                $scope.applicable_to_special_fee = false;
+            }
+        }
         var date_pick = new Picker.Date($$('#dob'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},

@@ -57,6 +57,20 @@
 				<select name="head" ng-model="student.fee_heads_list" ng-options="head.id as head.head for head in heads" multiple ng-selected="head.selected">
 					<option value="">Select</option>
 				</select>
+			</div>
+			<div class="formtext" style="padding-bottom: 12px !important;">
+				<label> Applicable to special Fees</label>
+				<div class="forminput">	
+					<input type="checkbox" ng-model="student.applicable_to_special_fees" ng-change="selected_special_fee()"> 
+				</div>
+			</div>
+
+			<div ng-show="applicable_to_special_fee">
+				<div class="forminput" style="margin-right: 86px; margin-left: 259px;" ng-repeat="fee_head in heads">
+					<label>[[fee_head.head]]</label>
+					<input type="text"   id ="fee_head.id" ng-model="fee_head.amount">
+						
+				</div>
 			</div>			
 			<div class = "form_text">
 				<label> Qualified Exam</label>

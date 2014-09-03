@@ -771,7 +771,8 @@ class GetApplicableFeeStructureHeads(View):
                 heads = fee_structure[0].head.all()
                 for head in heads:
                     heads_list.append({
-                        'head': head.name, 
+                        'head': head.name,
+                        'amount':head.amount, 
                         'id': head.id ,            
                     })
             res = {
@@ -788,6 +789,7 @@ class GetFeesHeadDateRanges(View):
 
         head_id = request.GET.get('head_id', '')
         student_id = request.GET.get('student_id', '')
+        student = Student.objects.get(id=student_id, applicable_to_special_fees= True)
         paid_date = datetime.strptime(request.GET.get('paid_date', ''), '%d/%m/%Y').date()
         head = FeesStructureHead.objects.get(id=head_id)
         installments = head.installments.filter(start_date__lte=paid_date, end_date__gte=paid_date)
