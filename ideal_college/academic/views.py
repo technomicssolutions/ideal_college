@@ -77,7 +77,6 @@ class AddStudent(View):
                         if  student.applicable_to_special_fees:
                             student_fees = ast.literal_eval(request.POST['student_fees'])
                             for student_fee in student_fees:
-                                print student_fee,"asdas"
                                 studentfee = StudentFees()
                                 studentfee.feeshead = FeesStructureHead.objects.get(id=student_fee['id'])
                                 studentfee.amount = student_fee['amount']
@@ -97,7 +96,7 @@ class AddStudent(View):
                             'result': 'error',
                             'message': str(ex)
                         }
-                    
+                
                     res = {
                         'result': 'ok',
                     }                     
