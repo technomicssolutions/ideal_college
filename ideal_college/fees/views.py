@@ -622,24 +622,25 @@ class GetOutStandingFeesDetails(View):
                                             if installment.count() == 0:
                                                 installment = head.installments.filter(name='Early Payment')
                                         if installment:
-                                            if student.applicable_to_special_fees:
-                                                ctx_heads_list.append({
-                                                    'id': head.id,
-                                                    'head': head.name,
-                                                    'amount': studentfee.amount,
-                                                    'installments': ctx_installments,
-                                                    'paid_fee_amount': fees_payment_heads[0].paid_fee_amount,
-                                                    'balance': studentfee.amount - fees_payment_heads[0].paid_fee_amount,
-                                                })
-                                            else:
-                                                ctx_heads_list.append({
-                                                    'id': head.id,
-                                                    'head': head.name,
-                                                    'amount': head.amount,
-                                                    'installments': ctx_installments,
-                                                    'paid_fee_amount': fees_payment_heads[0].paid_fee_amount,
-                                                    'balance': head.amount - fees_payment_heads[0].paid_fee_amount,
-                                                }) 
+                                            if installment[0].end_date < current_date:
+                                                if student.applicable_to_special_fees:
+                                                    ctx_heads_list.append({
+                                                        'id': head.id,
+                                                        'head': head.name,
+                                                        'amount': studentfee.amount,
+                                                        'installments': ctx_installments,
+                                                        'paid_fee_amount': fees_payment_heads[0].paid_fee_amount,
+                                                        'balance': studentfee.amount - fees_payment_heads[0].paid_fee_amount,
+                                                    })
+                                                else:
+                                                    ctx_heads_list.append({
+                                                        'id': head.id,
+                                                        'head': head.name,
+                                                        'amount': head.amount,
+                                                        'installments': ctx_installments,
+                                                        'paid_fee_amount': fees_payment_heads[0].paid_fee_amount,
+                                                        'balance': head.amount - fees_payment_heads[0].paid_fee_amount,
+                                                    }) 
                             except Exception as ex:
                                 installment = head.installments.filter(name='Late Payment')
                                 if installment.count() == 0:
@@ -675,67 +676,7 @@ class GetOutStandingFeesDetails(View):
                     ctx_fees_details.append({
                         'students': ctx_student_fees_details,
                     })    
-            else:
-                heads = FeesHead.objects.all()
-                if filtering_option == 'student_wise':
-                    ctx_fees_head_details = []
-                    for head in heads:
-                        try:
-                            student = Student.objects.get(id=student_id)
-                            fees_payment = CommonFeesPayment.objects.get(head=head, student__id=student_id)
-                            if fees_payment.paid_amount < head.amount:
-                                ctx_fees_head_details.append({
-                                    'id': head.id,
-                                    'name': head.name,
-                                    'amount': head.amount,
-                                    'balance': float(head.amount) - float(fees_payment.paid_amount),
-                                    'paid_head_amount': fees_payment.paid_amount,
-                                })
-                        except:
-                            ctx_fees_head_details.append({
-                                'id': head.id,
-                                'name': head.name,
-                                'amount': head.amount,
-                                'balance': float(head.amount),
-                                'paid_head_amount': 0,
-                            })
-                    ctx_fees_details.append({
-                        'head_details': ctx_fees_head_details,
-                        'student_name': student.student_name,
-                        'roll_no': student.roll_number
-                    })
-                else:
-                    students = Student.objects.filter(course__id=request.GET.get('course', ''), batch__id=request.GET.get('batch', '')).order_by('roll_number')
-                    ctx_student_fees_details = []
-                    for student in students:
-                        ctx_fees_head_details = []
-                        for head in heads:
-                            try:
-                                fees_payment = CommonFeesPayment.objects.get(head=head, student__id=student_id)
-                                if fees_payment.paid_amount < head.amount:
-                                    ctx_fees_head_details.append({
-                                        'id': head.id,
-                                        'name': head.name,
-                                        'amount': head.amount,
-                                        'balance': float(head.amount) - float(fees_payment.paid_amount),
-                                        'paid_head_amount': fees_payment.paid_amount,
-                                    })
-                            except:
-                                ctx_fees_head_details.append({
-                                    'id': head.id,
-                                    'name': head.name,
-                                    'amount': head.amount,
-                                    'balance': float(head.amount),
-                                    'paid_head_amount': 0,
-                                })
-                        ctx_student_fees_details.append({
-                            'head_details':ctx_fees_head_details,
-                            'name': student.student_name,
-                            'roll_no': student.roll_number,
-                        })
-                    ctx_fees_details.append({
-                        'students': ctx_student_fees_details,
-                    })
+            
             res = {
                 'result':'ok',
                 'fees_details': ctx_fees_details,
