@@ -882,7 +882,7 @@ class GetFeesHeadDateRanges(View):
                     installment = head.installments.filter(start_date__gte=paid_date, name='Early Payment')
                 head_installments.append ({
                     'result': 'error',
-                    'message': 'The date selected for payment is before Early Payment',
+                    'message': 'The date selected for payment is before '+installment[0].name if installment else 'Please check the date selected',
                 })
             if installment:
                 no_of_days = (paid_date - installment[0].start_date).days
