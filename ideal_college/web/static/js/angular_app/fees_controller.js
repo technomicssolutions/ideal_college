@@ -134,6 +134,7 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
     }
     $scope.validate_fees_payment = function() {
         $scope.validation_error = '';
+        var error_msg = $('#error_payment_type').text();
         if($scope.course == 'select') {
             $scope.validation_error = "Please Select a course " ;
             return false
@@ -151,6 +152,9 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
             return false;
         } else if ($scope.payment_installment.u_id == '' || $scope.payment_installment.u_id == undefined) {
             $scope.validation_error = "Please enter Student Unique id" ;
+            return false;
+        } else if (error_msg != '') {
+            $scope.validation_error = error_msg ;
             return false;
         } else if ($scope.payment_installment.paid_amount == '' || $scope.payment_installment.paid_amount == undefined) {
             $scope.validation_error = "Please enter paid amount" ;

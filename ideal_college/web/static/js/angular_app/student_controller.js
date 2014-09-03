@@ -53,7 +53,6 @@ function save_new_student($http, $scope) {
             'guardian_email': $scope.guardian_email,            
             "csrfmiddlewaretoken" : $scope.csrf_token
         }
-        console.log(params);
         var fd = new FormData();
         fd.append('photo_img', $scope.photo_img.src)   
         for(var key in params){
@@ -453,7 +452,6 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
             $http.get(url).success(function(data)
             {
                 $scope.students = data.students;
-                console.log($scope.students);
                 paginate(data.students, $scope);
                 hide_spinner();
             }).error(function(data, status)
@@ -478,7 +476,6 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
         save_new_student($http, $scope);
     }
     $scope.generate_id_card = function(){
-        console.log($scope.filtering_option);
         if ($scope.course == 'select' || $scope.course == '' || $scope.course == null) {
             $scope.validation_error = 'Please choose course';
         } else if ($scope.batch == 'select' || $scope.batch == '' || $scope.batch == null) {

@@ -340,7 +340,7 @@ class FeesPaymentSave(View):
                         fee_paid.fine = float(fees_payment_details['fine'])
                         fee_paid.save()
                     except Exception as Ex:
-                        print str(Ex)
+                        print str(ex)
                     fees_payment_head.save()
                     fees_payment.payment_heads.add(fees_payment_head)
                     fees_payment.save()
@@ -351,7 +351,6 @@ class FeesPaymentSave(View):
                     'result': 'ok',
                 }
             except Exception as Ex:
-                print str(Ex)
                 res = {
                     'result': 'error: '+str(Ex),
                     'message': 'Already Paid',
@@ -803,10 +802,7 @@ class GetFeesHeadDateRanges(View):
         
         
         installments = head.installments.filter(start_date__lte=paid_date, end_date__gte=paid_date)
-        print installments,"asdas"
         head_installments = []
-        # if student.applicable_to_special_fees : 
-        #     special_fee(student_id,head_id,installments,paid_date)
         try:
             if student.applicable_to_special_fees :   
                 fees_payment_heads = FeesPaymentHead.objects.filter(fees_head=studentfee.feeshead, student=student)  
@@ -855,10 +851,9 @@ class GetFeesHeadDateRanges(View):
                     'balance': float(balance) + float(fine),
                     'paid_head_amount': paid_fee_amount,
                 })
-                print head_installments,"xxxx"
+
         else:
             installment = None
-            print "in else"
             try:
                 installment = head.installments.filter(end_date__lte=paid_date, name='Late Payment')
                 if installment.count() == 0:
@@ -903,7 +898,6 @@ class GetFeesHeadDateRanges(View):
                         'balance': float(balance) + float(fine),
                         'paid_head_amount': paid_fee_amount,
                     })
-                    print head_installments,"xxxx1"
         if student.applicable_to_special_fees:
             res = {
                 'result': 'ok',
@@ -918,7 +912,6 @@ class GetFeesHeadDateRanges(View):
                 'fees_amount': balance,
                 'head_amount': head.amount,
             }
-        print res
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
         
@@ -1025,7 +1018,6 @@ class FeesReceipt(View):
             else:
                 student_fee = FeesPayment.objects.get(student=student)
                 fee_payment = FeesPaymentHead.objects.get(student = student,fees_head__id=head)
-                print fee_payment
                 p.drawString(300, y - 200, "Fee Head")
                 p.drawString(450, y - 200, ":")          
                 p.drawString(550, y - 200, fee_payment.fees_head.name)
