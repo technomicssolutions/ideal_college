@@ -74,8 +74,7 @@ function save_new_student($http, $scope) {
                 $scope.popup.show_content();
             }
             else {
-                
-                // document.location.href ="/academic/list_student/";
+                document.location.href ="/academic/list_student/";
             }
             hide_spinner();
         }).error(function(data, status){
@@ -87,13 +86,6 @@ function save_new_student($http, $scope) {
         });
     }
 }
-// function get_fees_head($scope, $http) {
-//     $http.get().success(function(data){
-//         $scope.heads = data.heads;
-//     }).error(function(data, status){
-//         console.log('Request failed'|| data)
-//     })
-// }
 function reset_student($scope) {
     $scope.student_name = '';
     $scope.roll_number = '';
@@ -216,26 +208,13 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
         show_spinner();
         $http.get($scope.url).success(function(data)
         {
-            console.log(data);
             $scope.student = data.student[0];
             if ($scope.student.course_id)
                 $scope.get_batch($scope.student.course_id);
             if ($scope.student.course && $scope.student.batch) {
                 $scope.course = $scope.student.course;
                 $scope.batch = $scope.student.batch;
-                get_fee_structure_head_details($scope, $http);
             }
-            console.log($scope.student.applicable_to_special_fees)
-            if ($scope.student.applicable_to_special_fees){
-
-                get_fee_structure_head_details($scope, $http);
-                $scope.student.applicable_to_special_fees = true;
-                $scope.applicable_to_special_fee = true;
-                $scope.student_fees = $scope.student.ctx_student_fees;
-            }else{
-                $scope.applicable_to_special_fee = false;
-            }
-
             hide_spinner();
         }).error(function(data, status)
         {
@@ -257,19 +236,8 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
         });
         get_course_list($scope, $http);
         get_semester_list($scope, $http);
-        $scope.selected_special_fee= function(){
-            console.log($scope.applicable_to_special_fees)
-            if ($scope.student.applicable_to_special_fees){
-                get_fee_structure_head_details($scope, $http);
-                $scope.student.applicable_to_special_fees = true;
-                $scope.applicable_to_special_fee = true;
-                $scope.student_fees = $scope.student.ctx_student_fees;
-            }
-            else{
-                $scope.applicable_to_special_fee = false;
-            }
-        }
     }
+    
     $scope.get_batch = function(course){
         show_spinner(); 
         if (course)
@@ -300,9 +268,6 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
             return false;
         } else if($scope.student.batch == '' || $scope.student.batch == undefined) {
             $scope.validation_error = "Please Enter Batch";
-            return false;
-        } else if($scope.student.fee_heads_list == '' || $scope.student.fee_heads_list == undefined) {
-            $scope.validation_error = "Please choose Fees Heads";
             return false;
         } else if($scope.student.dob == '' || $scope.student.dob == undefined) {
             $scope.validation_error = "Please Enter DOB";
@@ -373,8 +338,7 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
             if ($scope.student.uid == null) {
                 $scope.student.uid = '';
             }
-            $scope.student.applicable_to_special_fees = "True";
-            $scope.student.fee_heads = angular.toJson($scope.student.fee_heads_list);
+            
             params = { 
                 'student': angular.toJson($scope.student),
                 "csrfmiddlewaretoken" : $scope.csrf_token
@@ -457,7 +421,6 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
             $scope.fees_heads.push($scope.fee_heads[i].id);
             $scope.student_fees_details.push($scope.fee_heads[i]);
         }
-        console.log($scope.student_fees_details) 
     }
     $scope.applicable_check = function(){
         if ($scope.applicable_to_special_fees){
@@ -482,9 +445,7 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
             });
         }
     }
-    $scope.get_fees_head = function() {
-        get_fee_structure_head_details($scope, $http);
-    }
+    
     $scope.get_students = function(){
         var url = '/academic/list_student/?batch_id='+ $scope.batch;
         if($scope.batch != null){

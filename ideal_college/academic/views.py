@@ -271,9 +271,11 @@ class EditStudentDetails(View):
                 ctx_student_fees = []
                 for student_fee in student.student_fees.all():
                     ctx_student_fees.append({
-                        'feeshead': student_fee.feeshead.name,
+                        'id':student_fee.feeshead.id,
+                        'head': student_fee.feeshead.name,
                         'amount': student_fee.amount,
                     })
+                print ctx_student_fees
                 
                 ctx_student_data.append({
                     'student_name': student.student_name if student.student_name else '',
@@ -304,9 +306,6 @@ class EditStudentDetails(View):
                     'guardian_email': student.guardian_email if student.guardian_email else '',
                     'qualified_exams': qualified_exam if qualified_exam else '',
                     'technical_exams': technical_qualification if technical_qualification else '',
-                    'applicable_to_special_fees': student.applicable_to_special_fees ,
-                    'applicable_fees_heads': ctx_fee_heads,
-                    'ctx_student_fees':ctx_student_fees if ctx_student_fees else '',
                     'uid': student.unique_id,
                 })
                 res = {
@@ -372,25 +371,7 @@ class EditStudentDetails(View):
             student.guardian_mobile_number = student_data['guardian_mobile_number']
             student.guardian_land_number = student_data['guardian_land_number']
             student.guardian_email = student_data['guardian_email']  
-            student.applicable_to_special_fees = student_data['applicable_to_special_fees'] 
             student.save()
-            student_fees = ast.literal_eval(student_data['student_fees'])
-            
-
-            fees_heads = ast.literal_eval(student_data['fee_heads'])
-            if student.applicable_fees_heads.count() > 0 :
-                student.applicable_fees_heads.clear()
-            for fees_head in fees_heads:
-                if fees_head not in student.applicable_fees_heads.all():
-                    fee_head = FeesStructureHead.objects.get(id=fees_head)
-                    student.applicable_fees_heads.add(fee_head)
-            if student.student_fees.count() > 0 :
-                student.student_fees.clear()
-            for student_fee in student_fees:
-                if student_fee not in student.student_fees.all():
-                    studentfee = StudentFees()
-                    studentfee.feeshead = FeesStructureHead.objects.get(id=fee_head_id)
-                    studentfee.amount = student_fee.amount 
             res = {
                 'result': 'ok',
             }
