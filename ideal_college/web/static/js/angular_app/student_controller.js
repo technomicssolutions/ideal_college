@@ -15,11 +15,6 @@ function add_new_student($http, $scope){
     $scope.popup.show_content();
     $scope.course = '';
     $scope.batch = '';
-    $scope.student_fees = [{
-            'fee_head_id': '',
-            'fees_head': '',
-            'amount': '',
-        }];
 }
 function save_new_student($http, $scope) {
     if(validate_new_student($scope)) {
@@ -31,9 +26,9 @@ function save_new_student($http, $scope) {
             'roll_number': $scope.roll_number,
             'course': $scope.course,
             'batch': $scope.batch,
-            'applicable_fee_heads': angular.toJson($scope.fee_heads),
+            'applicable_fee_heads': angular.toJson($scope.fees_heads),
             'applicable_to_special_fees': $scope.applicable_to_special_fees,
-            'student_fees':  angular.toJson($scope.student_fees) ,      
+            'student_fees':  angular.toJson($scope.student_fees_details),      
             'semester': $scope.semester,           
             'qualified_exam': $scope.qualified_exam,
             'technical_qualification': $scope.technical_qualification,
@@ -58,6 +53,7 @@ function save_new_student($http, $scope) {
             'guardian_email': $scope.guardian_email,            
             "csrfmiddlewaretoken" : $scope.csrf_token
         }
+        console.log(params);
         var fd = new FormData();
         fd.append('photo_img', $scope.photo_img.src)   
         for(var key in params){
@@ -422,11 +418,11 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
         $scope.fees_head_id = [];
         $scope.student_fees_head = [];
         $scope.amount = [];
-        $scope.student_fees = [{
+        $scope.student_fees = {
             'fee_head_id': '',
             'fees_head': '',
             'amount': '',
-        }];
+        };
         $scope.csrf_token = csrf_token;
         $scope.error_flag = false;
         $scope.popup = '';      
@@ -435,37 +431,6 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
         $scope.students_listing = false;
         $scope.applicable_to_special_fee = false;
         $scope.student_selected = true;
-        $scope.selected_special_fee= function(){
-            console.log($scope.fee_heads)
-            $scope.selected_heads = $scope.fee_heads;
-           
-
-                get_fee_structure_head_details($scope, $http);
-                
-                for(var i=0; i<$scope.heads.length; i++) {
-                    for(var j=0; j<$scope.selected_heads.length; j++){
-                        if ($scope.selected_heads[j] == $scope.heads[i].id) {
-                            $scope.student_fees = $scope.heads[i];
-                            $scope.fees_head_id[i] = $scope.heads[i].id;
-                            console.log($scope.fees_head_id)
-                            $scope.amount[i] = $scope.heads[i].amount;
-                            $scope.student_fees_head[i] = $scope.heads[i].head;
-                            console.log($scope.student_fees)
-                    }
-                }
-            }   
-
-           
-        }
-        $scope.applicable_check = function(){
-            if ($scope.applicable_to_special_fees){
-                $scope.applicable_to_special_fees = true;
-                $scope.applicable_to_special_fee = true;
-            }
-            else{
-                $scope.applicable_to_special_fee = false;
-            }
-        }
         var date_pick = new Picker.Date($$('#dob'), {
             timePicker: false,
             positionOffset: {x: 5, y: 0},
@@ -481,6 +446,27 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
             format:'%d/%m/%Y',
         });
         reset_student($scope);
+    }
+    $scope.fees_heads = []
+    $scope.student_fees_details = []
+    $scope.selected_special_fee= function(){
+        $scope.selected_heads = $scope.fee_heads;
+        $scope.fees_heads = [];
+        $scope.student_fees_details = [];
+        for(var i=0; i<$scope.fee_heads.length; i++) {
+            $scope.fees_heads.push($scope.fee_heads[i].id);
+            $scope.student_fees_details.push($scope.fee_heads[i]);
+        }
+        console.log($scope.student_fees_details) 
+    }
+    $scope.applicable_check = function(){
+        if ($scope.applicable_to_special_fees){
+            $scope.applicable_to_special_fees = true;
+            $scope.applicable_to_special_fee = true;
+        }
+        else{
+            $scope.applicable_to_special_fee = false;
+        }
     }
     $scope.get_batch = function(){   
         if($scope.course != null){
