@@ -12,6 +12,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 
 from fees.models import *
+from academic.models import Student,StudentFees
 from datetime import datetime
 from report.views import header
 
@@ -789,27 +790,45 @@ class GetFeesHeadDateRanges(View):
 
         head_id = request.GET.get('head_id', '')
         student_id = request.GET.get('student_id', '')
-        student = Student.objects.get(id=student_id, applicable_to_special_fees= True)
+        try:
+            student = Student.objects.get(id=student_id, applicable_to_special_fees= True)
+        except Exception as ex:
+            print str(ex)
         paid_date = datetime.strptime(request.GET.get('paid_date', ''), '%d/%m/%Y').date()
         head = FeesStructureHead.objects.get(id=head_id)
+        studentfee = StudentFees.objects.get(feeshead=head) 
         installments = head.installments.filter(start_date__lte=paid_date, end_date__gte=paid_date)
         head_installments = []
+        # if student.applicable_to_special_fees : 
+        #     special_fee(student_id,head_id,installments,paid_date)
         try:
-            fees_payment_heads = FeesPaymentHead.objects.filter(fees_head=head, student__id=student_id)
+            if student.applicable_to_special_fees :   
+                fees_payment_heads = FeesPaymentHead.objects.filter(fees_head=studentfee.feeshead, student=student)  
+            else:
+                fees_payment_heads = FeesPaymentHead.objects.filter(fees_head=head, student__id=student_id)
             if fees_payment_heads.count() == 0:
-                paid_fee_amount = 0
-                balance = head.amount
+                paid_fee_amount = 0 
+                if student.applicable_to_special_fees :
+                    balance = studentfee.amount  
+                else:             
+                    balance = head.amount
                 start_date = None
                 paid_fine = 0
             else:
                 paid_fee_amount = fees_payment_heads[0].paid_fee_amount
                 balance = head.amount - fees_payment_heads[0].paid_fee_amount
                 paid_fine = fees_payment_heads[0].fine
-                paid_installment_details = head.installments.filter(start_date__lte=fees_payment_heads[0].paid_date, end_date__gte=fees_payment_heads[0].paid_date)
+                if student.applicable_to_special_fees :
+                    paid_installment_details = head.installments.filter(start_date__lte=fees_payment_heads[0].paid_date, end_date__gte=fees_payment_heads[0].paid_date)
+                else:
+                    paid_installment_details = head.installments.filter(start_date__lte=fees_payment_heads[0].paid_date, end_date__gte=fees_payment_heads[0].paid_date)
         except Exception as ex:
             print str(ex)
             paid_fee_amount = 0
-            balance = head.amount
+            if student.applicable_to_special_fees :
+                balance = studentfee.amount  
+            else:
+                balance = head.amount
             start_date = None
             paid_fine = 0
         if installments.count() > 0:
