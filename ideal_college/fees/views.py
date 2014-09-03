@@ -790,14 +790,19 @@ class GetFeesHeadDateRanges(View):
 
         head_id = request.GET.get('head_id', '')
         student_id = request.GET.get('student_id', '')
-        try:
-            student = Student.objects.get(id=student_id, applicable_to_special_fees= True)
-        except Exception as ex:
-            print str(ex)
-        paid_date = datetime.strptime(request.GET.get('paid_date', ''), '%d/%m/%Y').date()
         head = FeesStructureHead.objects.get(id=head_id)
-        studentfee = StudentFees.objects.get(feeshead=head) 
+        student = Student.objects.get(id=student_id)
+        if student.applicable_to_special_fees:
+            for student_fee in student.student_fees.all():
+                if student_fee.feeshead == head:
+                    studentfee = StudentFees.objects.get(id=student_fee.id) 
+        
+            
+        paid_date = datetime.strptime(request.GET.get('paid_date', ''), '%d/%m/%Y').date()
+        
+        
         installments = head.installments.filter(start_date__lte=paid_date, end_date__gte=paid_date)
+        print installments,"asdas"
         head_installments = []
         # if student.applicable_to_special_fees : 
         #     special_fee(student_id,head_id,installments,paid_date)
@@ -816,12 +821,13 @@ class GetFeesHeadDateRanges(View):
                 paid_fine = 0
             else:
                 paid_fee_amount = fees_payment_heads[0].paid_fee_amount
-                balance = head.amount - fees_payment_heads[0].paid_fee_amount
-                paid_fine = fees_payment_heads[0].fine
-                if student.applicable_to_special_fees :
-                    paid_installment_details = head.installments.filter(start_date__lte=fees_payment_heads[0].paid_date, end_date__gte=fees_payment_heads[0].paid_date)
+                if student.applicable_to_special_fees:
+                    balance = studentfee.amount - fees_payment_heads[0].paid_fee_amount
                 else:
-                    paid_installment_details = head.installments.filter(start_date__lte=fees_payment_heads[0].paid_date, end_date__gte=fees_payment_heads[0].paid_date)
+                    balance = head.amount - fees_payment_heads[0].paid_fee_amount
+                paid_fine = fees_payment_heads[0].fine
+               
+                paid_installment_details = head.installments.filter(start_date__lte=fees_payment_heads[0].paid_date, end_date__gte=fees_payment_heads[0].paid_date)
         except Exception as ex:
             print str(ex)
             paid_fee_amount = 0
@@ -848,7 +854,10 @@ class GetFeesHeadDateRanges(View):
                     'balance': float(balance) + float(fine),
                     'paid_head_amount': paid_fee_amount,
                 })
+                print head_installments,"xxxx"
         else:
+            installment = None
+            print "in else"
             try:
                 installment = head.installments.filter(end_date__lte=paid_date, name='Late Payment')
                 if installment.count() == 0:
@@ -856,10 +865,29 @@ class GetFeesHeadDateRanges(View):
                     if installment.count() == 0:
                         installment = head.installments.filter(end_date__lte=paid_date, name='Early Payment')
             except Exception as ex:
+                print str(ex)
                 try:
                     installment = head.installments.filter(end_date__lte=paid_date, name='Standard Payment')
                 except Exception as ex:
                     installment = head.installments.filter(end_date__lte=paid_date, name='Early Payment')
+            
+            if not installment:
+                try:
+                    installment = head.installments.filter(start_date__gte=paid_date, name='Late Payment')
+                    if installment.count() == 0:
+                        installment = head.installments.filter(start_date__gte=paid_date, name='Standard Payment')
+                    if installment.count() == 0:
+                        installment = head.installments.filter(start_date__gte=paid_date, name='Early Payment')
+                except Exception as ex:
+                    print str(ex)
+                try:
+                    installment = head.installments.filter(start_date__gte=paid_date, name='Standard Payment')
+                except Exception as ex:
+                    installment = head.installments.filter(start_date__gte=paid_date, name='Early Payment')
+                head_installments.append ({
+                    'result': 'error',
+                    'message': 'The date selected for payment is before Early Payment',
+                })
             if installment:
                 no_of_days = (paid_date - installment[0].start_date).days
                 if no_of_days >= 0:
@@ -874,12 +902,22 @@ class GetFeesHeadDateRanges(View):
                         'balance': float(balance) + float(fine),
                         'paid_head_amount': paid_fee_amount,
                     })
-        res = {
-            'result': 'ok',
-            'head_details': head_installments,
-            'fees_amount': balance,
-            'head_amount': head.amount,
-        }
+                    print head_installments,"xxxx1"
+        if student.applicable_to_special_fees:
+            res = {
+                'result': 'ok',
+                'head_details': head_installments,
+                'fees_amount': balance,
+                'head_amount': studentfee.amount,
+            }
+        else:
+            res = {
+                'result': 'ok',
+                'head_details': head_installments,
+                'fees_amount': balance,
+                'head_amount': head.amount,
+            }
+        print res
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
         

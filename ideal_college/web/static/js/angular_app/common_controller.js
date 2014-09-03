@@ -237,10 +237,12 @@ function calculate_total_fee_amount(head_id, student_id) {
     }
 }
 function get_fees_head_installment_details(response){
-
+    console.log(response['head_details'][0])
     var head_details = response['head_details'][0];
     $('#head_amount').val(response['head_amount'])
+
     if (head_details['result'] == 'error') {
+        
         $('#error_payment_type').text(head_details['message']);
         $('#payment_type').val('');
         $('#fee_amount').val('');
