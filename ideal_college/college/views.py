@@ -48,7 +48,7 @@ class ListCourse(View):
         if request.is_ajax():
             course_list = []
             for course in courses:
-                course_name = course.course + ' - '+course.university+' - '+course.course_type+(' - '+course.registration_type if course.registration_type else '') 
+                course_name = course.course + ' - '+(course.university.name if course.university else '')+' - '+course.course_type+(' - '+course.registration_type if course.registration_type else '') 
                 course_list.append({
                     'course': course_name, 
                     'id': course.id                
@@ -500,15 +500,16 @@ class AddNewCourse(View):
         status_code = 200
         if request.is_ajax():
             semester_list = ast.literal_eval(request.POST['semester_list'])
+            university = University.objects.get(id=request.POST['university'])
             try:
-                course = Course.objects.get(course=request.POST['course'],university=request.POST['university'], course_type=request.POST['course_type'], registration_type=request.POST['registration_type'])
+                course = Course.objects.get(course=request.POST['course'],university=university, course_type=request.POST['course_type'], registration_type=request.POST['registration_type'])
                 res = {
                     'result': 'error',
                     'message': 'Course already existing'
                 }
             except Exception as ex:
                 print str(ex), "Exception ===="
-                course = Course.objects.create(course=request.POST['course'],university=request.POST['university'], course_type=request.POST['course_type'], registration_type=request.POST['registration_type'])
+                course = Course.objects.create(course=request.POST['course'],university=university, course_type=request.POST['course_type'], registration_type=request.POST['registration_type'])
                 for semester_id in semester_list:
                     course.semester.add(semester_id)
                 res = {
@@ -796,7 +797,27 @@ class UniversityList(View):
     def get(self, request, *args, **kwargs):
 
         university_list = University.objects.all()
+        if request.is_ajax():
+            ctx_university = []
+            for university in university_list:
+                ctx_university.append({
+                    'id': university.id,
+                    'name': university.name,
+                })
+            res = {
+                'university_list': ctx_university,
+                'result': 'ok',
+            }
+            response = simplejson.dumps(res)
+            return HttpResponse(response, status=200, mimetype='application/json')
         context = {
             'university_list': university_list,
         }
         return render(request, 'college/university_list.html', context)
+
+class DeleteUniversity(View):
+    def get(self, request, *args, **kwargs):
+        university_id = kwargs['university_id']
+        university = University.objects.get(id=university_id)
+        university.delete()
+        return HttpResponseRedirect(reverse('university_list'))

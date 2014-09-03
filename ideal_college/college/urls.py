@@ -35,4 +35,5 @@ urlpatterns = patterns('',
 
     url(r'^add_university/$',login_required(AddUniversity.as_view()), name="add_university"),
     url(r'^university_list/$',login_required(UniversityList.as_view()), name="university_list"),
+    url(r'^delete_university/(?P<university_id>\d+)/$',login_required(DeleteUniversity.as_view()), name="delete_university"),
 )

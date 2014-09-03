@@ -13,14 +13,12 @@
 		<table id="list" class="table table-striped" >
 			<tr>
 			  <th>Name</th>
-			  <th>Edit</th>
 			  <th>Delete</th>		  
 			</tr>						
 			{% for university in university_list %} 
 				<tr>
 					<td>{{university.name}}</td>					 
-					<td><a href="{% url 'edit_course_branch' university.id %}" >Edit</td>
-					<td><a href="{% url 'delete_course_branch' university.id %}" >Delete</td>
+					<td><a href="{% url 'delete_university' university.id %}" >Delete</td>
 				</tr>
 			{% endfor %}										
 		</table> 

@@ -395,6 +395,7 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
         $scope.csrf_token = csrf_token;
         get_course_list($scope, $http);
         get_branch_list($scope, $http);
+        get_university($scope, $http);
     }
     $scope.get_registartion_type = function() {
         console.log($scope.course_type);
