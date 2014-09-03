@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Add University{% endblock title %}
+{% block body_id %}add_university{% endblock %}
+
+{% block controller %}
+	ng-controller="UniversityController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+
+{% block content %}
+<div id="main-title">
+	<div class="alert alert-info" align="Center"><h4>Add University </h4></div>
+</div>
+<div class="form_container">		
+	<div class="form_text">
+		<label> University</label>  
+	</div>
+	<div class="form_input"> 
+		<input type="text"  name="university" value=""  ng-model="university">
+	</div>
+	
+	<div  align="Center">
+		<p class="error_message">[[message]]</p>
+		<div class="buttons">
+			
+			<input type="button" class="btn btn-info" value="Cancel" onClick="document.location.href = '/college/list_course/'">
+			<input type="submit" value="Submit" ng-click="add_university()" class="btn btn-info">			
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

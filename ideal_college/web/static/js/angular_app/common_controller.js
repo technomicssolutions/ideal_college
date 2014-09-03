@@ -84,6 +84,14 @@ function validateEmail(email) {
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
 }
+function get_university($scope, $http) {
+    $http.get('/college/university_list/').success(function(data)
+    {
+        $scope.university_list = data.university_list;
+    }).error(function(data, status){
+        console.log(data || "Request failed");
+    });
+}
 function get_designation($scope, $http) {
     $http.get($scope.url).success(function(data)
     {

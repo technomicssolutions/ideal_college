@@ -910,3 +910,10 @@ label.block{
     font-size: 14px;
     font-weight: normal;
 }
+
+#university_list .new_button {
+    width: 9% !important;
+}
+#university_list .new_button a {
+    width: 100% !important;
+}

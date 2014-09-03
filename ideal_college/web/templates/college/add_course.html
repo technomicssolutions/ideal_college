@@ -21,11 +21,8 @@
                             <label > University</label> 
                         </div>
                         <div class="form_input"> 
-                            <select name="university" ng-model="university">
+                            <select name="university" ng-model="university" ng-options="university.id as university.name for university in university_list">
                                 <option value="">Select</option>
-                                <option value="Ignou University">Ignou University</option>
-                                <option value="Kerala University">Kerala University</option>
-                                <option value="Calicut University">Calicut University</option>
                             </select>
                         </div> 
                         <div class="form_text">
