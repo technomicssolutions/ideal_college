@@ -60,9 +60,11 @@ class AddStudent(View):
                         student.guardian_mobile_number = request.POST['guardian_mobile_number']
                         student.guardian_land_number = request.POST['guardian_land_number']
                         student.guardian_email = request.POST['guardian_email']  
-                        student.applicable_to_special_fees = request.POST['applicable_to_special_fees']
+                        if request.POST['applicable_to_special_fees'] != 'undefined':
+                            student.applicable_to_special_fees = True
+                        else:
+                            student.applicable_to_special_fees = False
                         student.save()
-                       
                         fees_heads = ast.literal_eval(request.POST['applicable_fee_heads']) 
                         for fee_head in fees_heads:
                             fees_head = FeesStructureHead.objects.get(id=fee_head) 
