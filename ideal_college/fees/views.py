@@ -857,6 +857,7 @@ class GetFeesHeadDateRanges(View):
                 fine = 0
                 if installment.name == 'Late Payment':
                     no_of_days = (paid_date - installment.start_date).days
+                    print no_of_days
                     if no_of_days >= 0:
                         no_of_days = no_of_days + 1
                         fine_amount = no_of_days*installment.fine_amount
@@ -904,6 +905,7 @@ class GetFeesHeadDateRanges(View):
                 })
             if installment:
                 no_of_days = (paid_date - installment[0].start_date).days
+                print no_of_days, installment[0].start_date, paid_date
                 if no_of_days >= 0:
                     no_of_days = no_of_days + 1
                     fine = no_of_days*installment[0].fine_amount

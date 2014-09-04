@@ -60,7 +60,13 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
                 $scope.heads = data.heads;
                 $scope.payment_installment.amount = '';
                 $scope.payment_installment.fine = '';
-                $('#total_fee_amount').val(0);
+                $scope.head = '';   
+                $('#payment_type').val('');
+                $('#fee_amount').val('');
+                $('#fine_amount').val('');
+                $('#total_fee_amount').val('');
+                $('#head_amount').val('');
+                $('#amount_paid').val('');
                 if ($scope.heads.length == 0) {
                     $scope.no_head_error = 'Payment completed for this student';
                 } else {
