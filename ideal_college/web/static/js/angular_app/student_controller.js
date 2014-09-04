@@ -614,8 +614,9 @@ function ConductCertificateController($scope, $http, $element, $location, $timeo
 
 function PrintTCController($scope, $http) {
     $scope.student_id = '';
-    $scope.init = function(csrf_token) {
+    $scope.init = function(csrf_token, college_name) {
         $scope.csrf_token = csrf_token;
+        $scope.college_name = college_name;
         $scope.student_selected = true;
         get_course_list($scope, $http);
     }
@@ -649,11 +650,16 @@ function PrintTCController($scope, $http) {
         } else if ($scope.tc_type == '' || $scope.tc_type == undefined) {
             $scope.tc_error = 'Please enter TC type';
             return false;
+        } else if ($scope.college_name == '' || $scope.college_name == undefined) {
+            $scope.tc_error = 'Please enter college name';
+            return false; 
         } return true;
     }
     $scope.view_report = function() {
         if($scope.validate_print_tc()) {
-            document.location.href = '/academic/print_transfer_certificate/?report_type=tc_type&course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&tc_type='+$scope.tc_type;
+            $scope.college_name = $scope.college_name.replace(/[\s]/g,'_');
+            console.log($scope.college_name)
+            document.location.href = '/academic/print_transfer_certificate/?report_type=tc_type&student='+$scope.student_id+'&tc_type='+$scope.tc_type+'&college='+$scope.college_name;
         }
     }
 

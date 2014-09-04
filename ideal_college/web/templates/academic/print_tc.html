@@ -2,7 +2,7 @@
 {% block title %}Outstanding Fees{% endblock title %}
 {% block body_id %}print_tc{% endblock %}
 {% block controller %}
-	ng-controller="PrintTCController" ng-init="init('{{csrf_token}}')"
+	ng-controller="PrintTCController" ng-init="init('{{csrf_token}}', '{{college_name}}')"
 {% endblock controller %}
 {% block content %}
 	<form class="" name="print_tc" method="get" action="">
@@ -44,7 +44,7 @@
 					</select>
 				</div>
 				<div class="control">
-					<input type="text" ng-model="college_name" value="{{college_name}}">
+					<input type="text" ng-model="college_name" value="">
 				</div>
 				<div class="control">
 					<p class="error_message">[[tc_error]]</p>

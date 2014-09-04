@@ -7,7 +7,7 @@ from django.views.generic.base import View
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 
-from college.models import Course, Branch, Batch, Semester, QualifiedExam, TechnicalQualification
+from college.models import Course, Branch, Batch, Semester, QualifiedExam, TechnicalQualification, College
 from academic.models import Student, StudentFees
 from fees.models import FeesStructureHead
 
@@ -459,9 +459,10 @@ class PrintTC(View):
         y = 1150
 
         report_type = request.GET.get('report_type', '')
+        college_name = ''
         try:
             college = College.objects.latest('id')
-            college_name = college.name + ' , '
+            college_name = college.name + ' , '+ college.district
         except:
             college = ''
         if not report_type:
@@ -471,14 +472,31 @@ class PrintTC(View):
             })
         else:
             tc_type = request.GET.get('tc_type', '')
-            if request.GET.get('course', ''):
-                course = Course.objects.get(id=request.GET.get('course', ''))
-            if request.GET.get('batch', ''):
-                batch = Batch.objects.get(id=request.GET.get('batch', ''))
             if request.GET.get('student', ''):
                 student = Student.objects.get(id=request.GET.get('student', ''))
+            college_name = request.GET.get('college', '')
+            college_name = college_name.replace('_', ' ')
+            print college_name
             if tc_type == 'type1':
-                p.drawCentredString(500, y - 20, (college.name if college else '')) 
+                # p.drawCentredString(500, y - 20, (college_name))
+                p.drawCentredString(500, y - 20, ('Form-5')) 
+                p.drawCentredString(500, y - 35, ('[See Rule VI - 17(1)]')) 
+                p.drawString(50, y - 35, ('No. .......................................'))
+                p.setFont('Times-Bold',25)  
+                p.drawCentredString(500, y - 65, ('Transfer Certificate'))
+                p.setFont('Helvetica',12)
+                p.drawString(50, y - 95, ('Name of Institute : '))
+                p.setFont('Helvetica-Bold',11) 
+                p.drawString(150, y - 95, (college_name))
+                p.setFont('Helvetica',12)
+                p.drawString(50, y - 115, ('whether the institute is government, Aided or Recognised : '))
+                p.setFont('Helvetica-Bold',10) 
+                p.drawString(365, y - 115, ('SELF FINANCING'))
+                p.setFont('Helvetica',12)
+                p.drawString(50, y - 135, ('Name of Pupil : '))
+                p.drawString(150, y - 135, ('Name of Pupil : '))
+                
+                 
             elif tc_type == 'type2':
                 print "type2"
             p.showPage()
