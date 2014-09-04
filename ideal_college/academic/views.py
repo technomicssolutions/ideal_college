@@ -516,8 +516,28 @@ class PrintTC(View):
                 p.drawString(155, y - 155, student.student_name)
                 p.drawString(50, y - 180, ('Date of Birth according to admission Register : '))
                 p.drawString(305, y - 180, str(student.dob.strftime('%d-%m-%Y')))
-                p.drawString(50, y - 205, ('(in words) '))
-
+                p.drawString(50, y - 205, ('(in words) : '))
+                p.drawString(50, y - 230, ('Class & Subject :  '))
+                if student.batch.branch:
+                    branch_name = student.batch.branch.branch
+                else:
+                    branch_name = ''
+                p.drawString(150, y - 230, student.course.course+" "+ branch_name)
+                p.drawString(400, y - 230, 'Year : ')
+                p.drawString(450, y - 230, str(student.batch.start_date)+"-"+str(student.batch.end_date))
+                p.drawString(50, y - 255, 'Date of admission : ')
+                p.drawString(160, y - 255, str(student.doj.strftime('%d-%m-%Y')))
+                p.drawString(400, y - 255, 'Admission No : ................................')
+                p.drawString(50, y - 280, 'Whether the student has paid all the fee due to the institution : ...............................................................')
+                p.drawString(50, y - 305, 'Whether the student was in receipt of fee concession : ...........................................................................')
+                p.drawString(50, y - 330, 'Date of Student'+"'"+'s last attendence at the institute : ....................................................................................')                
+                p.drawString(50, y - 355, 'Reason for leaving : .........................................')
+                p.drawString(50, y - 380, 'Date of application for T.C : ...................................')
+                p.drawString(50, y - 405, 'Date of issue of the T.C : ......................................')
+                p.drawString(50, y - 500, 'Date : ')
+                p.drawString(50, y - 550, 'Seal : ')
+                p.setFont('Helvetica-Bold',16)
+                p.drawString(600, y - 525, 'Principal')
             p.showPage()
             p.save()
         return response
