@@ -71,12 +71,24 @@ class IdcardReport(View):
             student_id = request.GET.get('student', '')
             student = Student.objects.get(id=student_id)
             p.rect(30,940,270,270)
-            p.setFont('Times-Bold',10)  
-            p.drawCentredString(160, y+40, college.name) 
+            p.setFont('Times-Bold',10)
+            try:  
+                p.drawCentredString(160, y+40, college.name)
+            except:
+                p.drawCentredString(160, y+40, '')  
             p.setFont('Times-Roman',10)  
-            p.drawCentredString(160, y+25, college.address) 
-            p.drawCentredString(160, y+10, college.district+","+college.state+",PIN-"+college.PIN)           
-            p.drawCentredString(160, y-5, "PH: "+college.contact)
+            try:
+                p.drawCentredString(160, y+25, college.address) 
+            except:
+                p.drawCentredString(160, y+25, '')
+            try: 
+                p.drawCentredString(160, y+10, college.district+","+college.state+",PIN-"+college.PIN)
+            except:
+                p.drawCentredString(160, y+10, '')          
+            try:            
+                p.drawCentredString(160, y-5, "PH: "+college.contact)
+            except:
+                p.drawCentredString(160, y-5, '')
             p.drawString(40, y-30, "Name:")  
             p.drawString(120, y-30, student.student_name);
             p.drawString(40, y-45, "Guardian Name:")  
@@ -119,11 +131,23 @@ class IdcardReport(View):
             for student in students:
                 p.rect(m,n,270,270)
                 p.setFont('Times-Bold',10)  
-                p.drawCentredString(i, y + 40, college.name)   
+                try:
+                    p.drawCentredString(i, y + 40, college.name)  
+                except:
+                    p.drawCentredString(i, y + 40, '')  
                 p.setFont('Times-Roman',10)  
-                p.drawCentredString(i, y + 25, college.address)   
-                p.drawCentredString(i, y + 10, college.district+","+college.state+",PIN-"+college.PIN)           
-                p.drawCentredString(i, y - 5, "PH: "+college.contact)
+                try:
+                    p.drawCentredString(i, y + 25, college.address) 
+                except:  
+                    p.drawCentredString(i, y + 25, '')   
+                try:
+                    p.drawCentredString(i, y + 10, college.district+","+college.state+",PIN-"+college.PIN)  
+                except:
+                    p.drawCentredString(i, y + 10, '')       
+                try:      
+                    p.drawCentredString(i, y - 5, "PH: "+college.contact)
+                except:
+                    p.drawCentredString(i, y - 5, '')
                 p.drawString(x1, y-30, "Name:")  
                 p.drawString(x2, y-30, student.student_name);
                 p.drawString(x1, y-45, "Guardian Name:")  
