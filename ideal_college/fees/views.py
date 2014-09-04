@@ -461,7 +461,6 @@ class GetOutStandingFeesDetails(View):
             if request.GET.get('fees_type','') == 'course':
                 if filtering_option == 'student_wise':
                     student = Student.objects.get(id=student_id)
-
                     ctx_fees_head_details = []
                     ctx_heads_list = []
                     heads = student.applicable_fees_heads.all()
@@ -673,6 +672,13 @@ class GetOutStandingFeesDetails(View):
                                 'head_details': ctx_heads_list,
                                 'name': student.student_name,
                                 'roll_no': student.roll_number,
+                                'result': 'ok',
+                            })
+                        else:
+                            ctx_student_fees_details.append({
+                                'result':'error',
+                                'head_details': ctx_heads_list,
+                                'message': 'No Outstanding fees',
                             })
                     ctx_fees_details.append({
                         'students': ctx_student_fees_details,
