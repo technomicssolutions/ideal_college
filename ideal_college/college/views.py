@@ -819,5 +819,6 @@ class DeleteUniversity(View):
     def get(self, request, *args, **kwargs):
         university_id = kwargs['university_id']
         university = University.objects.get(id=university_id)
-        university.delete()
+        if university.course_set.all().count() == 0:
+            university.delete()
         return HttpResponseRedirect(reverse('university_list'))
