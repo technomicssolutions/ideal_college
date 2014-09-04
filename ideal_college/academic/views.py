@@ -449,11 +449,35 @@ class ConductCertificate(View):
         p = canvas.Canvas(response, pagesize=(1000, 1250))
         y = 1150
         report_type = request.GET.get('report_type', '')
+        try:
+            college = College.objects.latest('id')
+            college_name = college.name + ' , '
+        except:
+            college = ''
+            college_name = ''
         if not report_type:
             return render(request, 'academic/conduct_certificate.html',{
                 'report_type' : 'conduct',
+                'college_name': college_name,
             })
-        
+        else:
+            conduct_type = request.GET.get('conduct_type', '')
+            print conduct_type
+            if request.GET.get('course', ''):
+                course = Course.objects.get(id=request.GET.get('course', ''))
+            if request.GET.get('batch', ''):
+                batch = Batch.objects.get(id=request.GET.get('batch', ''))
+            if request.GET.get('student', ''):
+                student = Student.objects.get(id=request.GET.get('student', ''))
+            if conduct_type == 'type1':
+                p.setFont('Times-Bold',10)
+                p.drawCentredString(500,y-20, "Course & Conduct Certificate")
+            elif conduct_type == 'type2':
+                p.setFont('Times-Bold',10)
+                p.drawCentredString(500,y-20, "Course & Conduct Certificate")
+            elif conduct_type == 'type3':
+                p.setFont('Times-Bold',10)
+                p.drawCentredString(500,y-20, "Course & Conduct Certificate")
  
 
 
@@ -472,6 +496,7 @@ class PrintTC(View):
             college_name = college.name + ' , '
         except:
             college = ''
+            college_name = ''
         if not report_type:
             return render(request, 'academic/print_tc.html',{
                 'report_type' : 'tc',

@@ -35,7 +35,7 @@
 				<label> College Name</label> 
 			</div>
 			<div class="form_input">
-				<input type="text" ng-model="college_name">
+				<input type="text" ng-model="college_name" value="{{college_name}}">
 			</div>
 			<label>Conduct Certificate Type</label>						
 			<select ng-model="conduct_type">
@@ -44,7 +44,8 @@
 				<option value="type2">type2</option>
 				<option value="type3">type3</option>
 				
-			</select>					
+			</select>
+			<p class="error_message">[[conduct_error]]</p>					
 			<input type="submit" value="View" ng-click="conduct_report()">
 		</div>
 {% endblock content %}
