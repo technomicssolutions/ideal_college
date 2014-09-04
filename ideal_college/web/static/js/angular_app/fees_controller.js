@@ -270,13 +270,14 @@ function FeesController($scope, $element, $http, $timeout, share, $location)
             if (data.result == 'ok') 
                 $scope.fees_details = data.fees_details[0];
                 if ($scope.fees_details != undefined) {
-                    if ($scope.fees_details.students.length >0 ) {
-                        if ($scope.fees_details.students[0].head_details != undefined) {
-                            if ($scope.fees_details.students[0].head_details.length == 0) {
-                                console.log('in if')
-                                $scope.paid_completely = 'No Outstanding fees';
-                            } else {
-                                $scope.paid_completely = '';
+                    if ($scope.fees_details.students != undefined) {
+                        if ($scope.fees_details.students.length >0 ) {
+                            if ($scope.fees_details.students[0].head_details != undefined) {
+                                if ($scope.fees_details.students[0].head_details.length == 0) {
+                                    $scope.paid_completely = 'No Outstanding fees';
+                                } else {
+                                    $scope.paid_completely = '';
+                                }
                             }
                         }
                     }
