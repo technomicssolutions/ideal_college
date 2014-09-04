@@ -535,6 +535,83 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
     }
 }
 
+function ConductCertificateController($scope, $http, $element, $location, $timeout) {
+    $scope.init = function(csrf_token){
+        get_course_list($scope, $http);
+       
+        $scope.page_interval = 10;
+        $scope.visible_list = [];
+        $scope.students = [];
+        $scope.csrf_token = csrf_token;
+        $scope.error_flag = false;
+        $scope.popup = '';      
+        $scope.pages = 1;
+        $scope.student_id = '';
+        $scope.students_listing = false;
+        $scope.student_selected = true;
+        $scope.college_name = '';
+        $scope.conduct_type = '';
+        var date_pick = new Picker.Date($$('#dob'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+        new Picker.Date($$('#doj'), {
+            timePicker: false,
+            positionOffset: {x: 5, y: 0},
+            pickerClass: 'datepicker_bootstrap',
+            useFadeInOut: !Browser.ie,
+            format:'%d/%m/%Y',
+        });
+        
+    }
+    $scope.conduct_report = function(){
+        
+    }
+    $scope.get_batch = function(){   
+        if($scope.course != null){
+            show_spinner();     
+            var url = '/college/get_batch/'+ $scope.course+ '/';
+            $http.get(url).success(function(data)
+            {
+                $scope.batches = data.batches;
+                hide_spinner();
+            }).error(function(data, status)
+            {
+                console.log(data || "Request failed");
+            });
+        }
+    }
+    $scope.get_students = function(){
+        var url = '/academic/list_student/?batch_id='+ $scope.batch;
+        if($scope.batch != null){
+            show_spinner();
+            $http.get(url).success(function(data)
+            {
+                $scope.students = data.students;
+                paginate(data.students, $scope);
+                hide_spinner();
+            }).error(function(data, status)
+            {
+                console.log(data || "Request failed");
+            });
+        }
+    }
+    $scope.select_student = function(student) {
+        if (student != undefined) {
+            $scope.student_id = student.id;
+            $scope.student_name = student.student_name;
+            $scope.student_selected = true;
+        }
+    }
+    $scope.get_student_details = function() {
+        course_batch_student_list($scope, $http);
+    }
+}
+
+
 function PrintTCController($scope, $http) {
     $scope.student_id = '';
     $scope.init = function(csrf_token) {
@@ -547,9 +624,7 @@ function PrintTCController($scope, $http) {
     }
     $scope.get_student = function() {
         get_course_batch_student_list($scope, $http);
-    }
-    $scope.get_student_details = function() {
-        course_batch_student_list($scope, $http);
+
     }
     $scope.hide_student_listing = function(student) {
         $scope.student_id = student.id;

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Conduct Certificate Details{% endblock title %}
+{% block body_id %}conduct_certificate{% endblock %}
+
+{% block controller %}
+	ng-controller="ConductCertificateController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+
+
+
+{% block content %}	
+	<div class="main-title">
+		<div class="alert alert-info" align="Center"> Conduct Certificate </div>
+		<div class="search_students">
+			<label> Course</label> 
+			<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
+				<option value="">Select</option>
+			</select>
+			<label> Batch</label> 
+			<select name="batch" ng-model="batch" ng-change="get_students()" ng-options="bat.id as bat.name for bat in batches">
+				<option value="">Select</option>
+			</select>
+			<div class="form_text">
+				<label> Student Name</label> 
+			</div>
+			<div class="form_input">
+				<input type="text" ng-model="student_name" ng-change="get_student_details()">
+			</div>
+			<div class="student_list" ng-show="students_listing" ng-hide="student_selected">
+				<div ng-repeat="student in students_list" ng-click="select_student(student)">
+					<span>[[student.student]]</span>
+				</div>
+			</div>
+			<div class="form_text">
+				<label> College Name</label> 
+			</div>
+			<div class="form_input">
+				<input type="text" ng-model="college_name">
+			</div>
+			<label>Conduct Certificate Type</label>						
+			<select ng-model="conduct_type">
+				<option value="">Select</option>
+				<option value="type1">type1</option>
+				<option value="type2">type2</option>
+				<option value="type3">type3</option>
+				
+			</select>					
+			<input type="submit" value="View" ng-click="conduct_report()">
+		</div>
+{% endblock content %}

@@ -440,6 +440,15 @@ class SearchStudent(View):
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
 
+
+class ConductCertificate(View):
+
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'academic/conduct_certificate.html',{})
+ 
+
+
 class PrintTC(View):
 
     def get(self, request, *args, **kwargs):

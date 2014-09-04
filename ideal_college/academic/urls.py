@@ -3,7 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 from academic.views import GetStudent, AddStudent, ListStudent, ViewStudentDetails, EditStudentDetails, \
-DeleteStudentDetails, CheckUidExists, SearchStudent, PrintTC
+
+DeleteStudentDetails, CheckUidExists, SearchStudent, ConductCertificate, PrintTC
+
 
 urlpatterns = patterns('',
 	url(r'^get_student/(?P<course_id>\d+)/(?P<batch_id>\d+)/$',login_required(GetStudent.as_view()), name="get_student"),
@@ -15,5 +17,8 @@ urlpatterns = patterns('',
 	url(r'^check_student_uid_exists/$', login_required(CheckUidExists.as_view()), name="check_student_uid_exists"),
 	url(r'^student_search/$', login_required(SearchStudent.as_view()), name="student_search"),
 
+	url(r'^conduct_certifcate/$', login_required(ConductCertificate.as_view()), name="conduct_certifcate"),
+
 	url(r'^print_transfer_certificate/$', login_required(PrintTC.as_view()), name="print_transfer_certificate"),
+
 )
