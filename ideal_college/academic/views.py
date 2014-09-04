@@ -18,6 +18,8 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_RIGHT, TA_JUSTIFY, TA_CENTER
 from reportlab.platypus import Paragraph, Table, TableStyle
 
+from num2words import num2words
+
 class AddStudent(View):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
@@ -494,9 +496,14 @@ class PrintTC(View):
                 p.drawString(365, y - 115, ('SELF FINANCING'))
                 p.setFont('Helvetica',12)
                 p.drawString(50, y - 135, ('Name of Pupil : '))
-                p.drawString(150, y - 135, ('Name of Pupil : '))
-                
-                 
+                p.drawString(140, y - 135, (student.student_name))
+                p.drawString(50, y - 155, ('Date of Birth according to admission : '))
+                p.drawString(250, y - 155, (student.dob.strftime('%d-%m-%Y')))
+                dob_month = student.dob.strftime('%B')
+                dob_date = num2words(student.dob.day).title() 
+                dob_year = num2words(student.dob.year).title()   
+                dob_words = ' ( ' + dob_date + ' ' + dob_month + ' ' +dob_year + ' ) '
+                p.drawString(310, y - 155, (dob_words))
             elif tc_type == 'type2':
                 p.drawCentredString(500, y - 20, (college.name if college else '')) 
             p.showPage()
