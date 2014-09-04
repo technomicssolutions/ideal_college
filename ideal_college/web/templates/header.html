@@ -36,8 +36,11 @@
 						<li> <a href="{% url 'list_staff' %}"> View Staff </a> </li>
 					</ul>
 				</li>
-				<li class="menu"> <a href="{% url 'list_student' %}"> Student </a>
-					
+				<li class="menu"> <a href=""> Student </a>
+					<ul> 
+						<li> <a href="{% url 'list_student' %}">Students</a></li>
+						<li> <a href="{% url 'print_transfer_certificate' %}"> Print TC </a> </li>
+					</ul>
 				</li>
 				<li class="menu"> <a href=""> Fees </a>
 					<ul>

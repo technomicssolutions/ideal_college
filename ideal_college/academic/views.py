@@ -11,6 +11,13 @@ from college.models import Course, Branch, Batch, Semester, QualifiedExam, Techn
 from academic.models import Student, StudentFees
 from fees.models import FeesStructureHead
 
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.lib.units import inch,cm, mm
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_RIGHT, TA_JUSTIFY, TA_CENTER
+from reportlab.platypus import Paragraph, Table, TableStyle
+
 class AddStudent(View):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
@@ -277,8 +284,6 @@ class EditStudentDetails(View):
                         'head': student_fee.feeshead.name,
                         'amount': student_fee.amount,
                     })
-                print ctx_student_fees
-                
                 ctx_student_data.append({
                     'student_name': student.student_name if student.student_name else '',
                     'roll_number': student.roll_number if student.roll_number else '',
@@ -434,4 +439,22 @@ class SearchStudent(View):
         }
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
+
+class PrintTC(View):
+
+    def get(self, request, *args, **kwargs):
+
+        status_code = 200
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1250))
+        y = 1150
+        report_type = request.GET.get('report_type', '')
+        # try:
+        #     college = College.objects.latest('id')
+        # except:
+        #     college = ''
+        if not report_type:
+            return render(request, 'academic/print_tc.html',{
+                'report_type' : 'tc',
+            })
         

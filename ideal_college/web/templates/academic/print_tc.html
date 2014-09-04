@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Outstanding Fees{% endblock title %}
+{% block body_id %}print_tc{% endblock %}
+{% block controller %}
+	ng-controller="PrintTCController" ng-init="init('{{csrf_token}}')"
+{% endblock controller %}
+{% block content %}
+	<form class="" name="print_tc" method="get" action="">
+		{% csrf_token %}
+		<div class="main-title">
+			<div class="alert alert-info" align="Center">Print TC</div>
+			<input type="hidden" name="report_type" value="{{report_type}}">
+			<div class="form_container">	
+				<p class="error_message">[[validation_error]]</p>	
+				<div class="control">
+					<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
+						<option value="">Course</option>
+					</select>
+				</div>
+				<p class="error_message">[[no_batch_error]]</p>
+				<div class="control">
+					<select name="batch" ng-model="batch" ng-change="get_student()" ng-options="batch.id as batch.name for batch in batches">
+						<option value="">Batch</option>
+					</select>
+				</div>
+				<p class="error_message">[[no_student_error]]</p>
+				<div class="control">
+					<input type="text" ng-model="student_name" ng-change="get_student_details()">
+					<div class="control" ng-show="paid_completely">
+						<p class="error_message" style="float:left;">[[paid_completely]]</p>
+					</div>
+				</div>
+				<div class="student_list" ng-show="students_listing" ng-hide="student_selected">
+					<div ng-repeat="student in students_list" ng-click="hide_student_listing(student)">
+						<span>[[student.student]]</span>
+					</div>
+				</div>
+				<div class="control">
+					<select ng-model="tc_type">
+						<option value="">TC Type</option>
+						<option value="type1">Type 1</option>
+						<option value="type2">Type 2</option>
+						<option value="type3">Type 3</option>
+					</select>
+				</div>
+				<div class="control">
+					<p class="error_message">[[tc_error]]</p>
+					<input type="submit" value="View" ng-click="view_report()">
+				</div>
+			</div>
+		</div>
+	</form>
+{% endblock content %}
