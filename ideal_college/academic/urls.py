@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 from academic.views import GetStudent, AddStudent, ListStudent, ViewStudentDetails, EditStudentDetails, \
-
 DeleteStudentDetails, CheckUidExists, SearchStudent, ConductCertificate, PrintTC
 
 
