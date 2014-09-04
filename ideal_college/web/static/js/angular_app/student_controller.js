@@ -534,6 +534,7 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
         return new Array(n);
     }
 }
+
 function ConductCertificateController($scope, $http, $element, $location, $timeout) {
     $scope.init = function(csrf_token){
         get_course_list($scope, $http);
@@ -607,6 +608,51 @@ function ConductCertificateController($scope, $http, $element, $location, $timeo
     }
     $scope.get_student_details = function() {
         course_batch_student_list($scope, $http);
+    }
+}
+
+
+function PrintTCController($scope, $http) {
+    $scope.student_id = '';
+    $scope.init = function(csrf_token) {
+        $scope.csrf_token = csrf_token;
+        $scope.student_selected = true;
+        get_course_list($scope, $http);
+    }
+    $scope.get_batch = function() {
+        get_course_batch_list($scope, $http);
+    }
+    $scope.get_student = function() {
+        get_course_batch_student_list($scope, $http);
+
+    }
+    $scope.hide_student_listing = function(student) {
+        $scope.student_id = student.id;
+        $scope.student_name = student.student_name;
+        $scope.student_selected = true;
+    } 
+    $scope.validate_print_tc = function() {
+        if ($scope.course == '' || $scope.course == undefined) {
+            $scope.tc_error = 'Please choose course';
+            return false;
+        } else if ($scope.batch == '' || $scope.batch == undefined) {
+            $scope.tc_error = 'Please choose batch';
+            return false;
+        } else if ($scope.batch == '' || $scope.batch == undefined) {
+            $scope.tc_error = 'Please choose batch';
+            return false;
+        } else if ($scope.student_id == '' || $scope.student_id == undefined) {
+            $scope.tc_error = 'Please enter student';
+            return false;
+        } else if ($scope.tc_type == '' || $scope.tc_type == undefined) {
+            $scope.tc_error = 'Please enter TC type';
+            return false;
+        } return true;
+    }
+    $scope.view_report = function() {
+        if($scope.validate_print_tc()) {
+            document.location.href = '/academic/print_transfer_certificate/?report_type=tc_type&course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&tc_type='+$scope.tc_type;
+        }
     }
 
 }
