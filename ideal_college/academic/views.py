@@ -448,14 +448,17 @@ class PrintTC(View):
         response = HttpResponse(content_type='application/pdf')
         p = canvas.Canvas(response, pagesize=(1000, 1250))
         y = 1150
+
         report_type = request.GET.get('report_type', '')
         try:
             college = College.objects.latest('id')
+            college_name = college.name + ' , '
         except:
             college = ''
         if not report_type:
             return render(request, 'academic/print_tc.html',{
                 'report_type' : 'tc',
+                'college_name': college_name
             })
         else:
             if request.GET.get('course', ''):
