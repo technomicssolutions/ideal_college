@@ -252,6 +252,9 @@ function EditStudentController($scope, $http, $element, $location, $timeout) {
             console.log(data || "Request failed");
         });
     }
+    $scope.get_fees_head = function() {
+        get_fee_structure_head_details($scope, $http);
+    }
     $scope.validate_edit_student = function() {
         $scope.validation_error = '';
         $scope.dob = $$('#dob')[0].get('value');
@@ -444,7 +447,9 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
             });
         }
     }
-    
+    $scope.get_fees_head = function() {
+        get_fee_structure_head_details($scope, $http);
+    }
     $scope.get_students = function(){
         var url = '/academic/list_student/?batch_id='+ $scope.batch;
         if($scope.batch != null){

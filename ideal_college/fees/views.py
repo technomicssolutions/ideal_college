@@ -980,6 +980,10 @@ class FeesReceipt(View):
                 tot_count = 0
                 total_amount = 0
                 for fee_payment in fee_payments:
+                    student_special_fees_head = student.student_fees.filter(feeshead=fee_payment.fees_head)
+                    fees_amount = fee_payment.fees_head.amount
+                    if student_special_fees_head:
+                        fees_amount = student_special_fees_head[0].amount
                     tot_count = tot_count + 1
                     total_amount = total_amount + fee_payment.total_amount
                     p.drawString(50, y - j, str(tot_count))
@@ -999,6 +1003,10 @@ class FeesReceipt(View):
                 p.drawString(250, y - j, str(total_amount)) 
             elif request.GET.get('amount',''):
                 fee_payment = FeesPaymentHead.objects.get(student = student,fees_head__id=head)
+                student_special_fees_head = student.student_fees.filter(feeshead__id=head)
+                fees_amount = fee_payment.fees_head.amount
+                if student_special_fees_head:
+                    fees_amount = student_special_fees_head[0].amount
                 p.drawString(300, y - 220, "Fee Head")
                 p.drawString(450, y - 220, ":")
                 p.drawString(550, y - 220, fee_payment.fees_head.name)  
@@ -1020,7 +1028,7 @@ class FeesReceipt(View):
                     y = y - 260
                 p.drawString(300, y - 20, "Fee Amount")
                 p.drawString(450, y - 20, ":")
-                p.drawString(550, y - 20, str(fee_payment.fees_head.amount))
+                p.drawString(550, y - 20, str(fees_amount))
                 p.drawString(300, y - 40, "Fine")
                 p.drawString(450, y - 40, ":")
                 p.drawString(550, y - 40, str(request.GET.get('fine','')))
@@ -1067,9 +1075,5 @@ class FeesReceipt(View):
                 p.drawString(50, y - j, "Total Amount Paid:")   
                 p.drawString(200, y - j, ":") 
                 p.drawString(250, y - j, str(total_amount)) 
-
-
-
-
             p.save()
             return response

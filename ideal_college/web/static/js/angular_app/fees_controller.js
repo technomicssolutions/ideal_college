@@ -150,11 +150,11 @@ function FeesPaymentController($scope, $element, $http, $timeout, share, $locati
         } else if ($scope.uid_exists == true) {
             $scope.validation_error = "Student Unique id already existing" ;
             return false;
-        } else if ($scope.payment_installment.u_id == '' || $scope.payment_installment.u_id == undefined) {
-            $scope.validation_error = "Please enter Student Unique id" ;
-            return false;
         } else if (error_msg != '') {
             $scope.validation_error = error_msg ;
+            return false;
+        } else if ($scope.payment_installment.u_id == '' || $scope.payment_installment.u_id == undefined) {
+            $scope.validation_error = "Please enter Student Unique id" ;
             return false;
         } else if ($scope.payment_installment.paid_amount == '' || $scope.payment_installment.paid_amount == undefined) {
             $scope.validation_error = "Please enter paid amount" ;
