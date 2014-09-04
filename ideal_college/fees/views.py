@@ -990,7 +990,7 @@ class FeesReceipt(View):
                     p.drawString(80, y - j, fee_payment.fees_head.name)   
                     p.drawString(250, y - j, fee_payment.installment.name)  
                     p.drawString(420, y - j, str(fee_payment.total_amount)) 
-                    p.drawString(550, y - j, str(fee_payment.fees_head.amount))  
+                    p.drawString(550, y - j, str(fees_amount))  
                     p.drawString(700, y - j, str(fee_payment.fine))  
                     p.drawString(800, y - j, str(fee_payment.paid_date.strftime('%d-%m-%Y'))) 
                     j = j + 30
@@ -1038,12 +1038,16 @@ class FeesReceipt(View):
             else:
                 student_fee = FeesPayment.objects.get(student=student)
                 fee_payment = FeesPaymentHead.objects.get(student = student,fees_head__id=head)
+                student_special_fees_head = student.student_fees.filter(feeshead__id=head)
+                fees_amount = fee_payment.fees_head.amount
+                if student_special_fees_head:
+                    fees_amount = student_special_fees_head[0].amount
                 p.drawString(300, y - 200, "Fee Head")
                 p.drawString(450, y - 200, ":")          
                 p.drawString(550, y - 200, fee_payment.fees_head.name)
                 p.drawString(300, y - 220, "Total Amount")
                 p.drawString(450, y - 220, ":")          
-                p.drawString(550, y - 220, str(fee_payment.fees_head.amount))
+                p.drawString(550, y - 220, str(fees_amount))
                 p.drawString(300, y - 240, "Amount Paid")
                 p.drawString(450, y - 240, ":")          
                 p.drawString(550, y - 240, str(fee_payment.total_amount))
