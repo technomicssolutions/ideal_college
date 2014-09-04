@@ -440,6 +440,15 @@ class SearchStudent(View):
         response = simplejson.dumps(res)
         return HttpResponse(response, status=200, mimetype='application/json')
 
+
+class ConductCertificate(View):
+
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'academic/conduct_certificate.html',{})
+ 
+
+
 class PrintTC(View):
 
     def get(self, request, *args, **kwargs):
@@ -461,15 +470,17 @@ class PrintTC(View):
                 'college_name': college_name
             })
         else:
+            tc_type = request.GET.get('tc_type', '')
             if request.GET.get('course', ''):
                 course = Course.objects.get(id=request.GET.get('course', ''))
             if request.GET.get('batch', ''):
                 batch = Batch.objects.get(id=request.GET.get('batch', ''))
             if request.GET.get('student', ''):
                 student = Student.objects.get(id=request.GET.get('student', ''))
-            if request.GET.get('tc_type', '') == 'type1':
+            if tc_type == 'type1':
                 p.drawCentredString(500, y - 20, (college.name if college else '')) 
+            elif tc_type == 'type2':
+                print "type2"
             p.showPage()
             p.save()
         return response
-        
