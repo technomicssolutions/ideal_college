@@ -567,8 +567,28 @@ function ConductCertificateController($scope, $http, $element, $location, $timeo
         });
         
     }
+    $scope.validate_conduct_certificate = function() {
+        if ($scope.course == '' || $scope.course == undefined) {
+            $scope.conduct_error = 'Please choose course';
+            return false;
+        } else if ($scope.batch == '' || $scope.batch == undefined) {
+            $scope.conduct_error = 'Please choose batch';
+            return false;
+        } else if ($scope.batch == '' || $scope.batch == undefined) {
+            $scope.conduct_error = 'Please choose batch';
+            return false;
+        } else if ($scope.student_id == '' || $scope.student_id == undefined) {
+            $scope.conduct_error = 'Please enter student';
+            return false;
+        } else if ($scope.conduct_type == '' || $scope.conduct_type == undefined) {
+            $scope.conduct_error = 'Please enter Conduct Certificate type';
+            return false;
+        } return true;
+    }
     $scope.conduct_report = function(){
-        
+        if($scope.validate_conduct_certificate()) {
+        document.location.href = '/academic/conduct_certifcate/?report_type=conduct_type&course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&college_name='+$scope.college_name+'&conduct_type='+$scope.conduct_type;
+        }
     }
     $scope.get_batch = function(){   
         if($scope.course != null){
