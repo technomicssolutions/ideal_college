@@ -17,7 +17,7 @@ from django.conf import settings
 
 from fees.models import Installment, FeesHead, FeesStructureHead, FeesStructure, FeesPaymentHead, FeesPayment, CommonFeesPayment
 from college.models import College, Course, Batch
-from academic.models import Student
+from academic.models import Student, StudentFees
 
 style = [
     ('FONTSIZE', (0,0), (-1, -1), 12),
@@ -332,10 +332,16 @@ class OutstandingFeesListReport(View):
                     p.drawString(730, y - 100, "Fine")
                     p.setFontSize(12)  
                     heads = student.applicable_fees_heads.all()
+
                     y1 = y - 130
                     for head in heads: 
                         new_y1 = y1
+                        if student.applicable_to_special_fees:
+                            for student_fee in student.student_fees.all():
+                                if student_fee.feeshead == head:
+                                    studentfee = StudentFees.objects.get(id=student_fee.id)  
                         try:
+                              
                             fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student=student)
                             fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
                             if fees_payment_heads.count() == 0:
@@ -350,7 +356,10 @@ class OutstandingFeesListReport(View):
                                         table = Table(data, colWidths=[150], rowHeights=100, style=style)      
                                         table.wrapOn(p, 200, 400)
                                         table.drawOn(p, 45, y1-10)
-                                        p.drawString(200, y1, str(head.amount))
+                                        if student.applicable_to_special_fees:
+                                            p.drawString(200, y1, str(studentfee.amount))
+                                        else:
+                                            p.drawString(200, y1, str(head.amount))
                                         p.drawString(300, y1, str(0))
                                         for installment in head.installments.all():
                                             p.drawString(400, y1, installment.name)
@@ -376,7 +385,10 @@ class OutstandingFeesListReport(View):
                                             table = Table(data, colWidths=[150], rowHeights=100, style=style)      
                                             table.wrapOn(p, 200, 400)
                                             table.drawOn(p, 45, y1-10)
-                                            p.drawString(200, y1, str(head.amount))
+                                            if student.applicable_to_special_fees:
+                                                p.drawString(200, y1, str(studentfee.amount))
+                                            else:
+                                                p.drawString(200, y1, str(head.amount))
                                             p.drawString(300, y1, str(fees_payment_heads[0].paid_fee_amount))
                                             for installment in head.installments.all():
                                                 p.drawString(400, y1, installment.name)
@@ -401,8 +413,11 @@ class OutstandingFeesListReport(View):
                                     data=[[Paragraph(head.name, para_style)]]
                                     table = Table(data, colWidths=[150], rowHeights=100, style=style)      
                                     table.wrapOn(p, 200, 400)
-                                    table.drawOn(p, 45, y1-10) 
-                                    p.drawString(200, y1, str(head.amount))
+                                    table.drawOn(p, 45, y1-10)
+                                    if student.applicable_to_special_fees:
+                                            p.drawString(200, y1, str(studentfee.amount))
+                                    else: 
+                                        p.drawString(200, y1, str(head.amount))
                                     p.drawString(300, y1, str(0))
                                     for installment in head.installments.all():
                                         p.drawString(400, y1, installment.name)
@@ -457,8 +472,13 @@ class OutstandingFeesListReport(View):
                         heads = student.applicable_fees_heads.all()
                         for head in heads:
                             data = [[Paragraph(head.name, para_style)]]
-                            table = Table(data, colWidths=[200], rowHeights=100, style=style)       
+                            table = Table(data, colWidths=[200], rowHeights=100, style=style) 
+                            if student.applicable_to_special_fees:
+                                for student_fee in student.student_fees.all():
+                                    if student_fee.feeshead == head:
+                                        studentfee = StudentFees.objects.get(id=student_fee.id)          
                             try:
+                                
                                 fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student=student)
                                 fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
                                 if fees_payment_heads.count() == 0:
@@ -472,7 +492,10 @@ class OutstandingFeesListReport(View):
                                             # p.drawString(250, y1, head.name)
                                             table.wrapOn(p, 200, 400)
                                             table.drawOn(p, 245, y1-10)
-                                            p.drawString(450, y1, str(head.amount))
+                                            if student.applicable_to_special_fees:
+                                                p.drawString(450, y1, str(studentfee.amount))
+                                            else:
+                                                p.drawString(450, y1, str(head.amount))
                                             p.drawString(550, y1, str(0))
                                             for installment in head.installments.all():
                                                 p.drawString(620, y1, installment.name)
@@ -496,7 +519,10 @@ class OutstandingFeesListReport(View):
                                             if installment[0].end_date < current_date:
                                                 table.wrapOn(p, 200, 400)
                                                 table.drawOn(p, 245, y1-10)
-                                                p.drawString(450, y1, str(head.amount))
+                                                if student.applicable_to_special_fees:
+                                                    p.drawString(450, y1, str(studentfee.amount))
+                                                else:
+                                                    p.drawString(450, y1, str(head.amount))
                                                 p.drawString(550, y1, str(fees_payment_heads[0].paid_fee_amount))
                                                 for installment in head.installments.all():
                                                     p.drawString(620, y1, installment.name)
@@ -520,7 +546,10 @@ class OutstandingFeesListReport(View):
                                         # p.drawString(250, y1, head.name)
                                         table.wrapOn(p, 200, 400)
                                         table.drawOn(p, 245, y1-10)
-                                        p.drawString(450, y1, str(head.amount))
+                                        if student.applicable_to_special_fees:
+                                            p.drawString(450, y1, str(studentfee.amount))
+                                        else:
+                                            p.drawString(450, y1, str(head.amount))
                                         p.drawString(550, y1, str(0))
                                         for installment in head.installments.all():
                                             p.drawString(620, y1, installment.name)
