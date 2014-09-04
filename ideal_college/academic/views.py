@@ -7,7 +7,7 @@ from django.views.generic.base import View
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 
-from college.models import Course, Branch, Batch, Semester, QualifiedExam, TechnicalQualification
+from college.models import Course, Branch, Batch, Semester, QualifiedExam, TechnicalQualification, College
 from academic.models import Student, StudentFees
 from fees.models import FeesStructureHead
 
@@ -449,16 +449,19 @@ class ConductCertificate(View):
         p = canvas.Canvas(response, pagesize=(1000, 1250))
         y = 1150
         report_type = request.GET.get('report_type', '')
+        print report_type,"asdas"
+        print request.GET.get('conduct_type', '')
         try:
             college = College.objects.latest('id')
             college_name = college.name + ' , '
         except:
             college = ''
             college_name = ''
+        print college_name
         if not report_type:
             return render(request, 'academic/conduct_certificate.html',{
                 'report_type' : 'conduct',
-                'college_name': college_name,
+                'college_name': college_name if college else '',
             })
         else:
             conduct_type = request.GET.get('conduct_type', '')
@@ -470,15 +473,36 @@ class ConductCertificate(View):
             if request.GET.get('student', ''):
                 student = Student.objects.get(id=request.GET.get('student', ''))
             if conduct_type == 'type1':
-                p.setFont('Times-Bold',10)
-                p.drawCentredString(500,y-20, "Course & Conduct Certificate")
+                p.setFont('Times-Bold',40)
+                if request.GET.get('college_name',''):
+                    college_name = request.GET.get('college_name','')
+                    p.drawCentredString(480, y , college_name)
+                else:
+                    p.drawCentredString(480, y , (college.name if college else ''))
+                p.setFont('Times-Roman',15)
+                p.drawCentredString(500,y-30,"Karumankurussi P .O, Cheruplassery,Palakkad(Dt.)")
+                p.setFont('Times-Bold',30)
+                p.drawCentredString(500,y-60, "Course & Conduct Certificate")
+                p.setFont('Times-Roman',20)
+                p.drawString(120,y-110,"This is to certify Mr./Mrs./Kum..................................................is/was a Student of this institution")
+                p.drawString(420,y-107,student.student_name)
+                p.drawString(80,y-150,"for BA/B.Com/B.Sc Degree Course (Sub:.......................)")
+                p.drawString(540,y-150,"during the academic year 20   - 20  ")
+                p.drawString(140,y-210,"His/Her conduct and character are/were...................")
+                p.drawString(560,y-210,"during the period .")
+                p.drawString(80,y-290,"Place:.....................")
+                p.drawString(660,y-290,"Principal")
+                p.drawString(80,y-320,"Date:.....................")
+                p.drawCentredString(500,y-380, "Seal")
             elif conduct_type == 'type2':
                 p.setFont('Times-Bold',10)
                 p.drawCentredString(500,y-20, "Course & Conduct Certificate")
             elif conduct_type == 'type3':
                 p.setFont('Times-Bold',10)
                 p.drawCentredString(500,y-20, "Course & Conduct Certificate")
- 
+            p.showPage()
+            p.save()
+        return response
 
 
 class PrintTC(View):
