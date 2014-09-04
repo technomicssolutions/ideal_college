@@ -457,4 +457,6 @@ class PrintTC(View):
             return render(request, 'academic/print_tc.html',{
                 'report_type' : 'tc',
             })
-        
+        else:
+            tc_type = request.GET.get('tc_type', '')
+            print tc_type
