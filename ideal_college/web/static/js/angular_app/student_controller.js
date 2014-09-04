@@ -644,7 +644,9 @@ function PrintTCController($scope, $http) {
     }
     $scope.get_student = function() {
         get_course_batch_student_list($scope, $http);
-
+    }
+    $scope.get_student_details = function() {
+        course_batch_student_list($scope, $http);
     }
     $scope.hide_student_listing = function(student) {
         $scope.student_id = student.id;

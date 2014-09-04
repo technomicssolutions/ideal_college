@@ -500,7 +500,7 @@ class PrintTC(View):
         if not report_type:
             return render(request, 'academic/print_tc.html',{
                 'report_type' : 'tc',
-                'college_name': college_name
+                'college_name': college_name if college else '',
             })
         else:
             tc_type = request.GET.get('tc_type', '')
@@ -513,7 +513,7 @@ class PrintTC(View):
             if tc_type == 'type1':
                 p.drawCentredString(500, y - 20, (college.name if college else '')) 
             elif tc_type == 'type2':
-                print "type2"
+                p.drawCentredString(500, y - 20, (college.name if college else '')) 
             p.showPage()
             p.save()
         return response
