@@ -449,10 +449,10 @@ class PrintTC(View):
         p = canvas.Canvas(response, pagesize=(1000, 1250))
         y = 1150
         report_type = request.GET.get('report_type', '')
-        # try:
-        #     college = College.objects.latest('id')
-        # except:
-        #     college = ''
+        try:
+            college = College.objects.latest('id')
+        except:
+            college = ''
         if not report_type:
             return render(request, 'academic/print_tc.html',{
                 'report_type' : 'tc',
@@ -465,5 +465,8 @@ class PrintTC(View):
             if request.GET.get('student', ''):
                 student = Student.objects.get(id=request.GET.get('student', ''))
             if request.GET.get('tc_type', '') == 'type1':
-                print 'tc_type'
+                p.drawCentredString(500, y - 20, (college.name if college else '')) 
+            p.showPage()
+            p.save()
+        return response
         
