@@ -446,9 +446,65 @@ class SearchStudent(View):
 class ConductCertificate(View):
 
     def get(self, request, *args, **kwargs):
-
-        return render(request, 'academic/conduct_certificate.html',{})
- 
+        status_code = 200
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1250))
+        y = 1150
+        report_type = request.GET.get('report_type', '')
+        print report_type,"asdas"
+        print request.GET.get('conduct_type', '')
+        try:
+            college = College.objects.latest('id')
+            college_name = college.name + ' , '
+        except:
+            college = ''
+            college_name = ''
+        print college_name
+        if not report_type:
+            return render(request, 'academic/conduct_certificate.html',{
+                'report_type' : 'conduct',
+                'college_name': college_name if college else '',
+            })
+        else:
+            conduct_type = request.GET.get('conduct_type', '')
+            print conduct_type
+            if request.GET.get('course', ''):
+                course = Course.objects.get(id=request.GET.get('course', ''))
+            if request.GET.get('batch', ''):
+                batch = Batch.objects.get(id=request.GET.get('batch', ''))
+            if request.GET.get('student', ''):
+                student = Student.objects.get(id=request.GET.get('student', ''))
+            if conduct_type == 'type1':
+                p.setFont('Times-Bold',40)
+                if request.GET.get('college_name',''):
+                    college_name = request.GET.get('college_name','')
+                    p.drawCentredString(480, y , college_name)
+                else:
+                    p.drawCentredString(480, y , (college.name if college else ''))
+                p.setFont('Times-Roman',15)
+                p.drawCentredString(500,y-30,"Karumankurussi P .O, Cheruplassery,Palakkad(Dt.)")
+                p.setFont('Times-Bold',30)
+                p.drawCentredString(500,y-60, "Course & Conduct Certificate")
+                p.setFont('Times-Roman',20)
+                p.drawString(120,y-110,"This is to certify Mr./Mrs./Kum..................................................is/was a Student of this institution")
+                p.drawString(420,y-107,student.student_name)
+                p.drawString(80,y-150,"for BA/B.Com/B.Sc Degree Course (Sub:.......................)")
+                p.drawString(540,y-150,"during the academic year 20   - 20  ")
+                p.drawString(140,y-210,"His/Her conduct and character are/were...................")
+                p.drawString(560,y-210,"during the period .")
+                p.drawString(80,y-290,"Place:.....................")
+                p.drawString(660,y-290,"Principal")
+                p.drawString(80,y-320,"Date:.....................")
+                p.drawCentredString(500,y-380, "Seal")
+            elif conduct_type == 'type2':
+                p.setFont('Times-Bold',10)
+                p.drawCentredString(500,y-20, "Course & Conduct Certificate")
+            elif conduct_type == 'type3':
+                p.setFont('Times-Bold',10)
+                p.drawCentredString(500,y-20, "Course & Conduct Certificate")
+            p.showPage()
+            p.save()
+        return response
 
 
 class PrintTC(View):
@@ -467,6 +523,7 @@ class PrintTC(View):
             college_name = college.name + ' , '+ college.district
         except:
             college = ''
+            college_name = ''
         if not report_type:
             return render(request, 'academic/print_tc.html',{
                 'report_type' : 'tc',
@@ -539,8 +596,28 @@ class PrintTC(View):
                 p.drawString(155, y - 155, student.student_name)
                 p.drawString(50, y - 180, ('Date of Birth according to admission Register : '))
                 p.drawString(305, y - 180, str(student.dob.strftime('%d-%m-%Y')))
-                p.drawString(50, y - 205, ('(in words) '))
-
+                p.drawString(50, y - 205, ('(in words) : '))
+                p.drawString(50, y - 230, ('Class & Subject :  '))
+                if student.batch.branch:
+                    branch_name = student.batch.branch.branch
+                else:
+                    branch_name = ''
+                p.drawString(150, y - 230, student.course.course+" "+ branch_name)
+                p.drawString(400, y - 230, 'Year : ')
+                p.drawString(450, y - 230, str(student.batch.start_date)+"-"+str(student.batch.end_date))
+                p.drawString(50, y - 255, 'Date of admission : ')
+                p.drawString(160, y - 255, str(student.doj.strftime('%d-%m-%Y')))
+                p.drawString(400, y - 255, 'Admission No : ................................')
+                p.drawString(50, y - 280, 'Whether the student has paid all the fee due to the institution : ...............................................................')
+                p.drawString(50, y - 305, 'Whether the student was in receipt of fee concession : ...........................................................................')
+                p.drawString(50, y - 330, 'Date of Student'+"'"+'s last attendence at the institute : ....................................................................................')                
+                p.drawString(50, y - 355, 'Reason for leaving : .........................................')
+                p.drawString(50, y - 380, 'Date of application for T.C : ...................................')
+                p.drawString(50, y - 405, 'Date of issue of the T.C : ......................................')
+                p.drawString(50, y - 500, 'Date : ')
+                p.drawString(50, y - 550, 'Seal : ')
+                p.setFont('Helvetica-Bold',16)
+                p.drawString(600, y - 525, 'Principal')
             p.showPage()
             p.save()
         return response
