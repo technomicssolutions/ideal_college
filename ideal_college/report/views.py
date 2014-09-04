@@ -619,13 +619,19 @@ class FeeCollectedReport(View):
                     try:
                         student_fees = FeesPaymentHead.objects.filter(student=student, paid_date__range=[from_date, to_date])
                         for fee_payment in student_fees:
+                            if student.applicable_to_special_fees:
+                                student_special_fees_head = student.student_fees.filter(feeshead=fee_payment.fees_head)
+                                fees_amount = student_special_fees_head[0].amount
                             total_amount = total_amount +  fee_payment.total_amount
                             p.drawString(50, y - j, str(student.unique_id))
                             p.drawString(100, y - j, str(student.student_name))
                             p.drawString(250, y - j, fee_payment.fees_head.name)   
                             p.drawString(400, y - j, fee_payment.installment.name)  
                             p.drawString(530, y - j, str(fee_payment.total_amount)) 
-                            p.drawString(630, y - j, str(fee_payment.fees_head.amount))  
+                            if student.applicable_to_special_fees:
+                                p.drawString(630, y - j, str(fees_amount))  
+                            else:
+                                p.drawString(630, y - j, str(fee_payment.fees_head.amount))  
                             p.drawString(730, y - j, str(fee_payment.fine))  
                             p.drawString(800, y - j, str(fee_payment.paid_date.strftime('%d-%m-%Y'))) 
                             j = j + 30
@@ -663,13 +669,19 @@ class FeeCollectedReport(View):
                 try:
                     student_fees = FeesPaymentHead.objects.filter(paid_date__range=[from_date, to_date]).order_by('paid_date')
                     for fee_payment in student_fees:
+                        if fee_payment.student.applicable_to_special_fees:
+                            student_special_fees_head = fee_payment.student.student_fees.filter(feeshead=fee_payment.fees_head)
+                            fees_amount = student_special_fees_head[0].amount
                         total_amount = total_amount + fee_payment.total_amount
                         p.drawString(50, y - j, str(fee_payment.student.unique_id))
                         p.drawString(100, y - j, str(fee_payment.student.student_name))
                         p.drawString(250, y - j, fee_payment.fees_head.name)   
                         p.drawString(400, y - j, fee_payment.installment.name)  
-                        p.drawString(530, y - j, str(fee_payment.total_amount)) 
-                        p.drawString(630, y - j, str(fee_payment.fees_head.amount))  
+                        p.drawString(530, y - j, str(fee_payment.total_amount))
+                        if fee_payment.student.applicable_to_special_fees:
+                            p.drawString(630, y - j, str(fees_amount))  
+                        else: 
+                            p.drawString(630, y - j, str(fee_payment.fees_head.amount))  
                         p.drawString(730, y - j, str(fee_payment.fine))  
                         p.drawString(800, y - j, str(fee_payment.paid_date.strftime('%d-%m-%Y'))) 
                         j = j + 30
