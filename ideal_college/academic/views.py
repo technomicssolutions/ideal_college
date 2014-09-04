@@ -498,7 +498,26 @@ class PrintTC(View):
                 
                  
             elif tc_type == 'type2':
-                p.drawCentredString(500, y - 20, (college.name if college else '')) 
+                p.drawCentredString(500, y - 20, ('Form-5')) 
+                p.drawCentredString(500, y - 35, ('[See Rule VI - 17(1)]')) 
+                p.drawString(50, y - 35, ('No. .......................................'))
+                p.setFont('Times-Bold',25)  
+                p.drawCentredString(500, y - 65, ('Transfer Certificate'))
+                p.setFont('Helvetica',12)
+                p.drawString(50, y - 105, ('Name of Institute : '))
+                p.setFont('Helvetica-Bold',11) 
+                p.drawString(155, y - 105, (college_name))
+                p.setFont('Helvetica',12)
+                p.drawString(50, y - 130, ('whether the institute is government, Aided or Recognised : '))
+                p.setFont('Helvetica-Bold',10) 
+                p.drawString(370, y - 130, ('Affiliated to University of Calicut'))
+                p.setFont('Helvetica',12)
+                p.drawString(50, y - 155, ('Name of Student : '))
+                p.drawString(155, y - 155, student.student_name)
+                p.drawString(50, y - 180, ('Date of Birth according to admission Register : '))
+                p.drawString(305, y - 180, str(student.dob.strftime('%d-%m-%Y')))
+                p.drawString(50, y - 205, ('(in words) '))
+
             p.showPage()
             p.save()
         return response
