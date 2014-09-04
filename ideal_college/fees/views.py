@@ -1042,6 +1042,8 @@ class FeesReceipt(View):
                 fees_amount = fee_payment.fees_head.amount
                 if student_special_fees_head:
                     fees_amount = student_special_fees_head[0].amount
+                fees_payment_heads = student_fee.payment_heads.filter(fees_head__id=head)
+                
                 p.drawString(300, y - 200, "Fee Head")
                 p.drawString(450, y - 200, ":")          
                 p.drawString(550, y - 200, fee_payment.fees_head.name)
