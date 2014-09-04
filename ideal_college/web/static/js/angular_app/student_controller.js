@@ -568,7 +568,7 @@ function ConductCertificateController($scope, $http, $element, $location, $timeo
         
     }
     $scope.conduct_report = function(){
-        
+        document.location.href = '/academic/print_transfer_certificate/?report_type=conduct_type&course='+$scope.course+'&batch='+$scope.batch+'&student='+$scope.student_id+'&college_name='+$scope.college_name+'&conduct_type='+$scope.conduct_type;
     }
     $scope.get_batch = function(){   
         if($scope.course != null){

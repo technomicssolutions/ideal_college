@@ -444,8 +444,16 @@ class SearchStudent(View):
 class ConductCertificate(View):
 
     def get(self, request, *args, **kwargs):
-
-        return render(request, 'academic/conduct_certificate.html',{})
+        status_code = 200
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1250))
+        y = 1150
+        report_type = request.GET.get('report_type', '')
+        if not report_type:
+            return render(request, 'academic/conduct_certificate.html',{
+                'report_type' : 'conduct',
+            })
+        
  
 
 
