@@ -207,105 +207,6 @@ function EditBatchController($scope, $http, $element, $location, $timeout) {
     }
 }
 
-function EditCourseController($scope, $http, $element, $location, $timeout) {
-    $scope.init = function(csrf_token, course_id){
-        $scope.csrf_token = csrf_token;
-        $scope.course_id = course_id;
-        $scope.get_semester();
-        $scope.semester_list = [];
-        $scope.url = '/college/edit_course/' + $scope.course_id+ '/';
-        show_spinner();
-        $http.get($scope.url).success(function(data)
-        {   
-            hide_spinner();
-            $scope.course = data.course[0];
-            for(var i = 0; i < $scope.course.semester_details.length; i++){
-                for(var j = 0; j < $scope.semesters.length; j++){
-                    if($scope.semesters[j].id == $scope.course.semester_details[i].semester_id){
-                        $scope.semesters[j].selected = true;
-                        $scope.semester_list.push($scope.semesters[j].id);
-                    }           
-                }
-            }
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
-        
-    }
-    $scope.get_semester = function(){
-        var url = '/college/list_semester/';
-        show_spinner();
-        $http.get(url).success(function(data) {
-            hide_spinner();
-            $scope.semesters = data.semesters;            
-        }).error(function(data, status)
-        {
-            console.log(data || "Request failed");
-        });
-    }
-    $scope.validate_edit_course = function() {
-
-        
-        $scope.validation_error = '';     
-        if($scope.course.course == '' || $scope.course.course == undefined) {
-            $scope.validation_error = "Please Enter course Name" ;
-            return false;
-        } else if($scope.semester_list == '') {
-            $scope.validation_error = "Please Choose Semesters" ;
-            return false;
-        } 
-        return true;   
-     }
-
-    $scope.save_course = function() {
-        $scope.is_valid = $scope.validate_edit_course();
-
-        if ($scope.is_valid) {
-            $scope.error_flag=false;
-            $scope.message = '';
-            for(var i = 0; i < $scope.course.semester_details.length; i++){
-                for(var j = 0; j < $scope.semesters.length; j++){
-                    if($scope.semesters[j].id == $scope.course.semester_details[i].semester_id){
-                        if($scope.semesters[j].selected = true)
-                            $scope.semesters[j].selected = "true"
-                    }           
-                }
-            }
-
-            params = { 
-                'course': angular.toJson($scope.course),
-                'semester_list': angular.toJson($scope.semester_list),
-                "csrfmiddlewaretoken" : $scope.csrf_token
-            }
-            show_spinner();
-            $http({
-                method : 'post',
-                url : $scope.url,
-                data : $.param(params),
-                headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded'
-                }
-            }).success(function(data, status) {
-                
-                hide_spinner();
-                if (data.result == 'error'){
-                    $scope.error_flag=true;
-                    $scope.message = data.message;
-                } else {
-                    $scope.error_flag=false;
-                    $scope.message = '';
-                    document.location.href = '/college/list_course/';
-                }
-            }).error(function(data, status){
-                $scope.error_flag=true;
-                $scope.message = data.message;
-            });
-        }
-  
-    }
-}
-
 function EditCollegeController($scope, $http, $element, $location, $timeout) {
     $scope.init = function(csrf_token, college_id){
         $scope.csrf_token = csrf_token;
@@ -402,8 +303,8 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
         if ($scope.course_type == 'Distant') {
             $scope.is_distant = true;
             $scope.is_registration_only = true
-        } else 
-        {
+            $scope.semester_list = []
+        } else {
             $scope.is_distant = false;
             $scope.is_registration_only = false
         }
@@ -482,6 +383,7 @@ function CollegeController($scope, $element, $http, $timeout, share, $location)
     }
     $scope.hide_semesters = function(){
         if ($scope.registration_type == 'Registration Only' && $scope.course_type == 'Distant') {
+            $scope.semester_list = [];
             $scope.is_registration_only = true;
         } else {
             $scope.is_registration_only = false;
