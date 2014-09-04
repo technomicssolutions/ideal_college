@@ -467,13 +467,14 @@ class PrintTC(View):
                 'report_type' : 'tc',
             })
         else:
+            tc_type = request.GET.get('tc_type', '')
             if request.GET.get('course', ''):
                 course = Course.objects.get(id=request.GET.get('course', ''))
             if request.GET.get('batch', ''):
                 batch = Batch.objects.get(id=request.GET.get('batch', ''))
             if request.GET.get('student', ''):
                 student = Student.objects.get(id=request.GET.get('student', ''))
-            if request.GET.get('tc_type', '') == 'type1':
-                print 'tc_type'
-        
-
+            if tc_type == 'type1':
+            
+            elif tc_type == 'type2':
+                
