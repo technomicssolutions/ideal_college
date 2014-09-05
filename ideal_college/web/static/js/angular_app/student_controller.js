@@ -682,5 +682,52 @@ function PrintTCController($scope, $http) {
             document.location.href = '/academic/print_transfer_certificate/?report_type=tc_type&student='+$scope.student_id+'&tc_type='+$scope.tc_type+'&college='+$scope.college_name;
         }
     }
+}
 
+function PrintTCConductCertificateController($scope, $http){
+    $scope.init = function(csrf_token, college_name) {
+        $scope.csrf_token = csrf_token;
+        $scope.college_name = college_name;
+        $scope.student_selected = true;
+        get_course_list($scope, $http);
+    }
+    $scope.get_batch = function() {
+        get_course_batch_list($scope, $http);
+    }
+    $scope.get_student = function() {
+        get_course_batch_student_list($scope, $http);
+    }
+    $scope.get_student_details = function() {
+        course_batch_student_list($scope, $http);
+    }
+    $scope.hide_student_listing = function(student) {
+        $scope.student_id = student.id;
+        $scope.student_name = student.student_name;
+        $scope.student_selected = true;
+    } 
+    $scope.validate_print_tc = function() {
+        if ($scope.course == '' || $scope.course == undefined) {
+            $scope.tc_error = 'Please choose course';
+            return false;
+        } else if ($scope.batch == '' || $scope.batch == undefined) {
+            $scope.tc_error = 'Please choose batch';
+            return false;
+        } else if ($scope.batch == '' || $scope.batch == undefined) {
+            $scope.tc_error = 'Please choose batch';
+            return false;
+        } else if ($scope.student_id == '' || $scope.student_id == undefined) {
+            $scope.tc_error = 'Please enter student';
+            return false;
+        } else if ($scope.college_name == '' || $scope.college_name == undefined) {
+            $scope.tc_error = 'Please enter college name';
+            return false; 
+        } return true;
+    }
+    $scope.view_report = function() {
+        if($scope.validate_print_tc()) {
+            $scope.college_name = $scope.college_name.replace(/[\s]/g,'_');
+            console.log($scope.college_name)
+            document.location.href = '/academic/print_tc_conduct_certificate/?report_type=tc_type&student='+$scope.student_id+'&college='+$scope.college_name;
+        }
+    }
 }

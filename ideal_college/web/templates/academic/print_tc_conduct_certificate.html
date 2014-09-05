@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}Print TC{% endblock title %}
-{% block body_id %}print_tc{% endblock %}
+{% block title %}TC & Conduct Certificate{% endblock title %}
+{% block body_id %}print_tc_conduct_certificate{% endblock %}
 {% block controller %}
-	ng-controller="PrintTCController" ng-init="init('{{csrf_token}}', '{{college_name}}')"
+	ng-controller="PrintTCConductCertificateController" ng-init="init('{{csrf_token}}', '{{college_name}}')"
 {% endblock controller %}
 {% block content %}
 	<form class="" name="print_tc" method="get" action="">
 		{% csrf_token %}
 		<div class="main-title">
-			<div class="alert alert-info" align="Center">Print TC</div>
+			<div class="alert alert-info" align="Center">Print TC & Conduct Certificate</div>
 			<input type="hidden" name="report_type" value="{{report_type}}">
 			<div class="form_container">	
 				<p class="error_message">[[validation_error]]</p>	
@@ -34,14 +34,6 @@
 					<div ng-repeat="student in students_list" ng-click="hide_student_listing(student)">
 						<span>[[student.student]]</span>
 					</div>
-				</div>
-				<div class="control">
-					<select ng-model="tc_type">
-						<option value="">TC Type</option>
-						<option value="type1">Type 1</option>
-						<option value="type2">Type 2</option>
-						<option value="type3">Type 3</option>
-					</select>
 				</div>
 				<div class="control">
 					<input type="text" ng-model="college_name" value="">

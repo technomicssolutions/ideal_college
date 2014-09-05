@@ -475,7 +475,7 @@ class ConductCertificate(View):
             if request.GET.get('student', ''):
                 student = Student.objects.get(id=request.GET.get('student', ''))
             if conduct_type == 'type1':
-                p.setFont('Times-Bold',40)
+                p.setFont('Times-Bold',30)
                 if request.GET.get('college_name',''):
                     college_name = request.GET.get('college_name','')
                     p.drawCentredString(480, y , college_name)
@@ -535,9 +535,7 @@ class PrintTC(View):
                 student = Student.objects.get(id=request.GET.get('student', ''))
             college_name = request.GET.get('college', '')
             college_name = college_name.replace('_', ' ')
-            print college_name
             if tc_type == 'type1':
-                # p.drawCentredString(500, y - 20, (college_name))
                 p.drawCentredString(500, y - 20, ('Form-5')) 
                 p.drawCentredString(500, y - 35, ('[See Rule VI - 17(1)]')) 
                 p.drawString(50, y - 35, ('No. .......................................'))
@@ -626,3 +624,34 @@ class PrintTC(View):
             p.showPage()
             p.save()
         return response
+
+class PrintTCConductCertificate(View):
+
+    def get(self, request, *args, **kwargs):
+
+        status_code = 200
+        response = HttpResponse(content_type='application/pdf')
+        p = canvas.Canvas(response, pagesize=(1000, 1250))
+        y = 1150
+
+        report_type = request.GET.get('report_type', '')
+        college_name = ''
+        try:
+            college = College.objects.latest('id')
+            college_name = college.name + ' , '+ college.district
+        except:
+            college = ''
+            college_name = ''
+        if not report_type:
+            return render(request, 'academic/print_tc_conduct_certificate.html',{
+                'report_type' : 'tc',
+                'college_name': college_name if college else '',
+            })
+        else:
+            # IDEAL TEACHER TRAINING COLLEGE, CHERPULASSERY
+            print "in else"
+            return render(request, 'academic/print_tc.html',{
+                'report_type' : 'tc',
+                'college_name': college_name if college else '',
+            })
+

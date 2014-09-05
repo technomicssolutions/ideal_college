@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 from academic.views import GetStudent, AddStudent, ListStudent, ViewStudentDetails, EditStudentDetails, \
-DeleteStudentDetails, CheckUidExists, SearchStudent, ConductCertificate, PrintTC
+DeleteStudentDetails, CheckUidExists, SearchStudent, ConductCertificate, PrintTC, PrintTCConductCertificate
 
 
 urlpatterns = patterns('',
@@ -19,5 +19,6 @@ urlpatterns = patterns('',
 	url(r'^conduct_certifcate/$', login_required(ConductCertificate.as_view()), name="conduct_certifcate"),
 
 	url(r'^print_transfer_certificate/$', login_required(PrintTC.as_view()), name="print_transfer_certificate"),
+	url(r'^print_tc_conduct_certificate/$', login_required(PrintTCConductCertificate.as_view()), name="print_tc_conduct_certificate"),
 
 )
