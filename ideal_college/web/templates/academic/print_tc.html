@@ -13,18 +13,21 @@
 			<div class="form_container">	
 				<p class="error_message">[[validation_error]]</p>	
 				<div class="control">
+					<label>Course</label>
 					<select name="course" ng-model="course" ng-change="get_batch()" ng-options="course.id as course.course for course in courses">
 						<option value="">Course</option>
 					</select>
 				</div>
 				<p class="error_message">[[no_batch_error]]</p>
 				<div class="control">
+					<label>Batch</label>
 					<select name="batch" ng-model="batch" ng-change="get_student()" ng-options="batch.id as batch.name for batch in batches">
 						<option value="">Batch</option>
 					</select>
 				</div>
 				<p class="error_message">[[no_student_error]]</p>
 				<div class="control">
+					<label>Student</label>
 					<input type="text" ng-model="student_name" ng-change="get_student_details()">
 					<div class="control" ng-show="paid_completely">
 						<p class="error_message" style="float:left;">[[paid_completely]]</p>
@@ -36,6 +39,7 @@
 					</div>
 				</div>
 				<div class="control">
+					<label>TC Type</label>
 					<select ng-model="tc_type">
 						<option value="">TC Type</option>
 						<option value="type1">Type 1</option>
@@ -44,6 +48,7 @@
 					</select>
 				</div>
 				<div class="control">
+					<label>College Name3</label>
 					<input type="text" ng-model="college_name" value="">
 				</div>
 				<div class="control">
