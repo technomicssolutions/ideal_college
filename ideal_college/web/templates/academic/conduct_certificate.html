@@ -3,7 +3,7 @@
 {% block body_id %}conduct_certificate{% endblock %}
 
 {% block controller %}
-	ng-controller="ConductCertificateController" ng-init="init('{{csrf_token}}')"
+	ng-controller="ConductCertificateController" ng-init="init('{{csrf_token}}','{{college_name}}')"
 {% endblock controller %}
 
 
@@ -35,7 +35,7 @@
 				<label> College Name</label> 
 			</div>
 			<div class="form_input">
-				<input type="text" ng-model="college_name" value="{{college_name}}">
+				<input type="text" ng-model="college_name" >
 			</div>
 			<label>Conduct Certificate Type</label>						
 			<select ng-model="conduct_type">
