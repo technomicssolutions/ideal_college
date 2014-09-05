@@ -482,7 +482,7 @@ class ConductCertificate(View):
                 else:
                     p.drawCentredString(500, y , (college.name if college else ''))
                 p.setFont('Times-Roman',15)
-                p.drawCentredString(500,y-30,"Karumankurussi P .O, Cheruplassery,Palakkad(Dt.)")
+                p.drawCentredString(500,y-30,"Karumanamkurussi P .O, Cheruplassery,Palakkad(Dt.)")
                 p.setFont('Times-Bold',30)
                 p.drawCentredString(500,y-60, "Course & Conduct Certificate")
                 p.setFont('Times-Roman',20)
@@ -504,7 +504,7 @@ class ConductCertificate(View):
                 else:
                     p.drawCentredString(500, y , (college.name if college else ''))
                 p.setFont('Times-Roman',15)
-                p.drawCentredString(500,y-30,"Karumankurussi P .O, Cheruplassery,PIN:679504")
+                p.drawCentredString(500,y-30,"Karumanamkurussi P .O, Cheruplassery,PIN:679504")
                 p.setFont('Times-Bold',30)
                 p.drawCentredString(500,y-60, "Course & Conduct Certificate")
                 p.setFont('Times-Roman',20)
@@ -667,9 +667,43 @@ class PrintTCConductCertificate(View):
             })
         else:
             # IDEAL TEACHER TRAINING COLLEGE, CHERPULASSERY
-            print "in else"
-            return render(request, 'academic/print_tc.html',{
-                'report_type' : 'tc',
-                'college_name': college_name if college else '',
-            })
+            try:
+                student = Student.objects.get(id=request.GET.get('student', ''))
+            except:
+                student = None
+            p.setFont('Times-Bold',20) 
+            college_name = request.GET.get('college', '').replace('_', ' ')
+            p.drawCentredString(500, y - 20, (college_name)) 
+            p.setFont('Times-Bold',12) 
+            p.drawCentredString(500, y - 40, ('KARUMANAMKURUSSI. (P.O), PALAKKAD(DT.), PIN:679504'))
+            p.drawCentredString(500, y - 60, ('( Affiliated to University of Calicut )'))  
+            p.drawString(100, y - 80, ('No: ........................................'))  
+            p.roundRect(350, y - 120, 300 , 25, 0.1*inch)
+            p.setFont('Times-Bold',14)
+            p.drawString(362, y - 112, ('TRANSFER & CONDUCT CERTIFICATE')) 
+            p.setFont('Times-Roman',14)
+            p.drawString(100, y - 170, ('1.  Name of Student:....................................................................................................................................................................................................... ')) 
+            p.drawString(100, y - 200, ('2.  Date of Birth as entered in the Admission Register:................................................................................................................................................. ')) 
+            p.drawString(100, y - 230, ('3.  Admission No: .........................................................')) 
+            p.drawString(400, y - 230, ('  Date of Admission: .................................................................................................................')) 
+            p.drawString(100, y - 260, ('4.  Class in which the student was admitted:................................................................................................................................................................... ')) 
+            p.drawString(100, y - 290, ('5.  Whether all dues to the college have been paid: ........................................................................................................................................................'))
+            p.drawString(100, y - 320, ('6.  Whether the student was in receipt of any scholarship or Concession : ....................................................................................................................'))
+            p.drawString(100, y - 350, ('7.  Whether the student has appeared for the Examination:.............................................................................................................................................'))
+            p.drawString(100, y - 380, ('8.  Register No:............................................................. '))
+            p.drawString(400, y - 380, ('  Year:......................................................................................................................................... '))
+            p.drawString(100, y - 410, ('9.  Whether qualified for promotion:............................................................................................................................................................................... '))
+            p.drawString(100, y - 440, ('10.  Reason for leaving:................................................................................................................................................................................................... '))
+            p.drawString(100, y - 470, ('11.  Date of application for Transfer Certificate:............................................................................................................................................................. '))
+            p.drawString(100, y - 500, ('12.  Date of Issue of Transfer Certificate:........................................................................................................................................................................ '))
+            p.drawString(100, y - 530, ('13.  Conduct during the period:........................................................................................................................................................................................ '))
+            p.drawString(120, y - 630, ('Date: '))
+            p.drawString(820, y - 630, ('Principal'))
+            if student:
+                p.drawString(250, y - 165, (student.student_name)) 
+                p.drawString(420, y - 195, (student.dob.strftime('%d/%m/%Y')))
+                p.drawString(550, y - 225, (student.doj.strftime('%d/%m/%Y')))  
 
+        p.showPage()
+        p.save()
+        return response

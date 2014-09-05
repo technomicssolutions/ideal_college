@@ -725,6 +725,7 @@ function PrintTCConductCertificateController($scope, $http){
     }
     $scope.view_report = function() {
         if($scope.validate_print_tc()) {
+            console.log($scope.college_name);
             $scope.college_name = $scope.college_name.replace(/[\s]/g,'_');
             console.log($scope.college_name)
             document.location.href = '/academic/print_tc_conduct_certificate/?report_type=tc_type&student='+$scope.student_id+'&college='+$scope.college_name;
