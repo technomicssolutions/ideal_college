@@ -688,7 +688,6 @@ class PrintTCConductCertificate(View):
                 'college_name': college_name if college else '',
             })
         else:
-            # IDEAL TEACHER TRAINING COLLEGE, CHERPULASSERY
             try:
                 student = Student.objects.get(id=request.GET.get('student', ''))
             except:

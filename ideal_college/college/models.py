@@ -43,7 +43,7 @@ class Branch(models.Model):
 
 class CourseBranch(models.Model):
 
-	branch = models.CharField('Branch Name', null=True, blank=True, max_length=200)
+	branch = models.CharField('Branch Name', null=True, blank=True, max_length=200, unique=True)
 
 	def __unicode__(self):
 		return (self.branch)
