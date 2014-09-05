@@ -360,8 +360,7 @@ function EditFeeStructureController($scope, $http, $element) {
                                         if(end_date >= start_date_current){
                                             $scope.validation_error = "Please Check the End Date of Standard Payment and Start Date of Late Payment in "+$scope.fees_structure.fees_head[i].head;
                                             return false;  
-                                        }
-                                        else if (j > 0) {
+                                        } else if (j > 0) {
                                             var date_value = $scope.fees_structure.fees_head[i].installments[j].start_date.split('/');
                                             var start_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
                                             var date_value = $scope.fees_structure.fees_head[i].installments[j-1].end_date.split('/');
@@ -739,6 +738,15 @@ function FeesStructureController($scope, $http, $element) {
                             if (start_date >= end_date) {
                                 $scope.validation_error = "Please check the dates for the payment type "+$scope.fees_head_details[i].payment[j].type+" in "+$scope.fees_head_details[i].head;
                                 return false;
+                            } else if (j > 0) {
+                                var date_value = $scope.fees_head_details[i].payment[j].start_date.split('/');
+                                var start_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                                var date_value = $scope.fees_head_details[i].payment[j-1].end_date.split('/');
+                                var end_date = new Date(date_value[2],date_value[1]-1, date_value[0]);
+                                if ((start_date - end_date)/(1000*60*60*24) > 1) {
+                                    $scope.validation_error = "Please check the start date of the payment type "+$scope.fees_head_details[i].payment[j].type+" and end date for the payment type "+$scope.fees_head_details[i].payment[j-1].type+' in '+$scope.fees_head_details[i].head;
+                                    return false;
+                                }
                             }
                         } 
                         if($scope.fees_head_details[i].payment[j].fine != Number($scope.fees_head_details[i].payment[j].fine)){
@@ -764,13 +772,11 @@ function FeesStructureController($scope, $http, $element) {
                                     var start_date_current = new Date(date_value[2],date_value[1]-1, date_value[0]);
                                     var date_value = $scope.fees_head_details[i].payment[k].end_date.split('/');
                                     var end_date_current = new Date(date_value[2],date_value[1]-1, date_value[0]);
-                                    console.log(end_date - start_date_current);
                                     if($scope.fees_head_details[i].payment[j].type == "Early Payment" && ( $scope.fees_head_details[i].payment[k].type == "Standard Payment" || $scope.fees_head_details[i].payment[k].type == "Late Payment") ){
                                         if(end_date >= start_date_current){
                                             $scope.validation_error = "Please Check the End Date of Early Payment and Start Date of "+$scope.fees_head_details[i].payment[k].type+" in "+$scope.fees_head_details[i].head;
                                             return false;  
                                         } 
-                                        
                                     }
                                     if($scope.fees_head_details[i].payment[j].type == "Standard Payment" && $scope.fees_head_details[i].payment[k].type == "Late Payment"){
                                         if(end_date >= start_date_current){
