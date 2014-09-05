@@ -387,7 +387,11 @@ class GetFeeStructureHeadList(View):
                                 'head_amount': head.amount,
                             })
                         else:
-                            if fees_payment_heads[0].paid_fee_amount != head.amount:
+                            head_amount = head.amount
+                            applicable_fee_head = student.student_fees.filter(feeshead=head)
+                            if applicable_fee_head.count() > 0:
+                                head_amount = applicable_fee_head[0].amount
+                            if fees_payment_heads[0].paid_fee_amount != head_amount:
                                ctx_heads_list.append({
                                     'id': head.id,
                                     'head': head.name,
