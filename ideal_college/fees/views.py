@@ -514,7 +514,11 @@ class GetOutStandingFeesDetails(View):
                                             'balance': head.amount,
                                             })
                             else:
-                                if fees_payment_heads[0].paid_fee_amount != head.amount:
+                                head_amount = head.amount
+                                applicable_special_fee = student.student_fees.filter(feeshead=head)
+                                if applicable_special_fee.count() > 0:
+                                    head_amount = applicable_special_fee[0].amount
+                                if fees_payment_heads[0].paid_fee_amount != head_amount:
                                     installment = head.installments.filter(name='Late Payment')
                                     if installment.count() == 0:
                                         installment = head.installments.filter(name='Standard Payment')
@@ -622,7 +626,11 @@ class GetOutStandingFeesDetails(View):
                                                     'balance': head.amount,
                                                 })
                                 else:
-                                    if fees_payment_heads[0].paid_fee_amount != head.amount:
+                                    head_amount = head.amount
+                                    applicable_special_fee = student.student_fees.filter(feeshead=head)
+                                    if applicable_special_fee.count() > 0:
+                                        head_amount = applicable_special_fee[0].amount
+                                    if fees_payment_heads[0].paid_fee_amount != head_amount:
                                         installment = head.installments.filter(name='Late Payment')
                                         if installment.count() == 0:
                                             installment = head.installments.filter(name='Standard Payment')
