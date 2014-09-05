@@ -18,6 +18,8 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_RIGHT, TA_JUSTIFY, TA_CENTER
 from reportlab.platypus import Paragraph, Table, TableStyle
 
+from num2words import num2words
+
 class AddStudent(View):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
@@ -559,19 +561,42 @@ class PrintTC(View):
                 p.drawString(50, y - 35, ('No. .......................................'))
                 p.setFont('Times-Bold',25)  
                 p.drawCentredString(500, y - 65, ('Transfer Certificate'))
-                p.setFont('Helvetica',12)
+                p.setFont('Helvetica',14)
                 p.drawString(50, y - 95, ('Name of Institute : '))
                 p.setFont('Helvetica-Bold',11) 
-                p.drawString(150, y - 95, (college_name))
-                p.setFont('Helvetica',12)
-                p.drawString(50, y - 115, ('whether the institute is government, Aided or Recognised : '))
-                p.setFont('Helvetica-Bold',10) 
-                p.drawString(365, y - 115, ('SELF FINANCING'))
-                p.setFont('Helvetica',12)
-                p.drawString(50, y - 135, ('Name of Pupil : '))
-                p.drawString(150, y - 135, ('Name of Pupil : '))
+                p.drawString(170, y - 95, (college_name))
+                p.setFont('Helvetica',14)
+                p.drawString(50, y - 125, ('whether the institute is government, Aided or Recognised : '))
+                p.setFont('Helvetica-Bold',12) 
+                p.drawString(415, y - 125, ('SELF FINANCING'))
+                p.setFont('Helvetica',14)
+                p.drawString(50, y - 155, ('Name of Pupil : '))
+                p.drawString(140, y - 155, (student.student_name))
+                p.drawString(50, y - 185, ('Date of Birth according to admission register : '))
+                p.drawString(340, y - 185, (student.dob.strftime('%d-%m-%Y')))
+                dob_month = student.dob.strftime('%B')
+                dob_date = num2words(student.dob.day).title() 
+                dob_year = num2words(student.dob.year).title()   
+                dob_words = ' ( ' + dob_date + ' ' + dob_month + ' ' +dob_year + ' ) '
+                p.drawString(410, y - 185, (dob_words))
+                p.drawString(50, y - 215, ('Class in which the pupil was Admitted'))
+                p.drawString(290, y - 215, (' : ...................................................................................................................................'))
+                p.drawString(50, y - 245, ('Date of Admission : '))
+                p.drawString(180, y - 245, (student.doj.strftime('%d-%m-%Y')))
+                p.drawString(50, y - 275, ('whether the pupil has paid all the fee due to the institute : '))
+                p.drawString(410, y - 275, ('.......................................................................................................'))
+                p.drawString(50, y - 315, ('whether the pupil was in receipt of fee concession : '))
+                p.drawString(370, y - 315, ('.................................................................................................................'))
+                p.drawString(50, y - 345, ("Date of the pupil's last attendance at institute : "))
+                p.drawString(340, y - 345, ('.........................................................................................................................'))
+                p.drawString(50, y - 375, ("Reason for leaving : "))
+                p.drawString(190, y - 375, ('...............................................................................................................................................................'))
+                p.drawString(50, y - 405, ("Date of application for certificate : "))
+                p.drawString(270, y - 405, ('...........................................................................................................................................'))
+                p.drawString(50, y - 435, ("Date of issue of the certificate : "))
+                p.drawString(250, y - 435, ('................................................................................................................................................'))
+                p.drawString(650, y - 515, ("Head of the Institution "))
                 
-                 
             elif tc_type == 'type2':
                 p.drawCentredString(500, y - 20, ('Form-5')) 
                 p.drawCentredString(500, y - 35, ('[See Rule VI - 17(1)]')) 
@@ -583,16 +608,39 @@ class PrintTC(View):
                 p.setFont('Helvetica-Bold',11) 
                 p.drawString(155, y - 105, (college_name))
                 p.setFont('Helvetica',12)
-                p.drawString(50, y - 130, ('whether the institute is government, Aided or Recognised : '))
+                p.drawString(50, y - 135, ('whether the institute is government, Aided or Recognised : '))
                 p.setFont('Helvetica-Bold',10) 
-                p.drawString(370, y - 130, ('Affiliated to University of Calicut'))
+                p.drawString(370, y - 135, ('Affiliated to University of Calicut'))
                 p.setFont('Helvetica',12)
-                p.drawString(50, y - 155, ('Name of Student : '))
-                p.drawString(155, y - 155, student.student_name)
-                p.drawString(50, y - 180, ('Date of Birth according to admission Register : '))
-                p.drawString(305, y - 180, str(student.dob.strftime('%d-%m-%Y')))
-                p.drawString(50, y - 205, ('(in words) '))
-
+                p.drawString(50, y - 165, ('Name of Student : '))
+                p.drawString(155, y - 165, student.student_name)
+                p.drawString(50, y - 195, ('Date of Birth according to admission Register : '))
+                dob_month = student.dob.strftime('%B')
+                dob_date = num2words(student.dob.day).title() 
+                dob_year = num2words(student.dob.year).title()   
+                dob_words = ' ( ' + dob_date + ' ' + dob_month + ' ' +dob_year + ' ) '
+                p.drawString(305, y - 195, str(student.dob.strftime('%d-%m-%Y'))+" "+dob_words)
+                p.drawString(50, y - 225, ('Class & Subject :  '))
+                if student.batch.branch:
+                    branch_name = student.batch.branch.branch
+                else:
+                    branch_name = ''
+                p.drawString(150, y - 225, student.course.course+" "+ branch_name)
+                p.drawString(400, y - 225, 'Year : ')
+                p.drawString(450, y - 225, str(student.batch.start_date)+"-"+str(student.batch.end_date))
+                p.drawString(50, y - 255, 'Date of admission : ')
+                p.drawString(160, y - 255, str(student.doj.strftime('%d-%m-%Y')))
+                p.drawString(400, y - 255, 'Admission No : ................................')
+                p.drawString(50, y - 285, 'Whether the student has paid all the fee due to the institution : ...............................................................')
+                p.drawString(50, y - 315, 'Whether the student was in receipt of fee concession : ...........................................................................')
+                p.drawString(50, y - 345, 'Date of Student'+"'"+'s last attendence at the institute : ....................................................................................')                
+                p.drawString(50, y - 375, 'Reason for leaving : .........................................')
+                p.drawString(50, y - 405, 'Date of application for T.C : ...................................')
+                p.drawString(50, y - 435, 'Date of issue of the T.C : ......................................')
+                p.drawString(50, y - 500, 'Date : ')
+                p.drawString(50, y - 550, 'Seal : ')
+                p.setFont('Helvetica-Bold',16)
+                p.drawString(600, y - 525, 'Principal')
             p.showPage()
             p.save()
         return response
