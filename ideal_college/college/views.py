@@ -530,7 +530,7 @@ class AddNewSemester(View):
                         'result': 'error',
                         'message': 'Semester already existing'
                     }
-                    status_code = 500
+                    status_code = 200
                 else:
                     try:
                         semester.semester = request.POST['name']
@@ -549,7 +549,7 @@ class AddNewSemester(View):
                         'result': 'error',
                         'message': 'Semester Name already existing'
                     }
-                status_code = 500
+                status_code = 200
             response = simplejson.dumps(res)
             return HttpResponse(response, status = status_code, mimetype="application/json")
 
