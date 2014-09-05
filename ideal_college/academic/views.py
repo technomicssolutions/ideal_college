@@ -453,7 +453,7 @@ class ConductCertificate(View):
         print request.GET.get('conduct_type', '')
         try:
             college = College.objects.latest('id')
-            college_name = college.name + ' , '
+            college_name = college.name 
         except:
             college = ''
             college_name = ''
@@ -473,12 +473,12 @@ class ConductCertificate(View):
             if request.GET.get('student', ''):
                 student = Student.objects.get(id=request.GET.get('student', ''))
             if conduct_type == 'type1':
-                p.setFont('Times-Bold',40)
+                p.setFont('Times-Bold',35)
                 if request.GET.get('college_name',''):
                     college_name = request.GET.get('college_name','')
-                    p.drawCentredString(480, y , college_name)
+                    p.drawCentredString(500, y , college_name)
                 else:
-                    p.drawCentredString(480, y , (college.name if college else ''))
+                    p.drawCentredString(500, y , (college.name if college else ''))
                 p.setFont('Times-Roman',15)
                 p.drawCentredString(500,y-30,"Karumankurussi P .O, Cheruplassery,Palakkad(Dt.)")
                 p.setFont('Times-Bold',30)
@@ -493,10 +493,28 @@ class ConductCertificate(View):
                 p.drawString(80,y-290,"Place:.....................")
                 p.drawString(660,y-290,"Principal")
                 p.drawString(80,y-320,"Date:.....................")
-                p.drawCentredString(500,y-380, "Seal")
+                p.drawCentredString(500,y-380, "(Seal)")
             elif conduct_type == 'type2':
-                p.setFont('Times-Bold',10)
-                p.drawCentredString(500,y-20, "Course & Conduct Certificate")
+                p.setFont('Times-Bold',35)
+                if request.GET.get('college_name',''):
+                    college_name = request.GET.get('college_name','')
+                    p.drawCentredString(500, y , college_name)
+                else:
+                    p.drawCentredString(500, y , (college.name if college else ''))
+                p.setFont('Times-Roman',15)
+                p.drawCentredString(500,y-30,"Karumankurussi P .O, Cheruplassery,PIN:679504")
+                p.setFont('Times-Bold',30)
+                p.drawCentredString(500,y-60, "Course & Conduct Certificate")
+                p.setFont('Times-Roman',20)
+                p.drawString(120,y-110,"This is to certify Sri/Smt_________________________________________________________")
+                p.drawString(420,y-107,student.student_name)
+                p.drawString(120,y-140,"was the student of the college for the________________________________________________")
+                p.drawString(120,y-170,"Course during the period from___________________________to_________________________")
+                p.drawString(120,y-200,"and his/her conduct and character are/were___________________________________________")
+                p.drawString(80,y-290,"Remarks:")
+                p.drawString(660,y-350,"Principal")
+                p.drawString(80,y-350,"Date:.....................")
+                p.drawCentredString(350,y-400, "(Seal)")
             elif conduct_type == 'type3':
                 p.setFont('Times-Bold',10)
                 p.drawCentredString(500,y-20, "Course & Conduct Certificate")

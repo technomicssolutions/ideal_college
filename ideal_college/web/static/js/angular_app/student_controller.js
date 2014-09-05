@@ -536,7 +536,7 @@ function StudentListController($scope, $http, $element, $location, $timeout) {
 }
 
 function ConductCertificateController($scope, $http, $element, $location, $timeout) {
-    $scope.init = function(csrf_token){
+    $scope.init = function(csrf_token, college_name){
         get_course_list($scope, $http);
        
         $scope.page_interval = 10;
@@ -549,7 +549,7 @@ function ConductCertificateController($scope, $http, $element, $location, $timeo
         $scope.student_id = '';
         $scope.students_listing = false;
         $scope.student_selected = true;
-        $scope.college_name = '';
+        $scope.college_name = college_name;
         $scope.conduct_type = '';
         var date_pick = new Picker.Date($$('#dob'), {
             timePicker: false,
