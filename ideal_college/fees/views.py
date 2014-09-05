@@ -137,8 +137,11 @@ class EditFeesStructure(View):
                 fee_structure_head = FeesStructureHead()
             removed_installments = fee_head['removed_installments']
             for installment in removed_installments:
-                installment_obj = Installment.objects.get(id=installment['id'])
-                installment_obj.delete()
+                try:
+                    installment_obj = Installment.objects.get(id=installment['id'])
+                    installment_obj.delete()
+                except:
+                    pass
             fee_structure_head.name = fee_head['head']
             fee_structure_head.amount = fee_head['amount']
             fee_structure_head.save()
