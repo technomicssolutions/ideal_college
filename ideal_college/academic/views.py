@@ -482,7 +482,7 @@ class ConductCertificate(View):
                 else:
                     p.drawCentredString(500, y , (college.name if college else ''))
                 p.setFont('Times-Roman',15)
-                p.drawCentredString(500,y-30,"Karumankurussi P .O, Cheruplassery,Palakkad(Dt.)")
+                p.drawCentredString(500,y-30,"Karumanamkurussi P .O, Cheruplassery,Palakkad(Dt.)")
                 p.setFont('Times-Bold',30)
                 p.drawCentredString(500,y-60, "Course & Conduct Certificate")
                 p.setFont('Times-Roman',20)
@@ -661,6 +661,96 @@ class PrintTC(View):
                 p.drawString(50, y - 550, 'Seal : ')
                 p.setFont('Helvetica-Bold',16)
                 p.drawString(600, y - 525, 'Principal')
+            elif tc_type == 'type3':
+                p.setFont('Times-Bold',35)
+                if request.GET.get('college_name',''):
+                    college_name = request.GET.get('college_name','')
+                    p.drawCentredString(500, y , college_name)
+                else:
+                    p.drawCentredString(500, y , (college.name if college else ''))
+                p.setFont('Times-Italic',20)
+                p.drawCentredString(500, y - 30 , "(Affiliated to National Council for Vocational Training/Govt. of India)")
+                p.setFont('Times-Roman',20)
+                p.drawCentredString(500, y - 60, "KARUMANAMKURUSSI P.O, PALAKKAD (Dt.) Pin: 679504, Ph: 0466-2207585,2280111")
+                p.setFont('Times-Bold',25)
+                p.drawCentredString(500, y - 120, "TRANSFER CERTIFICATE")
+                p.setFont('Times-Roman',20)
+                p.drawString(50, y - 120, "No .......................")
+                p.drawString(50, y - 200, "1.  Name of Trainee")
+                p.drawString(300, y - 200, ":")
+                p.drawString(320, y - 200, student.student_name)
+                p.drawString(50, y - 230, "2.  Permanent Address")
+                address = str(student.address)
+                p.drawString(300, y - 230, ":")
+                j = 230
+                for address_line in address.split(","):
+                    p.drawString(320, y-j, address_line.lstrip() + " ")
+                    j = j + 30
+                j = y-j
+                p.drawString(50, j, "3.  Name of Parent/Guardian")
+                p.drawString(300, j, ":")
+                p.drawString(320, j, student.guardian_name);
+                p.drawString(50, j - 30, "4.  Relationship of guardiang")
+                p.drawString(300, j - 30, ":")
+                p.drawString(320, j - 30, student.relationship);
+                p.drawString(50, j - 60, "5.  Nationality")
+                p.drawString(300, j - 60, ":")
+                p.drawString(320, j - 60, ".......................................");
+                p.drawString(530, j - 60, "6.  Community/Religion")
+                p.drawString(730, j - 60, ":")
+                p.drawString(750, j - 60, "....................................");
+                p.drawString(50, j - 90, "7.  Date of Birth")
+                p.drawString(300, j - 90, ":")
+                p.drawString(320, j - 90, (student.dob.strftime('%d-%m-%Y')));
+                dob_month = student.dob.strftime('%B')
+                dob_date = num2words(student.dob.day).title() 
+                dob_year = num2words(student.dob.year).title()   
+                dob_words = ' ( ' + dob_date + ' ' + dob_month + ' ' +dob_year + ' ) '
+                p.drawString(430, j - 90, (dob_words))
+                p.drawString(50, j - 120, "8.  Permanent marks of")
+                p.drawString(120, j - 150, "identification")
+                p.drawString(300, j - 150, ":")
+                p.drawString(320, j - 150, "....................................................................................................");
+                p.drawString(50, j - 180, "9.  Eduational Qualifications")
+                p.drawString(300, j - 180, ":")
+                p.drawString(320, j - 180, "....................................................................................................");
+                p.drawString(50, j - 210, "10. Details of T.C. Received ")
+                p.drawString(300, j - 210, ":")
+                p.drawString(320, j - 210, "....................................................................................................");
+                p.drawString(50, j - 240, "11. Date of Admission ")
+                p.drawString(300, j - 240, ":")
+                p.drawString(320, j - 240, student.doj.strftime('%d-%m-%Y'))
+                p.drawString(530, j - 240, "12. Admission No")
+                p.drawString(680, j - 240, ":")
+                p.drawString(700, j - 240, "............................................");
+                p.drawString(50, j - 270, "13. Roll No")
+                p.drawString(300, j - 270, ":")
+                p.drawString(320, j - 270, str(student.roll_number));
+                p.drawString(50, j - 300, "14. Date of application for")
+                p.drawString(120, j - 330, "TC Received")
+                p.drawString(300, j - 330, ":")
+                p.drawString(320, j - 330, "....................................................................................................");
+                p.drawString(50, j - 360, "15. Reasons for leaving")
+                p.drawString(300, j - 360, ":")
+                p.drawString(320, j - 360, "....................................................................................................");
+                p.drawString(50, j - 390, "16. Neither Passed or Failed")
+                p.drawString(300, j - 390, ":")
+                p.drawString(320, j - 390, "....................................................................................................");
+                p.drawString(50, j - 420, "17. Date of issue of TC")
+                p.drawString(300, j - 420, ":")
+                p.drawString(320, j - 420, "....................................................................................................");
+                p.drawString(50, j - 450, "18. Signature of Trainee")
+                p.drawString(300, j - 450, ":")
+                p.drawString(320, j - 450, "....................................................................................................");
+                p.drawString(50, j - 480, "19. Remarks")
+                p.drawString(300, j - 480, ":")
+                p.drawString(320, j - 480, "....................................................................................................");
+                p.drawString(60, y - 1000, "Cheruplassery")
+                p.drawString(60, y - 1040, "Date: ..........................")
+                p.setFont('Times-Bold',20)
+                p.drawString(750, y - 1040, "Principal")
+                p.setFont('Times-Roman',20)
+                p.drawCentredString(500, y - 1080, '(Seal)')
             p.showPage()
             p.save()
         return response

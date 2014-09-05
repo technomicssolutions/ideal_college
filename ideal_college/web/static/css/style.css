@@ -910,10 +910,54 @@ label.block{
     font-size: 14px;
     font-weight: normal;
 }
+.student_list_conduct {
+    background-color: #FFFFFF;
+    border: 1px solid #ADD8E6;
+    border-radius: 5px;
+    left: 50%;
+    margin-top: 2.3%;
+    position: absolute;
+    width: 17%;
+}
+.student_list_conduct div{
+  	border: 1px solid #ADD8E6;
+    height: 20px;
+    padding: 7px;
+    width: 93%;
+    font-size: 14px;
+    font-weight: normal;
+}
+.student_list_tc {
+    background-color: #FFFFFF;
+    border: 1px solid #ADD8E6;
+    border-radius: 5px;
+    left: 33.5%;
+    margin-top: 10.3%;
+    position: absolute;
+    width: 18%;
+}
+.student_list_tc div{
+  	border: 1px solid #ADD8E6;
+    height: 20px;
+    padding: 7px;
+    width: 94%;
+    font-size: 14px;
+    font-weight: normal;
+}
 
 #university_list .new_button {
     width: 9% !important;
 }
 #university_list .new_button a {
     width: 100% !important;
+}
+
+#conduct_certificate input[type="text"]{
+	width: 88% !important;
+}
+#conduct_certificate input[type="submit"]{
+	margin-left: 50%;
+}
+#print_tc input[type="text"]{
+	width: 47% !important;
 }

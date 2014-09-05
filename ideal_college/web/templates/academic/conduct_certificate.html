@@ -26,7 +26,7 @@
 			<div class="form_input">
 				<input type="text" ng-model="student_name" ng-change="get_student_details()">
 			</div>
-			<div class="student_list" ng-show="students_listing" ng-hide="student_selected">
+			<div class="student_list_conduct" ng-show="students_listing" ng-hide="student_selected">
 				<div ng-repeat="student in students_list" ng-click="select_student(student)">
 					<span>[[student.student]]</span>
 				</div>
@@ -40,12 +40,13 @@
 			<label>Conduct Certificate Type</label>						
 			<select ng-model="conduct_type">
 				<option value="">Conduct Certifcate Type</option>
-				<option value="type1">type1</option>
-				<option value="type2">type2</option>
-				<option value="type3">type3</option>
+				<option value="type1">Type 1</option>
+				<option value="type2">Type 2</option>
+				<option value="type3">Type 3</option>
 				
 			</select>
 			<p class="error_message">[[conduct_error]]</p>					
 			<input type="submit" value="View" ng-click="conduct_report()">
 		</div>
+	</div>
 {% endblock content %}
