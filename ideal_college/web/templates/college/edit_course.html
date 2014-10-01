@@ -21,7 +21,7 @@
 		<label class="one" > Choose Semesters</label>  
 	</div>
     <div class="form_input"> 
-	    <select class="one" size="10" name="semester_list" ng-model="semester_list" ng-selected="semester.selected" multiple ng-options="semester.id as semester.semester for semester in semesters">
+	    <select class="one" size="10" name="semester_list" ng-model="semester_list" ng-selected="semester.selected=='true'" multiple ng-options="semester.id as semester.semester for semester in semesters">
 		</select>   
 	</div>		
 	<div class="control">
