@@ -36,16 +36,6 @@
 						<li> <a href="{% url 'list_staff' %}"> View Staff </a> </li>
 					</ul>
 				</li>
-				<li class="menu"> <a href=""> Student </a>
-
-					<ul>
-						<li><a href="{% url 'list_student' %}"> Student </a></li>
-						<li><a href="{% url 'conduct_certifcate' %}">Conduct Certificate</a></li>
-						<li> <a href="{% url 'print_transfer_certificate' %}"> TC </a> </li>
-						<li> <a href="{% url 'print_tc_conduct_certificate' %}"> TC and Conduct Certificate</a> </li>
-					</ul>
-
-				</li>
 				<li class="menu"> <a href=""> Fees </a>
 					<ul>
 						<li> <a href="{% url 'fees_heads' %}">Fees Head</a> </li>
@@ -55,6 +45,15 @@
 						<li> <a href="{% url 'list_outstanding_fees' %}">Outstanding Fees</a> </li>
 						<li> <a href="{% url 'fee_receipt' %}">Fees Receipt</a> </li>
 					</ul>
+				</li>
+				<li class="menu"> <a href=""> Student </a>
+					<ul>
+						<li><a href="{% url 'list_student' %}"> Student </a></li>
+						<li><a href="{% url 'conduct_certifcate' %}">Conduct Certificate</a></li>
+						<li> <a href="{% url 'print_transfer_certificate' %}"> TC </a> </li>
+						<li> <a href="{% url 'print_tc_conduct_certificate' %}"> TC and Conduct Certificate</a> </li>
+					</ul>
+
 				</li>
 				<li class="menu last"> <a href=""> Report </a>
 					<ul>

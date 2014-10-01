@@ -475,7 +475,7 @@ class ConductCertificate(View):
             if request.GET.get('student', ''):
                 student = Student.objects.get(id=request.GET.get('student', ''))
             if conduct_type == 'type1':
-                p.setFont('Times-Bold',35)
+                p.setFont('Times-Bold',30)
                 if request.GET.get('college_name',''):
                     college_name = request.GET.get('college_name','')
                     p.drawCentredString(500, y , college_name)

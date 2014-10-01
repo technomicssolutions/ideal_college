@@ -365,7 +365,6 @@ class OutstandingFeesListReport(View):
                                 if student_fee.feeshead == head:
                                     studentfee = StudentFees.objects.get(id=student_fee.id)  
                         try:
-                              
                             fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student=student)
                             fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
                             if fees_payment_heads.count() == 0:
@@ -397,7 +396,11 @@ class OutstandingFeesListReport(View):
                                                 p = header(p, y)
                                                 p.setFontSize(12)
                             else:
-                                if fees_payment_heads[0].paid_fee_amount != head.amount:
+                                head_amount = head.amount
+                                applicable_special_fee = student.student_fees.filter(feeshead=head)
+                                if applicable_special_fee.count() > 0:
+                                    head_amount = applicable_special_fee[0].amount
+                                if fees_payment_heads[0].paid_fee_amount != head_amount:
                                     installment = head.installments.filter(name='Late Payment')
                                     if installment.count() == 0:
                                         installment = head.installments.filter(name='Standard Payment')
@@ -502,7 +505,6 @@ class OutstandingFeesListReport(View):
                                     if student_fee.feeshead == head:
                                         studentfee = StudentFees.objects.get(id=student_fee.id)          
                             try:
-                                
                                 fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student=student)
                                 fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
                                 if fees_payment_heads.count() == 0:
@@ -533,7 +535,11 @@ class OutstandingFeesListReport(View):
                                                     p = header(p, y)
                                                     p.setFontSize(12)
                                 else:
-                                    if fees_payment_heads[0].paid_fee_amount != head.amount:
+                                    head_amount = head.amount
+                                    applicable_special_fee = student.student_fees.filter(feeshead=head)
+                                    if applicable_special_fee.count() > 0:
+                                        head_amount = applicable_special_fee[0].amount
+                                    if fees_payment_heads[0].paid_fee_amount != head_amount:
                                         installment = head.installments.filter(name='Late Payment')
                                         if installment.count() == 0:
                                             installment = head.installments.filter(name='Standard Payment')
