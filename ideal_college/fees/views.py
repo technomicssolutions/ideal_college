@@ -73,7 +73,7 @@ class EditFeesStructure(View):
         status = 200
         if request.is_ajax():
             fees = FeesStructure.objects.get(id = fees_structure_id)
-            heads = fees.head.all()
+            heads = fees.head.all().order_by('id')
             i = 0
             for head in heads:
                 ctx_installments = []
@@ -377,7 +377,7 @@ class GetFeeStructureHeadList(View):
                 for head in heads:
                     try:
                         fees_payment = FeesPayment.objects.get(fee_structure=fee_structure, student__id=student_id)
-                        fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
+                        fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head).order_by('id')
                         if fees_payment_heads.count() == 0:
                             ctx_heads_list.append({
                                 'id': head.id,
