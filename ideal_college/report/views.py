@@ -465,6 +465,7 @@ class OutstandingFeesListReport(View):
                                 p = header(p, y)
                                 p.setFontSize(12)
                 else:
+                    net_balance = 0
                     students = Student.objects.filter(course__id=request.GET.get('course', ''), batch__id=request.GET.get('batch', '')).order_by('roll_number')
                     batch = Batch.objects.get(id=request.GET.get('batch', ''))
                     batch_name = str(batch.start_date) + ' - ' + str(batch.end_date) + ((' - '+ str(batch.branch.branch)) if batch.branch else '')
@@ -509,6 +510,7 @@ class OutstandingFeesListReport(View):
                             try:
                                 fees_payment = FeesPayment.objects.get(fee_structure=fees_structure, student=student)
                                 fees_payment_heads = fees_payment.payment_heads.filter(fees_head=head)
+                                print fees_payment_heads
                                 if fees_payment_heads.count() == 0:
                                     installment = head.installments.filter(name='Late Payment')
                                     if installment.count() == 0:
@@ -522,10 +524,13 @@ class OutstandingFeesListReport(View):
                                             table.drawOn(p, 245, y1-10)
                                             if student.applicable_to_special_fees:
                                                 p.drawString(400, y1, str(studentfee.amount))
+                                                balance = studentfee.amount
                                             else:
                                                 p.drawString(400, y1, str(head.amount))
+                                                balance = head.amount
+                                            net_balance = float(net_balance) + float(balance)
                                             p.drawString(500, y1, str(0))
-                                            p.drawString(560, y1, str(0))
+                                            p.drawString(560, y1, str(balance))
                                             for installment in head.installments.all():
                                                 p.drawString(620, y1, installment.name)
                                                 p.drawString(750, y1, installment.start_date.strftime('%d/%m/%Y'))
@@ -572,6 +577,7 @@ class OutstandingFeesListReport(View):
                                                         p.showPage()
                                                         p = header(p, y)
                                                         p.setFontSize(12)
+                                    net_balance = float(net_balance) + float(balance)
                             except Exception as ex:
                                 installment = head.installments.filter(name='Late Payment')
                                 if installment.count() == 0:
@@ -585,10 +591,13 @@ class OutstandingFeesListReport(View):
                                         table.drawOn(p, 245, y1-10)
                                         if student.applicable_to_special_fees:
                                             p.drawString(400, y1, str(studentfee.amount))
+                                            balance = studentfee.amount
                                         else:
                                             p.drawString(400, y1, str(head.amount))
+                                            balance = head.amount
+                                        net_balance = float(net_balance) + float(balance)
                                         p.drawString(500, y1, str(0))
-                                        p.drawString(560, y1, str(0))
+                                        p.drawString(560, y1, str(balance))
                                         for installment in head.installments.all():
                                             p.drawString(620, y1, installment.name)
                                             p.drawString(750, y1, installment.start_date.strftime('%d/%m/%Y'))
@@ -600,6 +609,8 @@ class OutstandingFeesListReport(View):
                                                 p.showPage()
                                                 p = header(p, y)
                                                 p.setFontSize(12)
+                    p.drawString(400, y1, "Net Balance:")
+                    p.drawString(500, y1, str(net_balance))
             p.save()
         return response
 
