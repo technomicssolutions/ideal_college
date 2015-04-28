@@ -333,6 +333,7 @@ class OutstandingFeesListReport(View):
             course = request.GET.get('course','')
             batch = request.GET.get('batch', '')
             student_id = request.GET.get('student', '')
+            net_balance = 0
             if request.GET.get('fees_type','') == 'course':
                 course = Course.objects.get(id=request.GET.get('course', ''))
                 try:
@@ -341,6 +342,7 @@ class OutstandingFeesListReport(View):
                     p.save()
                     return response
                 if filtering_option == 'student_wise':
+                    balance = 0
                     student = Student.objects.get(id=student_id)
                     batch = Batch.objects.get(id=request.GET.get('batch', ''))
                     batch_name = str(batch.start_date) + ' - ' + str(batch.end_date) + ((' - '+ str(batch.branch.branch)) if batch.branch else '')
@@ -381,8 +383,11 @@ class OutstandingFeesListReport(View):
                                         table.drawOn(p, 45, y1-10)
                                         if student.applicable_to_special_fees:
                                             p.drawString(200, y1, str(studentfee.amount))
+                                            balance = studentfee.amount
                                         else:
                                             p.drawString(200, y1, str(head.amount))
+                                            balance = head.amount
+                                        net_balance = float(net_balance) + float(balance)
                                         p.drawString(300, y1, str(0))
                                         for installment in head.installments.all():
                                             p.drawString(400, y1, installment.name)
@@ -396,6 +401,7 @@ class OutstandingFeesListReport(View):
                                                 p = header(p, y)
                                                 p.setFontSize(12)
                             else:
+                                balance = 0
                                 head_amount = head.amount
                                 applicable_special_fee = student.student_fees.filter(feeshead=head)
                                 if applicable_special_fee.count() > 0:
@@ -414,8 +420,12 @@ class OutstandingFeesListReport(View):
                                             table.drawOn(p, 45, y1-10)
                                             if student.applicable_to_special_fees:
                                                 p.drawString(200, y1, str(studentfee.amount))
+                                                balance = studentfee.amount - fees_payment_heads[0].paid_fee_amount
                                             else:
                                                 p.drawString(200, y1, str(head.amount))
+                                                balance = head.amount - fees_payment_heads[0].paid_fee_amount
+                                                print balance, "balance"
+                                            net_balance = float(net_balance) + float(balance)
                                             p.drawString(300, y1, str(fees_payment_heads[0].paid_fee_amount))
                                             for installment in head.installments.all():
                                                 p.drawString(400, y1, installment.name)
@@ -430,6 +440,7 @@ class OutstandingFeesListReport(View):
                                                     p.setFontSize(12)
 
                         except Exception as ex:
+                            balance = 0
                             installment = head.installments.filter(name='Late Payment')
                             if installment.count() == 0:
                                 installment = head.installments.filter(name='Standard Payment')
@@ -442,9 +453,12 @@ class OutstandingFeesListReport(View):
                                     table.wrapOn(p, 200, 400)
                                     table.drawOn(p, 45, y1-10)
                                     if student.applicable_to_special_fees:
-                                            p.drawString(200, y1, str(studentfee.amount))
+                                        p.drawString(200, y1, str(studentfee.amount))
+                                        balance = studentfee.amount
                                     else: 
                                         p.drawString(200, y1, str(head.amount))
+                                        balance = head.amount
+                                    net_balance = float(net_balance) + float(balance)
                                     p.drawString(300, y1, str(0))
                                     for installment in head.installments.all():
                                         p.drawString(400, y1, installment.name)
@@ -464,6 +478,8 @@ class OutstandingFeesListReport(View):
                                 p.showPage()
                                 p = header(p, y)
                                 p.setFontSize(12)
+                    p.drawString(400, y1, "Net Balance:")
+                    p.drawString(500, y1, str(net_balance))
                 else:
                     net_balance = 0
                     students = Student.objects.filter(course__id=request.GET.get('course', ''), batch__id=request.GET.get('batch', '')).order_by('roll_number')
